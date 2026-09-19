@@ -1,9 +1,68 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans:
+        "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
+        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji";
+}
+
+@theme {
+    /* black */
+    --color-black-100: #cccccc;
+    --color-black-200: #999999;
+    --color-black-300: #666666;
+    --color-black-400: #333333;
+    --color-black-500: #000000;
+    --color-black-600: #000000;
+    --color-black-700: #000000;
+    --color-black-800: #000000;
+    --color-black-900: #000000;
+
+    /* prussian blue */
+    --color-prussian-blue-100: #beccea;
+    --color-prussian-blue-200: #7e99d5;
+    --color-prussian-blue-300: #3e67bf;
+    --color-prussian-blue-400: #29447e;
+    --color-prussian-blue-500: #14213d;
+    --color-prussian-blue-600: #101b31;
+    --color-prussian-blue-700: #0c1425;
+    --color-prussian-blue-800: #080d19;
+    --color-prussian-blue-900: #04070c;
+
+    /* orange */
+    --color-orange-100: #ffedd0;
+    --color-orange-200: #fedaa0;
+    --color-orange-300: #fec871;
+    --color-orange-400: #fdb541;
+    --color-orange-500: #fca311;
+    --color-orange-600: #d68502;
+    --color-orange-700: #a16402;
+    --color-orange-800: #6b4201;
+    --color-orange-900: #362101;
+
+    /* alabaster grey */
+    --color-alabaster-grey-100: #fafafa;
+    --color-alabaster-grey-200: #f5f5f5;
+    --color-alabaster-grey-300: #f0f0f0;
+    --color-alabaster-grey-400: #ebebeb;
+    --color-alabaster-grey-500: #e5e5e5;
+    --color-alabaster-grey-600: #b8b8b8;
+    --color-alabaster-grey-700: #8a8a8a;
+    --color-alabaster-grey-800: #5c5c5c;
+    --color-alabaster-grey-900: #2e2e2e;
+
+    /* white */
+    --color-white-100: #ffffff;
+    --color-white-200: #ffffff;
+    --color-white-300: #ffffff;
+    --color-white-400: #ffffff;
+    --color-white-500: #ffffff;
+    --color-white-600: #cccccc;
+    --color-white-700: #999999;
+    --color-white-800: #666666;
+    --color-white-900: #333333;
 }
