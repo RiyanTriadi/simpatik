@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Complaint;
 use Illuminate\Http\Request;
 
 class ComplaintsController extends Controller
@@ -12,7 +13,8 @@ class ComplaintsController extends Controller
      */
     public function index()
     {
-        return view('admin.complaints.index');
+        $complaints = Complaint::all();
+        return view('admin.complaints.index', compact('complaints'));
     }
 
     /**

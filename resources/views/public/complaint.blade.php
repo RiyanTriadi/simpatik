@@ -1,12 +1,14 @@
 <x-layout.main>
-    <h1 class="text-lg font-semibold mb-4">
+    <p class="text-lg font-semibold mb-4">
         Sampaikan pengaduan terkait dugaan pelanggaran, permasalahan layanan, fasilitas, sarana dan prasarana, maupun
         permasalahan lainnya di lingkungan institusi. Pengaduan dapat disampaikan oleh sivitas maupun masyarakat dan
         akan ditindaklanjuti sesuai dengan ketentuan yang berlaku.
-    </h1>
+    </p>
 
     <div class="max-w-4xl bg-white shadow-sm p-4">
-        <form action="">
+        <form action="{{ route('public.pengaduan.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+
             {{-- tentang pengaduan --}}
             <div>
                 <h3 class="text-lg text-prussian-blue-300 font-semibold border-b pb-2 mb-4">Tentang Pengaduan</h3>
@@ -14,32 +16,49 @@
                     <h3 class="text-alabaster-grey-800 text-md font-medium col-span-1">Penyampai Pengaduan</h3>
                     <div class="col-span-4 md:col-span-3">
                         <div>
-                            <input type="radio" name="creator_type" id="ekternal">
-                            <label for="ekternal">Pengaduan Ekternal / Masyarakat</label>
+                            <input type="radio" name="creator_type" id="eksternal" value="eksternal"
+                                @checked(old('creator_type') === 'eksternal')>
+                            <label for="eksternal">Pengaduan Ekternal / Masyarakat</label>
                         </div>
                         <div>
-                            <input type="radio" name="creator_type" id="internal">
+                            <input type="radio" name="creator_type" id="internal" value="internal"
+                                @checked(old('creator_type') === 'internal')>
                             <label for="internal">Pengaduan Internal / Sivitas</label>
                         </div>
+                        @error('creator_type')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
                 <div class="grid grid-cols-4 gap-4 mb-4">
-                    <h3 class="text-alabaster-grey-800 text-md font-medium col-span-4 md:col-span-1">Kategori Pengaduan</h3>
-                    <select class="border border-gray-300 p-2" name="category" id="category">
-                        <option value="">Pilih Kategori</option>
-                        <option value="pelanggaran">Pelanggaran</option>
-                        <option value="layanan">Permasalahan Layanan</option>
-                        <option value="fasilitas">Permasalahan Fasilitas</option>
-                        <option value="sarana-prasarana">Permasalahan Sarana dan Prasarana</option>
-                        <option value="lainnya">Permasalahan Lainnya</option>
-                    </select>
+                    <h3 class="text-alabaster-grey-800 text-md font-medium col-span-4 md:col-span-1">Kategori Pengaduan
+                    </h3>
+                    <div class="col-span-4 md:col-span-3">
+                        <select class="border border-gray-300 p-2" name="category_id" id="category_id">
+                            <option value="">Pilih Kategori</option>
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->id }}" @selected(old('category_id') == $category->id)>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('category_id')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-4 gap-4 mb-4">
-                    <h3 class="text-alabaster-grey-800 text-md font-medium col-span-4 md:col-span-1">Topik Pengaduan</h3>
-                    <input type="text" name="topic" id="topic" class="border border-gray-300 p-2"
-                        placeholder="Masukkan topik pengaduan">
+                    <h3 class="text-alabaster-grey-800 text-md font-medium col-span-4 md:col-span-1">Topik Pengaduan
+                    </h3>
+                    <div class="col-span-4 md:col-span-3">
+                        <input type="text" name="subject" id="subject" class="border border-gray-300 p-2 w-full"
+                            value="{{ old('subject') }}" placeholder="Masukkan topik pengaduan">
+                        @error('subject')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
             </div>
 
@@ -47,36 +66,42 @@
             <div>
                 <h3 class="text-lg text-prussian-blue-300 font-semibold border-b pb-2 mb-4">Detail Pengaduan</h3>
                 <div class="grid grid-cols-4 gap-4 mb-4">
-                    <h3 class="text-alabaster-grey-800 text-md font-medium col-span-4 md:col-span-1">Deskripsi Pengaduan</h3>
+                    <h3 class="text-alabaster-grey-800 text-md font-medium col-span-4 md:col-span-1">Deskripsi Pengaduan
+                    </h3>
                     <div class="col-span-4 md:col-span-3">
-                        <textarea name="description" id="description" cols="80" rows="5"
-                            class="border border-gray-300 p-2" placeholder="Masukkan deskripsi pengaduan"></textarea>
+                        <textarea name="description" id="description" cols="80" rows="5" class="border border-gray-300 p-2 w-full"
+                            placeholder="Masukkan deskripsi pengaduan">{{ old('description') }}</textarea>
+                        @error('description')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
                 <div class="grid grid-cols-4 gap-4 mb-4">
-                    <h3 class="text-alabaster-grey-800 text-md font-medium col-span-4 md:col-span-1">Tanggal Kejadian</h3>
-                    <input type="date" name="incident_date" id="incident_date"
-                        class="border border-gray-300 p-2">
+                    <h3 class="text-alabaster-grey-800 text-md font-medium col-span-4 md:col-span-1">Tanggal Kejadian
+                    </h3>
+                    <div class="col-span-4 md:col-span-3">
+                        <input type="date" name="incident_date" id="incident_date" class="border border-gray-300 p-2"
+                            max="{{ date('Y-m-d') }}" value="{{ old('incident_date') }}">
+                        @error('incident_date')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-4 gap-4 mb-4">
-                    <h3 class="text-alabaster-grey-800 text-md font-medium col-span-4 md:col-span-1">Lokasi Kejadian</h3>
-                    <input type="text" name="location" id="location" class="border border-gray-300 p-2"
-                        placeholder="Masukkan lokasi kejadian">
+                    <h3 class="text-alabaster-grey-800 text-md font-medium col-span-4 md:col-span-1">Lokasi Kejadian
+                    </h3>
+                    <div class="col-span-4 md:col-span-3">
+                        <input type="text" name="incident_location" id="incident_location"
+                            class="border border-gray-300 p-2 w-full" value="{{ old('incident_location') }}"
+                            placeholder="Masukkan lokasi kejadian">
+                        @error('incident_location')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-4 gap-4 mb-4">
-                    <h3 class="text-alabaster-grey-800 text-md font-medium col-span-4 md:col-span-1">Unit/Bagian Terkait</h3>
-                    <select class="border border-gray-300 p-2" name="category" id="category">
-                        <option value="">Pilih Kategori</option>
-                        <option value="pelanggaran">Pelanggaran</option>
-                        <option value="layanan">Permasalahan Layanan</option>
-                        <option value="fasilitas">Permasalahan Fasilitas</option>
-                        <option value="sarana-prasarana">Permasalahan Sarana dan Prasarana</option>
-                        <option value="lainnya">Permasalahan Lainnya</option>
-                    </select>
-                </div>
             </div>
 
             {{-- dokumen pendukung --}}
@@ -85,8 +110,11 @@
                 <div class="grid grid-cols-4 gap-4 mb-4">
                     <h3 class="text-alabaster-grey-800 text-md font-medium col-span-4 md:col-span-1">Lampiran</h3>
                     <div class="col-span-4 md:col-span-3">
-                        <input type="file" name="attachment" id="attachment"
-                            class="border border-gray-300 p-2">
+                        <input type="file" name="attachment" id="attachment" class="border border-gray-300 p-2">
+                        <p class="text-xs text-gray-500 mt-1">Format JPG, JPEG, PNG, atau PDF. Maks. 2 MB.</p>
+                        @error('attachment')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
             </div>
@@ -97,41 +125,53 @@
                 <h3 class="text-lg text-prussian-blue-300 font-semibold border-b pb-2 mb-4">Identitas Pelapor</h3>
                 <div class="grid grid-cols-4 gap-4 mb-4">
                     <div class="col-span-4 md:col-span-1">
-                        <input type="checkbox" name="anonymous" id="anonymous" class="p-2">
-                        <label for="anonymous" class="text-alabaster-grey-800 text-md font-medium">Laporkan secara anonim?</label>
+                        <input type="checkbox" name="is_anonymous" id="is_anonymous" value="1" class="p-2"
+                            @checked(old('is_anonymous'))>
+                        <label for="is_anonymous" class="text-alabaster-grey-800 text-md font-medium">Laporkan secara
+                            anonim?</label>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-4 gap-4 mb-4">
                     <h3 class="text-alabaster-grey-800 text-md font-medium col-span-4 md:col-span-1">Nama</h3>
                     <div class="col-span-4 md:col-span-3">
-                        <input type="text" name="name" id="name"
-                            class="border border-gray-300 p-2"
+                        <input type="text" name="reporter_name" id="reporter_name"
+                            class="border border-gray-300 p-2 w-full" value="{{ old('reporter_name') }}"
                             placeholder="Masukkan nama pelapor">
+                        @error('reporter_name')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
                 <div class="grid grid-cols-4 gap-4 mb-4">
                     <h3 class="text-alabaster-grey-800 text-md font-medium col-span-4 md:col-span-1">No. HP</h3>
                     <div class="col-span-4 md:col-span-3">
-                        <input type="text" name="phone" id="phone"
-                            class="border border-gray-300 p-2"
+                        <input type="tel" name="reporter_phone" id="reporter_phone"
+                            class="border border-gray-300 p-2 w-full" value="{{ old('reporter_phone') }}"
                             placeholder="Masukkan nomor handphone pelapor">
+                        @error('reporter_phone')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
                 <div class="grid grid-cols-4 gap-4 mb-4">
                     <h3 class="text-alabaster-grey-800 text-md font-medium col-span-4 md:col-span-1">Email</h3>
                     <div class="col-span-4 md:col-span-3">
-                        <input type="text" name="email" id="email"
-                            class="border border-gray-300 p-2"
+                        <input type="email" name="reporter_email" id="reporter_email"
+                            class="border border-gray-300 p-2 w-full" value="{{ old('reporter_email') }}"
                             placeholder="Masukkan email pelapor">
+                        @error('reporter_email')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
             </div>
 
             <div class="flex justify-end pt-4">
-                <button type="submit" class="bg-orange-500 hover:bg-orange-400 text-white font-semibold py-2 px-4 cursor-pointer">
+                <button type="submit"
+                    class="bg-orange-500 hover:bg-orange-400 text-white font-semibold py-2 px-4 cursor-pointer">
                     Kirim Pengaduan
                 </button>
             </div>

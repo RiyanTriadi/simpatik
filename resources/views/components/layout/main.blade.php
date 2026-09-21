@@ -21,7 +21,8 @@
     <div class="flex min-h-screen">
 
         {{-- Sidebar --}}
-        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-prussian-blue-600 text-white transition-transform duration-300 lg:static lg:translate-x-0 -translate-x-full">
+        <aside id="sidebar"
+            class="fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-prussian-blue-600 text-white transition-transform duration-300 lg:static lg:translate-x-0 -translate-x-full">
 
             {{-- Logo --}}
             <div class="flex h-16 shrink-0 items-center px-6">
@@ -39,17 +40,20 @@
                     Menu Utama
                 </p>
 
-                <a href="{{ route('public.index') }}" class="flex items-center gap-3 {{ request()->routeIs('public.index') ? 'text-black bg-orange-500' : 'transition hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium ">
+                <a href="{{ route('public.index') }}"
+                    class="flex items-center gap-3 {{ request()->routeIs('public.index') ? 'text-black bg-orange-500' : 'transition hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium ">
                     <i class="ri-home-3-line"></i>
                     Beranda
                 </a>
 
-                <a href="{{ route('public.pengaduan.index') }}" class="flex items-center gap-3 {{ request()->routeIs('public.pengaduan.index') ? 'text-black bg-orange-500' : 'transition hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
+                <a href="{{ route('public.pengaduan.index') }}"
+                    class="flex items-center gap-3 {{ request()->routeIs('public.pengaduan.index') ? 'text-black bg-orange-500' : 'transition hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
                     <i class="ri-file-list-line"></i>
                     Pengaduan
                 </a>
 
-                <a href="{{ route('public.aspirasi.index') }}" class="flex items-center gap-3 {{ request()->routeIs('public.aspirasi.index') ? 'text-black bg-orange-500' : 'transition hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
+                <a href="{{ route('public.aspirasi.index') }}"
+                    class="flex items-center gap-3 {{ request()->routeIs('public.aspirasi.index') ? 'text-black bg-orange-500' : 'transition hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
                     <i class="ri-message-2-line"></i>
                     Aspirasi
                 </a>
@@ -91,6 +95,17 @@
 
             {{-- Content --}}
             <main class="flex-1 p-4 sm:p-6">
+                @if (session('success'))
+                    <div id="toast-success" role="alert"
+                        class="fixed top-20 right-5 z-50 flex items-center gap-3 bg-green-600 text-white px-4 py-3 shadow-lg opacity-0 translate-x-4 transition-all duration-300">
+                        <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>{{ session('success') }}</span>
+                        <button type="button" onclick="document.getElementById('toast-success')?.remove()"
+                            class="ml-2 text-white/80 hover:text-white cursor-pointer">&times;</button>
+                    </div>
+                @endif
                 {{ $slot }}
             </main>
 
@@ -125,6 +140,45 @@
 
         toggle?.addEventListener('click', openSidebar);
         overlay?.addEventListener('click', closeSidebar);
+
+        (function() {
+            const toast = document.getElementById('toast-success');
+            if (!toast) return;
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('opacity-0', 'translate-x-4');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-x-4');
+                setTimeout(() => toast.remove(), 300);
+            }, 10000);
+        })();
+
+        (function() {
+            const anonymousCheckbox = document.getElementById('is_anonymous');
+            const reporterFields = [
+                document.getElementById('reporter_name'),
+                document.getElementById('reporter_phone'),
+                document.getElementById('reporter_email'),
+            ];
+
+            function toggleReporterFields() {
+                const isAnonymous = anonymousCheckbox.checked;
+
+                reporterFields.forEach((field) => {
+                    if (!field) return;
+                    field.disabled = isAnonymous;
+                    field.classList.toggle('bg-gray-100', isAnonymous);
+                    field.classList.toggle('cursor-not-allowed', isAnonymous);
+                });
+            }
+
+            if (anonymousCheckbox) {
+                anonymousCheckbox.addEventListener('change', toggleReporterFields);
+                toggleReporterFields();
+            }
+        })();
     </script>
 
 

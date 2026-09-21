@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Public\ComplaintStoreRequest;
+use App\Models\Category;
+use App\Models\Complaint;
+use Illuminate\Support\Str;
 
 class ComplaintController extends Controller
 {
@@ -12,7 +15,13 @@ class ComplaintController extends Controller
      */
     public function index()
     {
-        return view('public.complaint');
+        $categories = Category::query()
+            ->where('is_active', true)
+            ->whereIn('type', ['pengaduan', 'keduanya'])
+            ->orderBy('name', 'asc')
+            ->get();
+
+        return view('public.complaint', compact('categories'));
     }
 
     /**
@@ -20,15 +29,40 @@ class ComplaintController extends Controller
      */
     public function create()
     {
-        //
+
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ComplaintStoreRequest $request)
     {
-        //
+        $validated = $request->validated();
+        $isAnonymous = $request->boolean('is_anonymous');
+
+        $attachmentPath = null;
+        if ($request->hasFile('attachment')) {
+            $attachmentPath = $request->file('attachment')->store('complaints/attachments', 'public');
+        }
+
+        $complaint = Complaint::create([
+            'ticket_number' => $this->generateTicketNumber(),
+            'creator_type' => $validated['creator_type'],
+            'category_id' => $validated['category_id'],
+            'is_anonymous' => $isAnonymous,
+            'subject' => $validated['subject'],
+            'description' => $validated['description'],
+            'incident_date' => $validated['incident_date'],
+            'incident_location' => $validated['incident_location'],
+            'attachment_path' => $attachmentPath,
+            'reporter_name' => $isAnonymous ? null : $validated['reporter_name'],
+            'reporter_phone' => $isAnonymous ? null : $validated['reporter_phone'],
+            'reporter_email' => $validated['reporter_email'] ?? null,
+        ]);
+
+        return redirect()
+            ->route('public.pengaduan.index')
+            ->with('success', 'Pengaduan berhasil dikirim. Nomor tiket Anda: ' . $complaint->ticket_number);
     }
 
     /**
@@ -50,7 +84,7 @@ class ComplaintController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(ComplaintStoreRequest $request, string $id)
     {
         //
     }
@@ -61,5 +95,17 @@ class ComplaintController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    /**
+     * Generate a unique complaint ticket number.
+     */
+    private function generateTicketNumber(): string
+    {
+        do {
+            $ticketNumber = 'PGD-' . now()->format('Ymd') . '-' . strtoupper(Str::random(5));
+        } while (Complaint::where('ticket_number', $ticketNumber)->exists());
+
+        return $ticketNumber;
     }
 }

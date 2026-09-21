@@ -56,58 +56,58 @@
             </thead>
 
             <tbody>
-                @foreach (range(1, 10) as $i)
-                   <tr class="border-b border-alabaster-grey-100 bg-white">
-                    <td class="px-4 py-3">
-                        <input type="checkbox">
-                    </td>
+                @foreach ($complaints as $complaint)
+                    <tr class="border-b border-alabaster-grey-100 bg-white">
+                        <td class="px-4 py-3">
+                            <input type="checkbox">
+                        </td>
 
-                    <td class="px-4 py-3 font-medium text-prussian-blue-500">
-                        PD-0{{ $i }}
-                    </td>
+                        <td class="px-4 py-3 font-medium text-prussian-blue-500">
+                            {{ $complaint->ticket_number }}
+                        </td>
 
-                    <td class="px-4 py-3">
-                        Masalah Toilet
-                    </td>
+                        <td class="px-4 py-3">
+                            {{ $complaint->subject }}
+                        </td>
 
-                    <td class="px-4 py-3">
-                        Fasilitas
-                    </td>
+                        <td class="px-4 py-3">
+                            {{ $complaint->category->name }}
+                        </td>
 
-                    <td class="px-4 py-3">
-                        Staff Kebersihan
-                    </td>
+                        <td class="px-4 py-3">
+                            -
+                        </td>
 
-                    <td class="px-4 py-3">
-                        Pending
-                    </td>
+                        <td class="px-4 py-3">
+                            {{ $complaint->status }}
+                        </td>
 
-                    <td class="px-4 py-3">
-                        Sedang
-                    </td>
+                        <td class="px-4 py-3">
+                            {{ $complaint->priority }}
+                        </td>
 
-                    <td class="px-4 py-3">
-                        Anonim
-                    </td>
+                        <td class="px-4 py-3">
+                            {{ !$complaint->is_anonymous ? $complaint->reporter_name : 'Anonim' }}
+                        </td>
 
-                    <td class="px-4 py-3">
-                        Ridwan
-                    </td>
+                        <td class="px-4 py-3">
+                            -
+                        </td>
 
-                    <td class="px-4 py-3">
-                        12 Juli 2026
-                    </td>
+                        <td class="px-4 py-3">
+                            {{ \Carbon\Carbon::parse($complaint->incident_date)->translatedFormat('d F Y') }}
+                        </td>
 
-                    <td class="px-4 py-3">
-                        12 Juli 2026
-                    </td>
+                        <td class="px-4 py-3">
+                            {{ $complaint->created_at->translatedFormat('d F Y') }}
+                        </td>
 
-                    <td class="text-center px-4 py-3">
-                        <button class="cursor-pointer">
-                            <i class="ri-more-line"></i>
-                        </button>
-                    </td>
-                </tr> 
+                        <td class="text-center px-4 py-3">
+                            <button class="cursor-pointer">
+                                <i class="ri-more-line"></i>
+                            </button>
+                        </td>
+                    </tr>
                 @endforeach
             </tbody>
         </table>
