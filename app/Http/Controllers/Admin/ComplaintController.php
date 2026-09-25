@@ -6,14 +6,24 @@ use App\Http\Controllers\Controller;
 use App\Models\Complaint;
 use Illuminate\Http\Request;
 
-class ComplaintsController extends Controller
+class ComplaintController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $complaints = Complaint::all();
+        $complaints = Complaint::latest();
+
+        if (request('search')){
+            $searchTerm = '%'. $request->search .'%';
+
+            $complaints->where(function ($query) use ($searchTerm) {
+                $query->where('subject', 'LIKE', $searchTerm)->orWhere('reporter_name','LIKE', $searchTerm);
+            });
+        }
+
+        $complaints = $complaints->paginate(10)->withQueryString();
         return view('admin.complaints.index', compact('complaints'));
     }
 

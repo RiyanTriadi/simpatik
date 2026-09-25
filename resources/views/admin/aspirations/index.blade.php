@@ -28,31 +28,11 @@
                         </th>
 
                         <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">
-                            Unit
-                        </th>
-
-                        <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">
                             Status
                         </th>
 
                         <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">
-                            Prioritas
-                        </th>
-
-                        <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">
                             Pelapor
-                        </th>
-
-                        <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">
-                            Petugas
-                        </th>
-
-                        <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">
-                            Tanggal Kejadian
-                        </th>
-
-                        <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">
-                            Tanggal Lapor
                         </th>
 
                         <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">
@@ -62,46 +42,26 @@
                 </thead>
 
                 <tbody>
-                    @foreach ($complaints as $complaint)
+                    @foreach ($aspirations as $aspiration)
                         <tr class="border-b border-alabaster-grey-100 bg-white">
                             <td class="px-4 py-3 font-medium text-prussian-blue-500">
-                                {{ $complaint->ticket_number }}
+                                {{ $aspiration->ticket_number }}
                             </td>
 
                             <td class="px-4 py-3">
-                                {{ $complaint->subject }}
+                                {{ $aspiration->subject }}
                             </td>
 
                             <td class="px-4 py-3">
-                                {{ $complaint->category->name }}
+                                {{ $aspiration->category->name }}
                             </td>
 
                             <td class="px-4 py-3">
-                                -
+                                {{ $aspiration->status }}
                             </td>
 
                             <td class="px-4 py-3">
-                                {{ $complaint->status }}
-                            </td>
-
-                            <td class="px-4 py-3">
-                                {{ $complaint->priority }}
-                            </td>
-
-                            <td class="px-4 py-3">
-                                {{ !$complaint->is_anonymous ? $complaint->reporter_name : 'Anonim' }}
-                            </td>
-
-                            <td class="px-4 py-3">
-                                -
-                            </td>
-
-                            <td class="px-4 py-3">
-                                {{ \Carbon\Carbon::parse($complaint->incident_date)->translatedFormat('d F Y') }}
-                            </td>
-
-                            <td class="px-4 py-3">
-                                {{ $complaint->created_at->translatedFormat('d F Y') }}
+                                {{ !$aspiration->is_anonymous ? $aspiration->reporter_name : 'Anonim' }}
                             </td>
 
                             <td class="text-center px-4 py-3">
@@ -150,6 +110,6 @@
             </table>
         </div>
 
-        {{ $complaints->links('components.pagination') }}
+        {{ $aspirations->links('components.pagination') }}
     </div>
 </x-layout.admin>
