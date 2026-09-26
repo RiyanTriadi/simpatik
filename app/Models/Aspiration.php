@@ -17,6 +17,7 @@ class Aspiration extends Model
     public const STATUS_BARU = 'baru';
     public const STATUS_DIBACA = 'dibaca';
     public const STATUS_DITINDAKLANJUTI = 'ditindaklanjuti';
+    public const STATUS_DITOLAK = 'ditolak';
 
     protected $fillable = [
         'ticket_number',

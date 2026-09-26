@@ -68,7 +68,7 @@
                                 <div x-data="{ open: false }" class="relative inline-block text-left">
 
                                     <button @click="open = !open" @click.outside="open = false"
-                                        class="cursor-pointer text-gray-500 hover:text-prussian-blue-500 focus:outline-none p-1 rounded-full hover:bg-gray-100 transition">
+                                        class="cursor-pointer text-gray-500 hover:text-prussian-blue-500 focus:outline-none p-1 hover:bg-gray-100 transition">
                                         <i class="ri-more-line text-lg"></i>
                                     </button>
 
@@ -78,10 +78,10 @@
                                         x-transition:leave="transition ease-in duration-75"
                                         x-transition:leave-start="transform opacity-100 scale-100"
                                         x-transition:leave-end="transform opacity-0 scale-95"
-                                        class="absolute right-0 z-50 mt-2 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border border-gray-100">
+                                        class="absolute right-0 z-50 mt-2 w-36 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border border-gray-100">
 
                                         <div class="py-1">
-                                            <a href=""
+                                            <a href="{{ route('admin.aspirasi.show', $aspiration->id) }}"
                                                 class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-prussian-blue-500 transition">
                                                 <i
                                                     class="ri-eye-line mr-2 text-gray-400 group-hover:text-prussian-blue-500"></i>

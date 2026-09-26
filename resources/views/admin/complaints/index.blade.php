@@ -19,16 +19,12 @@
                             No Tiket
                         </th>
 
-                        <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">
+                        <th class="max-w-xs px-4 py-3 text-left font-semibold text-prussian-blue-500">
                             Topik
                         </th>
 
                         <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">
                             Kategori
-                        </th>
-
-                        <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">
-                            Unit
                         </th>
 
                         <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">
@@ -40,19 +36,7 @@
                         </th>
 
                         <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">
-                            Pelapor
-                        </th>
-
-                        <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">
-                            Petugas
-                        </th>
-
-                        <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">
-                            Tanggal Kejadian
-                        </th>
-
-                        <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">
-                            Tanggal Lapor
+                            Pelapor & Waktu
                         </th>
 
                         <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">
@@ -68,16 +52,14 @@
                                 {{ $complaint->ticket_number }}
                             </td>
 
-                            <td class="px-4 py-3">
-                                {{ $complaint->subject }}
+                            <td class="px-4 py-3 text-sm text-gray-900 max-w-xs">
+                                <div class="line-clamp-2" title="{{ $complaint->subject }}">
+                                    {{ $complaint->subject }}
+                                </div>
                             </td>
 
                             <td class="px-4 py-3">
                                 {{ $complaint->category->name }}
-                            </td>
-
-                            <td class="px-4 py-3">
-                                -
                             </td>
 
                             <td class="px-4 py-3">
@@ -90,25 +72,14 @@
 
                             <td class="px-4 py-3">
                                 {{ !$complaint->is_anonymous ? $complaint->reporter_name : 'Anonim' }}
-                            </td>
-
-                            <td class="px-4 py-3">
-                                -
-                            </td>
-
-                            <td class="px-4 py-3">
-                                {{ \Carbon\Carbon::parse($complaint->incident_date)->translatedFormat('d F Y') }}
-                            </td>
-
-                            <td class="px-4 py-3">
-                                {{ $complaint->created_at->translatedFormat('d F Y') }}
+                                <p class="text-xs">{{ $complaint->created_at->translatedFormat('d F Y') }}</p>
                             </td>
 
                             <td class="text-center px-4 py-3">
                                 <div x-data="{ open: false }" class="relative inline-block text-left">
 
                                     <button @click="open = !open" @click.outside="open = false"
-                                        class="cursor-pointer text-gray-500 hover:text-prussian-blue-500 focus:outline-none p-1 rounded-full hover:bg-gray-100 transition">
+                                        class="cursor-pointer text-gray-500 hover:text-prussian-blue-500 focus:outline-none p-1 hover:bg-gray-100 transition">
                                         <i class="ri-more-line text-lg"></i>
                                     </button>
 
@@ -118,18 +89,17 @@
                                         x-transition:leave="transition ease-in duration-75"
                                         x-transition:leave-start="transform opacity-100 scale-100"
                                         x-transition:leave-end="transform opacity-0 scale-95"
-                                        class="absolute right-0 z-50 mt-2 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border border-gray-100">
+                                        class="absolute right-0 z-50 mt-2 w-36 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border border-gray-100">
 
                                         <div class="py-1">
-                                            <a href=""
+                                            <a href="{{ route('admin.pengaduan.show', $complaint->id) }}"
                                                 class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-prussian-blue-500 transition">
                                                 <i
                                                     class="ri-eye-line mr-2 text-gray-400 group-hover:text-prussian-blue-500"></i>
                                                 Detail
                                             </a>
 
-                                            <form action=""
-                                                method="POST"
+                                            <form action="" method="POST"
                                                 onsubmit="return confirm('Apakah Anda yakin ingin menghapus pengaduan ini?');">
                                                 @csrf
                                                 @method('DELETE')

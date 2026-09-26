@@ -41,14 +41,14 @@
                 </p>
 
                 {{-- Dashboard --}}
-                <a href="#" {{-- TODO: route('admin.dashboard') --}}
+                <a href="/admin/dashboard"
                     class="flex items-center gap-3 {{ request()->routeIs('admin.dashboard') ? 'text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
                     <i class="ri-dashboard-line"></i>
                     Dashboard
                 </a>
 
                 {{-- Kotak Masuk --}}
-                @php $groupInbox = request()->routeIs('admin.inbox.*'); @endphp
+                {{-- @php $groupInbox = request()->routeIs('admin.inbox.*'); @endphp
                 <div>
                     <button type="button" data-submenu-toggle
                         class="submenu-toggle flex w-full items-center justify-between gap-3 {{ $groupInbox ? 'bg-gray-700 text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
@@ -63,22 +63,22 @@
                         class="submenu-panel grid transition-[grid-template-rows] duration-300 ease-in-out {{ $groupInbox ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]' }}">
                         <div class="overflow-hidden">
                             <div class="mt-1 space-y-1 pl-4">
-                                <a href="#" {{-- TODO: route('admin.inbox.index') --}}
+                                <a href="#"
                                     class="flex items-center gap-3 {{ request()->routeIs('admin.inbox.index') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-list-unordered"></i>
                                     Semua Tiket
                                 </a>
-                                <a href="#" {{-- TODO: route('admin.inbox.unassigned') --}}
+                                <a href="#"
                                     class="flex items-center gap-3 {{ request()->routeIs('admin.inbox.unassigned') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-user-unfollow-line"></i>
                                     Belum Di-assign
                                 </a>
-                                <a href="#" {{-- TODO: route('admin.inbox.processing') --}}
+                                <a href="#"
                                     class="flex items-center gap-3 {{ request()->routeIs('admin.inbox.processing') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-loader-4-line"></i>
                                     Sedang Diproses
                                 </a>
-                                <a href="#" {{-- TODO: route('admin.inbox.completed') --}}
+                                <a href="#"
                                     class="flex items-center gap-3 {{ request()->routeIs('admin.inbox.completed') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-checkbox-circle-line"></i>
                                     Selesai
@@ -86,7 +86,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 {{-- Pengaduan --}}
                 @php $groupPengaduan = request()->routeIs('admin.pengaduan.*') || request()->routeIs('admin.pengaduan.*'); @endphp
@@ -104,17 +104,17 @@
                         class="submenu-panel grid transition-[grid-template-rows] duration-300 ease-in-out {{ $groupPengaduan ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]' }}">
                         <div class="overflow-hidden">
                             <div class="mt-1 space-y-1 pl-4">
-                                <a href="{{ route('admin.pengaduan.index') }}" 
+                                <a href="{{ route('admin.pengaduan.index') }}"
                                     class="flex items-center gap-3 {{ request()->routeIs('admin.pengaduan.index') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-file-list-line"></i>
                                     Semua Pengaduan
                                 </a>
-                                <a href="#" {{-- TODO: route('admin.pengaduan.verifikasi') --}}
-                                    class="flex items-center gap-3 {{ request()->routeIs('admin.pengaduan.verifikasi') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
+                                <a href="{{ route('admin.pengaduan.verification') }}"
+                                    class="flex items-center gap-3 {{ request()->routeIs('admin.pengaduan.verification') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-shield-check-line"></i>
                                     Verifikasi
                                 </a>
-                                <a href="#" {{-- TODO: route('admin.pengaduan.assign') --}}
+                                <a href="#"
                                     class="flex items-center gap-3 {{ request()->routeIs('admin.pengaduan.assign') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-user-add-line"></i>
                                     Assign ke Petugas
@@ -140,13 +140,13 @@
                         class="submenu-panel grid transition-[grid-template-rows] duration-300 ease-in-out {{ $groupAspirasi ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]' }}">
                         <div class="overflow-hidden">
                             <div class="mt-1 space-y-1 pl-4">
-                                <a href="{{ route('admin.aspirasi.index') }}" {{-- TODO: route('admin.aspirasi.index') --}}
+                                <a href="{{ route('admin.aspirasi.index') }}"
                                     class="flex items-center gap-3 {{ request()->routeIs('admin.aspirasi.index') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-chat-3-line"></i>
                                     Semua Aspirasi
                                 </a>
-                                <a href="#" {{-- TODO: route('admin.aspirasi.tindak-lanjut') --}}
-                                    class="flex items-center gap-3 {{ request()->routeIs('admin.aspirasi.tindak-lanjut') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
+                                <a href="{{ route('admin.aspirasi.follow-up') }}"
+                                    class="flex items-center gap-3 {{ request()->routeIs('admin.aspirasi.follow-up') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-flag-2-line"></i>
                                     Tindak Lanjut
                                 </a>
@@ -156,7 +156,7 @@
                 </div>
 
                 {{-- Laporan --}}
-                @php $groupLaporan = request()->routeIs('admin.laporan.*'); @endphp
+                {{-- @php $groupLaporan = request()->routeIs('admin.laporan.*'); @endphp
                 <div>
                     <button type="button" data-submenu-toggle
                         class="submenu-toggle flex w-full items-center justify-between gap-3 {{ $groupLaporan ? 'bg-gray-700 text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
@@ -171,27 +171,27 @@
                         class="submenu-panel grid transition-[grid-template-rows] duration-300 ease-in-out {{ $groupLaporan ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]' }}">
                         <div class="overflow-hidden">
                             <div class="mt-1 space-y-1 pl-4">
-                                <a href="#" {{-- TODO: route('admin.laporan.statistik') --}}
+                                <a href="#"
                                     class="flex items-center gap-3 {{ request()->routeIs('admin.laporan.statistik') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-bar-chart-box-line"></i>
                                     Statistik Tiket
                                 </a>
-                                <a href="#" {{-- TODO: route('admin.laporan.kategori') --}}
+                                <a href="#"
                                     class="flex items-center gap-3 {{ request()->routeIs('admin.laporan.kategori') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-pie-chart-line"></i>
                                     Per Kategori
                                 </a>
-                                <a href="#" {{-- TODO: route('admin.laporan.unit-kerja') --}}
+                                <a href="#"
                                     class="flex items-center gap-3 {{ request()->routeIs('admin.laporan.unit-kerja') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-building-line"></i>
                                     Per Unit Kerja
                                 </a>
-                                <a href="#" {{-- TODO: route('admin.laporan.petugas') --}}
+                                <a href="#"
                                     class="flex items-center gap-3 {{ request()->routeIs('admin.laporan.petugas') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-user-star-line"></i>
                                     Per Petugas
                                 </a>
-                                <a href="#" {{-- TODO: route('admin.laporan.export') --}}
+                                <a href="#"
                                     class="flex items-center gap-3 {{ request()->routeIs('admin.laporan.export') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-download-2-line"></i>
                                     Export (PDF/Excel)
@@ -199,10 +199,10 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 {{-- Manajemen User --}}
-                @php $groupUser = request()->routeIs('admin.user.*'); @endphp
+                {{-- @php $groupUser = request()->routeIs('admin.user.*'); @endphp
                 <div>
                     <button type="button" data-submenu-toggle
                         class="submenu-toggle flex w-full items-center justify-between gap-3 {{ $groupUser ? 'bg-gray-700 text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
@@ -217,22 +217,22 @@
                         class="submenu-panel grid transition-[grid-template-rows] duration-300 ease-in-out {{ $groupUser ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]' }}">
                         <div class="overflow-hidden">
                             <div class="mt-1 space-y-1 pl-4">
-                                <a href="#" {{-- TODO: route('admin.user.index') --}}
+                                <a href="#"
                                     class="flex items-center gap-3 {{ request()->routeIs('admin.user.index') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-group-line"></i>
                                     Semua User
                                 </a>
-                                <a href="#" {{-- TODO: route('admin.user.petugas') --}}
+                                <a href="#"
                                     class="flex items-center gap-3 {{ request()->routeIs('admin.user.petugas') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-user-settings-line"></i>
                                     Petugas
                                 </a>
-                                <a href="#" {{-- TODO: route('admin.user.staff') --}}
+                                <a href="#"
                                     class="flex items-center gap-3 {{ request()->routeIs('admin.user.staff') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-user-3-line"></i>
                                     Staff
                                 </a>
-                                <a href="#" {{-- TODO: route('admin.user.administrator') --}}
+                                <a href="#"
                                     class="flex items-center gap-3 {{ request()->routeIs('admin.user.administrator') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-admin-line"></i>
                                     Administrator
@@ -240,7 +240,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 {{-- Master Data --}}
                 @php $groupMaster = request()->routeIs('admin.master.*'); @endphp
@@ -258,17 +258,17 @@
                         class="submenu-panel grid transition-[grid-template-rows] duration-300 ease-in-out {{ $groupMaster ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]' }}">
                         <div class="overflow-hidden">
                             <div class="mt-1 space-y-1 pl-4">
-                                <a href="#" {{-- TODO: route('admin.master.kategori') --}}
-                                    class="flex items-center gap-3 {{ request()->routeIs('admin.master.kategori') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
+                                <a href="{{ route('admin.master.kategori.index') }}"
+                                    class="flex items-center gap-3 {{ request()->routeIs('admin.master.kategori.*') ? 'text-white' : 'text-alabaster-grey-600 transition hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-price-tag-3-line"></i>
                                     Kategori
                                 </a>
-                                <a href="#" {{-- TODO: route('admin.master.unit-kerja') --}}
+                                <a href="#"
                                     class="flex items-center gap-3 {{ request()->routeIs('admin.master.unit-kerja') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-building-2-line"></i>
                                     Unit Kerja
                                 </a>
-                                <a href="#" {{-- TODO: route('admin.master.prioritas') --}}
+                                <a href="#"
                                     class="flex items-center gap-3 {{ request()->routeIs('admin.master.prioritas') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-star-line"></i>
                                     Prioritas
@@ -279,7 +279,7 @@
                 </div>
 
                 {{-- Pengaturan --}}
-                @php $groupSetting = request()->routeIs('admin.pengaturan.*'); @endphp
+                {{-- @php $groupSetting = request()->routeIs('admin.pengaturan.*'); @endphp
                 <div>
                     <button type="button" data-submenu-toggle
                         class="submenu-toggle flex w-full items-center justify-between gap-3 {{ $groupSetting ? 'bg-gray-700 text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
@@ -294,22 +294,22 @@
                         class="submenu-panel grid transition-[grid-template-rows] duration-300 ease-in-out {{ $groupSetting ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]' }}">
                         <div class="overflow-hidden">
                             <div class="mt-1 space-y-1 pl-4">
-                                <a href="#" {{-- TODO: route('admin.pengaturan.umum') --}}
+                                <a href="#"
                                     class="flex items-center gap-3 {{ request()->routeIs('admin.pengaturan.umum') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-settings-4-line"></i>
                                     Pengaturan Umum
                                 </a>
-                                <a href="#" {{-- TODO: route('admin.pengaturan.notifikasi') --}}
+                                <a href="#"
                                     class="flex items-center gap-3 {{ request()->routeIs('admin.pengaturan.notifikasi') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-notification-3-line"></i>
                                     Notifikasi
                                 </a>
-                                <a href="#" {{-- TODO: route('admin.pengaturan.template-email') --}}
+                                <a href="#"
                                     class="flex items-center gap-3 {{ request()->routeIs('admin.pengaturan.template-email') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-mail-settings-line"></i>
                                     Template Email
                                 </a>
-                                <a href="#" {{-- TODO: route('admin.pengaturan.log-aktivitas') --}}
+                                <a href="#"
                                     class="flex items-center gap-3 {{ request()->routeIs('admin.pengaturan.log-aktivitas') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-history-line"></i>
                                     Log Aktivitas
@@ -317,17 +317,17 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 {{-- Akun --}}
-                <p class="mb-2 mt-4 px-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                {{-- <p class="mb-2 mt-4 px-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
                     Akun
                 </p>
-                <a href="#" {{-- TODO: route('admin.profil') --}}
+                <a href="#"
                     class="flex items-center gap-3 {{ request()->routeIs('admin.profil') ? 'text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
                     <i class="ri-user-line"></i>
                     Profil Saya
-                </a>
+                </a> --}}
             </nav>
         </aside>
 
@@ -354,11 +354,8 @@
 
                     <div class="flex items-center gap-3">
                         <div class="flex h-10 w-10 items-center justify-center bg-orange-500">
-                            <span class="text-lg font-bold text-black">RT</span>
+                            <span class="text-lg font-bold text-white"><i class="ri-menu-line"></i></span>
                         </div>
-                        <h2 class="text-lg font-bold text-gray-800">
-                            UNIVERSITASKU
-                        </h2>
                     </div>
                 </div>
             </header>
@@ -374,7 +371,6 @@
             <footer class="border-t border-gray-200 bg-white px-6 py-4">
                 <div class="flex flex-col items-center justify-between gap-2 text-sm text-gray-500 sm:flex-row">
                     <p>&copy; {{ date('Y') }} Riyan Triadi. All rights reserved.</p>
-                    <p>Sistem Informasi Manajemen Pengaduan, Aspirasi, dan Tindak Lanjut Sivitas</p>
                 </div>
             </footer>
 
