@@ -6,8 +6,12 @@ use App\Http\Controllers\Public\AspirationController;
 use App\Http\Controllers\Admin\Dashboard;
 use App\Http\Controllers\Admin\ComplaintController as AdminComplaintController;
 use App\Http\Controllers\Admin\AspirationController as AdminAspirationController;
+use App\Http\Controllers\Admin\Master\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\Master\UnitController as AdminUnitController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 
-Route::get('/', function () {return view('public.index');})->name('public.index');
+Route::get('/', function () {
+    return view('public.index'); })->name('public.index');
 Route::resource('pengaduan', ComplaintController::class)->names('public.pengaduan');
 Route::resource('aspirasi', AspirationController::class)->names('public.aspirasi');
 
@@ -19,8 +23,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::resource('aspirasi', AdminAspirationController::class)->names('aspirasi');
 
     Route::prefix('master')->name('master.')->group(function () {
-        Route::resource('kategori', \App\Http\Controllers\Admin\Master\CategoryController::class)
-            ->names('kategori')
-            ->parameters(['kategori' => 'category']);
+        Route::resource('kategori', AdminCategoryController::class)->names('kategori')->parameters(['kategori' => 'category'])->except(['create', 'edit', 'show']);
+        Route::resource('unit-kerja', AdminUnitController::class)->names('unit-kerja')->parameters(['unit-kerja' => 'unit'])->except(['create', 'edit', 'show']);
     });
+
+    Route::resource('users', AdminUserController::class)->except(['show']);
 });

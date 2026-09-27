@@ -11,7 +11,7 @@
 
 <body class="bg-gray-100 flex items-center justify-center min-h-screen font-sans">
 
-    <div class="w-full max-w-md bg-white shadow-lg rounded-lg overflow-hidden">
+    <div class="w-full max-w-md bg-white shadow-lg overflow-hidden p-2">
         {{-- Header --}}
         <div class="bg-prussian-blue-600 p-6 text-center">
             <div class="flex justify-center mb-3">
@@ -36,7 +36,7 @@
                             <i class="ri-mail-line text-gray-400"></i>
                         </div>
                         <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
-                            class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 @error('email') border-red-500 @enderror"
+                            class="w-full pl-10 pr-3 py-2 border border-gray-300 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 @error('email') border-red-500 @enderror"
                             placeholder="admin@universitas.ac.id">
                     </div>
                     @error('email')
@@ -52,7 +52,7 @@
                             <i class="ri-lock-line text-gray-400"></i>
                         </div>
                         <input id="password" type="password" name="password" required
-                            class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 @error('password') border-red-500 @enderror"
+                            class="w-full pl-10 pr-3 py-2 border border-gray-300 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 @error('password') border-red-500 @enderror"
                             placeholder="••••••••">
                     </div>
                     @error('password')
@@ -71,7 +71,7 @@
 
                 {{-- Tombol Submit --}}
                 <button type="submit"
-                    class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-2.5 px-4 rounded-sm transition duration-200 flex items-center justify-center gap-2">
+                    class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-2.5 px-4 transition duration-200 flex items-center justify-center gap-2">
                     <i class="ri-login-box-line"></i> Masuk ke Panel
                 </button>
             </form>

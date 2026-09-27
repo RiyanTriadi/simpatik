@@ -1,21 +1,24 @@
 <x-layout.admin title="Detail Aspirasi">
     <div class="bg-white p-4 md:p-6">
         {{-- Header & Tombol Aksi --}}
-        <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 border-b border-gray-200 pb-4">
+        <div
+            class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 border-b border-gray-200 pb-4">
             <div class="flex items-center gap-3">
-                <a href="{{ route('admin.aspirasi.index') }}" class="p-2 text-gray-500 hover:text-prussian-blue-500 hover:bg-gray-100 transition">
+                <a href="{{ route('admin.aspirasi.index') }}"
+                    class="p-2 text-gray-500 hover:text-prussian-blue-500 hover:bg-gray-100 transition">
                     <i class="ri-arrow-left-line text-xl"></i>
                 </a>
                 <div>
                     <h1 class="text-xl font-bold text-prussian-blue-500">Detail Aspirasi</h1>
-                    <p class="text-sm text-gray-500">Tiket: <span class="font-semibold text-gray-800">{{ $aspiration->ticket_number }}</span></p>
+                    <p class="text-sm text-gray-500">Tiket: <span
+                            class="font-semibold text-gray-800">{{ $aspiration->ticket_number }}</span></p>
                 </div>
             </div>
         </div>
 
         {{-- Konten Utama --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
+
             {{-- Kolom Kiri: Informasi Aspirasi --}}
             <div class="lg:col-span-2 space-y-6">
                 <div class="bg-alabaster-grey-100 p-5 border border-alabaster-grey-300">
@@ -27,12 +30,13 @@
 
                 {{-- Lampiran --}}
                 @if($aspiration->attachment_path)
-                <div class="bg-white border border-gray-200 p-5">
-                    <h3 class="text-md font-semibold text-gray-800 mb-4 border-b pb-2">Lampiran</h3>
-                    <a href="{{ Storage::url($aspiration->attachment_path) }}" target="_blank" class="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium text-sm">
-                        <i class="ri-file-download-line text-lg"></i> Lihat / Unduh Lampiran
-                    </a>
-                </div>
+                    <div class="bg-white border border-gray-200 p-5">
+                        <h3 class="text-md font-semibold text-gray-800 mb-4 border-b pb-2">Lampiran</h3>
+                        <a href="{{ Storage::url($aspiration->attachment_path) }}" target="_blank"
+                            class="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium text-sm">
+                            <i class="ri-file-download-line text-lg"></i> Lihat / Unduh Lampiran
+                        </a>
+                    </div>
                 @endif
             </div>
 
@@ -42,15 +46,58 @@
                 <div class="bg-white border border-gray-200 p-5">
                     <h3 class="text-md font-semibold text-gray-800 mb-4 border-b pb-2">Status</h3>
                     <div class="space-y-3 text-sm">
+
+                        {{-- Status --}}
                         <div class="flex justify-between items-center">
                             <span class="text-gray-500">Status</span>
-                            <span class="px-2.5 py-1 text-xs font-semibold 
-                                @if($aspiration->status == 'baru') bg-blue-100 text-blue-800
-                                @elseif($aspiration->status == 'dibaca') bg-yellow-100 text-yellow-800
-                                @else bg-emerald-100 text-emerald-800 @endif">
-                                {{ ucfirst($aspiration->status) }}
-                            </span>
+                            <div x-data="{ open: false }" class="relative">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="px-2.5 py-1 text-xs font-semibold 
+                                        @if ($aspiration->status == 'baru') bg-blue-100 text-blue-800
+                                        @elseif($aspiration->status == 'dibaca') bg-yellow-100 text-yellow-800
+                                        @else bg-emerald-100 text-emerald-800 @endif">
+                                        {{ ucfirst($aspiration->status) }}
+                                    </span>
+                                    <button @click="open = !open" @click.outside="open = false"
+                                        class="text-gray-400 hover:text-prussian-blue-500 focus:outline-none transition"
+                                        title="Ubah Status">
+                                        <i class="ri-pencil-line text-base"></i>
+                                    </button>
+                                </div>
+
+                                {{-- Dropdown Pilihan Status --}}
+                                <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-100"
+                                    x-transition:enter-start="opacity-0 scale-95"
+                                    x-transition:enter-end="opacity-100 scale-100"
+                                    x-transition:leave="transition ease-in duration-75"
+                                    x-transition:leave-start="opacity-100 scale-100"
+                                    x-transition:leave-end="opacity-0 scale-95"
+                                    class="absolute right-0 z-50 mt-2 w-44 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 border border-gray-100">
+                                    <div class="py-1">
+                                        @foreach (['baru' => 'Baru', 'dibaca' => 'Dibaca', 'ditindaklanjuti' => 'Ditindaklanjuti'] as $value => $label)
+                                                <form action="{{ route('admin.aspirasi.update', $aspiration->id) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <input type="hidden" name="status" value="{{ $value }}">
+                                                    <button type="submit"
+                                                        class="group flex w-full items-center gap-2 px-4 py-2 text-sm text-left transition
+                                                        {{ $aspiration->status == $value ? 'bg-gray-50 font-semibold text-prussian-blue-500' : 'text-gray-700 hover:bg-gray-100' }}">
+                                                        @if ($aspiration->status == $value)
+                                                            <i class="ri-check-line text-emerald-500"></i>
+                                                        @else
+                                                            <i class="ri-circle-line text-gray-300"></i>
+                                                        @endif
+                                                        {{ $label }}
+                                                    </button>
+                                                </form>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
+                        {{-- Kategori --}}
                         <div class="flex flex-col md:flex-row justify-between md:items-center">
                             <span class="text-gray-500">Kategori</span>
                             <span class="font-medium text-gray-800">{{ $aspiration->category->name }}</span>

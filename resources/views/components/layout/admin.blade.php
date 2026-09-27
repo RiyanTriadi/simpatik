@@ -17,6 +17,7 @@
 
 <body class="bg-gray-100 text-gray-800">
 
+    <x-toast />
 
     <div class="flex min-h-screen">
 
@@ -42,7 +43,7 @@
 
                 {{-- Dashboard --}}
                 <a href="/admin/dashboard"
-                    class="flex items-center gap-3 {{ request()->routeIs('admin.dashboard') ? 'text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
+                    class="flex items-center gap-3 {{ request()->routeIs('admin.dashboard') ? 'text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium cursor-pointer">
                     <i class="ri-dashboard-line"></i>
                     Dashboard
                 </a>
@@ -51,7 +52,7 @@
                 {{-- @php $groupInbox = request()->routeIs('admin.inbox.*'); @endphp
                 <div>
                     <button type="button" data-submenu-toggle
-                        class="submenu-toggle flex w-full items-center justify-between gap-3 {{ $groupInbox ? 'bg-gray-700 text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
+                        class="submenu-toggle flex w-full items-center justify-between gap-3 {{ $groupInbox ? 'bg-gray-700 text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium cursor-pointer">
                         <span class="flex items-center gap-3">
                             <i class="ri-inbox-line"></i>
                             Kotak Masuk
@@ -92,7 +93,7 @@
                 @php $groupPengaduan = request()->routeIs('admin.pengaduan.*') || request()->routeIs('admin.pengaduan.*'); @endphp
                 <div>
                     <button type="button" data-submenu-toggle
-                        class="submenu-toggle flex w-full items-center justify-between gap-3 {{ $groupPengaduan ? 'bg-gray-700 text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
+                        class="submenu-toggle flex w-full items-center justify-between gap-3 {{ $groupPengaduan ? 'bg-gray-700 text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium cursor-pointer">
                         <span class="flex items-center gap-3">
                             <i class="ri-file-list-3-line"></i>
                             Pengaduan
@@ -128,7 +129,7 @@
                 @php $groupAspirasi = request()->routeIs('admin.aspirasi.*') || request()->routeIs('admin.aspirasi.*'); @endphp
                 <div>
                     <button type="button" data-submenu-toggle
-                        class="submenu-toggle flex w-full items-center justify-between gap-3 {{ $groupAspirasi ? 'bg-gray-700 text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
+                        class="submenu-toggle flex w-full items-center justify-between gap-3 {{ $groupAspirasi ? 'bg-gray-700 text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium cursor-pointer">
                         <span class="flex items-center gap-3">
                             <i class="ri-message-2-line"></i>
                             Aspirasi
@@ -159,7 +160,7 @@
                 {{-- @php $groupLaporan = request()->routeIs('admin.laporan.*'); @endphp
                 <div>
                     <button type="button" data-submenu-toggle
-                        class="submenu-toggle flex w-full items-center justify-between gap-3 {{ $groupLaporan ? 'bg-gray-700 text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
+                        class="submenu-toggle flex w-full items-center justify-between gap-3 {{ $groupLaporan ? 'bg-gray-700 text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium cursor-pointer">
                         <span class="flex items-center gap-3">
                             <i class="ri-bar-chart-2-line"></i>
                             Laporan
@@ -202,51 +203,17 @@
                 </div> --}}
 
                 {{-- Manajemen User --}}
-                {{-- @php $groupUser = request()->routeIs('admin.user.*'); @endphp
-                <div>
-                    <button type="button" data-submenu-toggle
-                        class="submenu-toggle flex w-full items-center justify-between gap-3 {{ $groupUser ? 'bg-gray-700 text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
-                        <span class="flex items-center gap-3">
-                            <i class="ri-team-line"></i>
-                            Manajemen User
-                        </span>
-                        <i
-                            class="ri-arrow-down-s-line submenu-chevron transition-transform duration-300 {{ $groupUser ? 'rotate-180' : '' }}"></i>
-                    </button>
-                    <div
-                        class="submenu-panel grid transition-[grid-template-rows] duration-300 ease-in-out {{ $groupUser ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]' }}">
-                        <div class="overflow-hidden">
-                            <div class="mt-1 space-y-1 pl-4">
-                                <a href="#"
-                                    class="flex items-center gap-3 {{ request()->routeIs('admin.user.index') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
-                                    <i class="ri-group-line"></i>
-                                    Semua User
-                                </a>
-                                <a href="#"
-                                    class="flex items-center gap-3 {{ request()->routeIs('admin.user.petugas') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
-                                    <i class="ri-user-settings-line"></i>
-                                    Petugas
-                                </a>
-                                <a href="#"
-                                    class="flex items-center gap-3 {{ request()->routeIs('admin.user.staff') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
-                                    <i class="ri-user-3-line"></i>
-                                    Staff
-                                </a>
-                                <a href="#"
-                                    class="flex items-center gap-3 {{ request()->routeIs('admin.user.administrator') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
-                                    <i class="ri-admin-line"></i>
-                                    Administrator
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div> --}}
+                <a href="{{ route('admin.users.index') }}"
+                    class="flex items-center gap-3 {{ request()->routeIs('admin.users.index') ? 'text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium cursor-pointer">
+                    <i class="ri-group-line"></i>
+                    Manajemen User
+                </a>
 
                 {{-- Master Data --}}
                 @php $groupMaster = request()->routeIs('admin.master.*'); @endphp
                 <div>
                     <button type="button" data-submenu-toggle
-                        class="submenu-toggle flex w-full items-center justify-between gap-3 {{ $groupMaster ? 'bg-gray-700 text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
+                        class="submenu-toggle flex w-full items-center justify-between gap-3 {{ $groupMaster ? 'bg-gray-700 text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium cursor-pointer">
                         <span class="flex items-center gap-3">
                             <i class="ri-database-2-line"></i>
                             Master Data
@@ -263,15 +230,10 @@
                                     <i class="ri-price-tag-3-line"></i>
                                     Kategori
                                 </a>
-                                <a href="#"
-                                    class="flex items-center gap-3 {{ request()->routeIs('admin.master.unit-kerja') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
+                                <a href="{{ route('admin.master.unit-kerja.index') }}"
+                                    class="flex items-center gap-3 {{ request()->routeIs('admin.master.unit-kerja.*') ? 'text-white' : 'text-alabaster-grey-600 transition hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
                                     <i class="ri-building-2-line"></i>
                                     Unit Kerja
-                                </a>
-                                <a href="#"
-                                    class="flex items-center gap-3 {{ request()->routeIs('admin.master.prioritas') ? 'text-white' : 'text-alabaster-grey-600 transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm">
-                                    <i class="ri-star-line"></i>
-                                    Prioritas
                                 </a>
                             </div>
                         </div>
@@ -282,7 +244,7 @@
                 {{-- @php $groupSetting = request()->routeIs('admin.pengaturan.*'); @endphp
                 <div>
                     <button type="button" data-submenu-toggle
-                        class="submenu-toggle flex w-full items-center justify-between gap-3 {{ $groupSetting ? 'bg-gray-700 text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
+                        class="submenu-toggle flex w-full items-center justify-between gap-3 {{ $groupSetting ? 'bg-gray-700 text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium cursor-pointer">
                         <span class="flex items-center gap-3">
                             <i class="ri-settings-3-line"></i>
                             Pengaturan
@@ -324,7 +286,7 @@
                     Akun
                 </p>
                 <a href="#"
-                    class="flex items-center gap-3 {{ request()->routeIs('admin.profil') ? 'text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
+                    class="flex items-center gap-3 {{ request()->routeIs('admin.profil') ? 'text-white' : 'transition text-alabaster-grey-600 hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium cursor-pointer">
                     <i class="ri-user-line"></i>
                     Profil Saya
                 </a> --}}

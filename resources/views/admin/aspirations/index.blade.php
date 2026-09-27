@@ -65,43 +65,58 @@
                             </td>
 
                             <td class="text-center px-4 py-3">
-                                <div x-data="{ open: false }" class="relative inline-block text-left">
+                                <div x-data="{
+                                        open: false,
+                                        top: 0,
+                                        left: 0,
+                                        toggle(event) {
+                                            if (this.open) { this.open = false; return; }
+                                            const rect = event.currentTarget.getBoundingClientRect();
+                                            this.top  = rect.bottom + 4;
+                                            this.left = rect.right - 144;
+                                            this.open = true;
+                                        }
+                                    }"
+                                    @scroll.window="open = false"
+                                    @resize.window="open = false">
 
-                                    <button @click="open = !open" @click.outside="open = false"
+                                    <button @click="toggle($event)"
                                         class="cursor-pointer text-gray-500 hover:text-prussian-blue-500 focus:outline-none p-1 hover:bg-gray-100 transition">
                                         <i class="ri-more-line text-lg"></i>
                                     </button>
 
-                                    <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-100"
-                                        x-transition:enter-start="transform opacity-0 scale-95"
-                                        x-transition:enter-end="transform opacity-100 scale-100"
-                                        x-transition:leave="transition ease-in duration-75"
-                                        x-transition:leave-start="transform opacity-100 scale-100"
-                                        x-transition:leave-end="transform opacity-0 scale-95"
-                                        class="absolute right-0 z-50 mt-2 w-36 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border border-gray-100">
+                                    <template x-teleport="body">
+                                        <div x-show="open" x-cloak
+                                            @click.outside="open = false"
+                                            x-transition:enter="transition ease-out duration-100"
+                                            x-transition:enter-start="opacity-0 scale-95"
+                                            x-transition:enter-end="opacity-100 scale-100"
+                                            x-transition:leave="transition ease-in duration-75"
+                                            x-transition:leave-start="opacity-100 scale-100"
+                                            x-transition:leave-end="opacity-0 scale-95"
+                                            :style="`top: ${top}px; left: ${left}px;`"
+                                            class="fixed z-[100] w-36 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 border border-gray-100">
 
-                                        <div class="py-1">
-                                            <a href="{{ route('admin.aspirasi.show', $aspiration->id) }}"
-                                                class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-prussian-blue-500 transition">
-                                                <i
-                                                    class="ri-eye-line mr-2 text-gray-400 group-hover:text-prussian-blue-500"></i>
-                                                Detail
-                                            </a>
+                                            <div class="py-1">
+                                                <a href="{{ route('admin.aspirasi.show', $aspiration->id) }}"
+                                                    class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-prussian-blue-500 transition">
+                                                    <i class="ri-eye-line mr-2 text-gray-400 group-hover:text-prussian-blue-500"></i>
+                                                    Detail
+                                                </a>
 
-                                            <form action=""
-                                                method="POST"
-                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus pengaduan ini?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="group flex w-full items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition">
-                                                    <i
-                                                        class="ri-delete-bin-line mr-2 text-red-400 group-hover:text-red-600"></i>
-                                                    Hapus
-                                                </button>
-                                            </form>
+                                                <form action="{{ route('admin.aspirasi.destroy', $aspiration->id) }}" method="POST"
+                                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus aspirasi ini?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="group flex w-full items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition">
+                                                        <i class="ri-delete-bin-line mr-2 text-red-400 group-hover:text-red-600"></i>
+                                                        Hapus
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </template>
                                 </div>
                             </td>
                         </tr>

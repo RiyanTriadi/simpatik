@@ -1,36 +1,35 @@
-<x-layout.admin title="Kategori">
+<x-layout.admin title="Unit Kerja">
     <div x-data="{
             createOpen: false,
             editOpen: false,
-            editData: { id: null, name: '', type: '', description: '', is_active: true }
+            editData: { id: null, name: '', code: '', description: '', is_active: true }
         }" class="bg-white p-4">
 
         {{-- Header --}}
         <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
-            <h1 class="text-lg font-semibold">Master Kategori</h1>
+            <h1 class="text-lg font-semibold">Master Unit Kerja</h1>
             <div class="flex flex-wrap items-center gap-2">
-                <form action="{{ route('admin.master.kategori.index') }}" method="GET" class="flex items-center gap-2   ">
-                    <select name="type" onchange="this.form.submit()"
+                <form action="{{ route('admin.master.unit-kerja.index') }}" method="GET" class="flex items-center gap-2">
+                    <select name="status" onchange="this.form.submit()"
                         class="h-8 border border-alabaster-grey-600 text-sm px-2 bg-white focus:outline-none focus:border-emerald-500">
-                        <option value="">Semua Tipe</option>
-                        <option value="pengaduan" {{ request('type') == 'pengaduan' ? 'selected' : '' }}>Pengaduan</option>
-                        <option value="aspirasi" {{ request('type') == 'aspirasi' ? 'selected' : '' }}>Aspirasi</option>
-                        <option value="keduanya" {{ request('type') == 'keduanya' ? 'selected' : '' }}>Keduanya</option>
+                        <option value="">Semua Status</option>
+                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Aktif</option>
+                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Nonaktif</option>
                     </select>
+
                     <div class="flex">
                         <input type="search" name="search" value="{{ request('search') }}"
                         class="h-8 border border-alabaster-grey-600 text-sm px-4 focus:outline-none focus:border-emerald-500"
-                        placeholder="Cari Kategori" autocomplete="off">
+                        placeholder="Cari Nama / Kode" autocomplete="off">
                         <button type="submit" class="bg-emerald-500 h-8 px-3 cursor-pointer text-white">
                             <i class="ri-search-line"></i>
                         </button>
                     </div>
-                    
                 </form>
 
                 <button @click="createOpen = true"
                     class="bg-prussian-blue-500 hover:bg-prussian-blue-600 text-white text-sm h-8 px-4 flex items-center gap-1.5 transition cursor-pointer">
-                    <i class="ri-add-line"></i> Tambah Kategori
+                    <i class="ri-add-line"></i> Tambah Unit
                 </button>
             </div>
         </div>
@@ -41,36 +40,37 @@
                 <thead class="bg-alabaster-grey-500">
                     <tr class="border-b border-alabaster-grey-300">
                         <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500 w-12">#</th>
-                        <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">Nama</th>
-                        <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">Tipe</th>
+                        <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">Nama Unit</th>
+                        <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">Kode</th>
                         <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">Deskripsi</th>
+                        <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">Jumlah User</th>
                         <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">Status</th>
                         <th class="px-4 py-3 text-center font-semibold text-prussian-blue-500">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($categories as $category)
+                    @forelse ($units as $unit)
                         <tr class="border-b border-alabaster-grey-100 bg-white hover:bg-gray-50">
                             <td class="px-4 py-3 text-gray-500">
-                                {{ $loop->iteration + ($categories->currentPage() - 1) * $categories->perPage() }}
+                                {{ $loop->iteration + ($units->currentPage() - 1) * $units->perPage() }}
                             </td>
-
-                            <td class="px-4 py-3 font-medium text-prussian-blue-500">{{ $category->name }}</td>
-                            
+                            <td class="px-4 py-3 font-medium text-prussian-blue-500">{{ $unit->name }}</td>
                             <td class="px-4 py-3">
-                                @if ($category->type == 'pengaduan')
-                                    <span class="px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-800">Pengaduan</span>
-                                @elseif ($category->type == 'aspirasi')
-                                    <span class="px-2 py-1 text-xs font-semibold bg-purple-100 text-purple-800">Aspirasi</span>
+                                @if ($unit->code)
+                                    <span class="px-2 py-1 text-xs font-mono bg-gray-100 text-gray-700">{{ $unit->code }}</span>
                                 @else
-                                    <span class="px-2 py-1 text-xs font-semibold bg-gray-100 text-gray-800">Keduanya</span>
+                                    <span class="text-gray-400">-</span>
                                 @endif
                             </td>
-
-                            <td class="px-4 py-3 text-gray-600">{{ Str::limit($category->description, 50) ?? '-' }}</td>
-                            
+                            <td class="px-4 py-3 text-gray-600">{{ Str::limit($unit->description, 50) ?? '-' }}</td>
                             <td class="px-4 py-3">
-                                @if ($category->is_active)
+                                <span class="inline-flex items-center gap-1 text-xs font-medium text-gray-700">
+                                    <i class="ri-user-line text-gray-400"></i>
+                                    {{ $unit->users()->count() }} user
+                                </span>
+                            </td>
+                            <td class="px-4 py-3">
+                                @if ($unit->is_active)
                                     <span class="inline-flex items-center gap-1 text-xs font-medium text-emerald-600">
                                         <i class="ri-checkbox-circle-fill"></i> Aktif
                                     </span>
@@ -80,7 +80,7 @@
                                     </span>
                                 @endif
                             </td>
-
+                            
                             <td class="text-center px-4 py-3">
                                 <div x-data="{
                                         open: false,
@@ -118,11 +118,11 @@
                                                 <button type="button"
                                                     @click="
                                                         editData = {{ Js::from([
-                                                            'id'          => $category->id,
-                                                            'name'        => $category->name,
-                                                            'type'        => $category->type,
-                                                            'description' => $category->description,
-                                                            'is_active'   => (bool) $category->is_active,
+                                                            'id'          => $unit->id,
+                                                            'name'        => $unit->name,
+                                                            'code'        => $unit->code,
+                                                            'description' => $unit->description,
+                                                            'is_active'   => (bool) $unit->is_active,
                                                         ]) }};
                                                         editOpen = true;
                                                         open = false;
@@ -132,9 +132,9 @@
                                                     Edit
                                                 </button>
 
-                                                <form action="{{ route('admin.master.kategori.destroy', $category) }}"
+                                                <form action="{{ route('admin.master.unit-kerja.destroy', $unit) }}"
                                                     method="POST"
-                                                    onsubmit="return confirm('Yakin ingin menghapus kategori ini?');">
+                                                    onsubmit="return confirm('Yakin ingin menghapus unit kerja ini?');">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"
@@ -151,9 +151,9 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                            <td colspan="7" class="px-4 py-8 text-center text-gray-500">
                                 <i class="ri-inbox-line text-3xl block mb-2"></i>
-                                Belum ada data kategori.
+                                Belum ada data unit kerja.
                             </td>
                         </tr>
                     @endforelse
@@ -161,61 +161,54 @@
             </table>
         </div>
 
-        {{ $categories->links('components.pagination') }}
+        {{ $units->links('components.pagination') }}
 
         {{-- Modal Create --}}
         <div x-show="createOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div class="absolute inset-0 bg-black/50" @click="createOpen = false"></div>
             <div class="relative bg-white w-full max-w-lg shadow-xl">
-                {{-- Header --}}
                 <div class="flex items-center justify-between p-5 border-b border-gray-200">
                     <div>
-                        <h2 class="text-lg font-bold text-prussian-blue-500">Tambah Kategori</h2>
-                        <p class="text-xs text-gray-500">Buat kategori baru untuk pengaduan atau aspirasi</p>
+                        <h2 class="text-lg font-bold text-prussian-blue-500">Tambah Unit Kerja</h2>
+                        <p class="text-xs text-gray-500">Buat unit kerja baru</p>
                     </div>
                     <button @click="createOpen = false" class="text-gray-400 hover:text-gray-600 transition">
                         <i class="ri-close-line text-xl"></i>
                     </button>
                 </div>
 
-                {{-- Form --}}
-                <form action="{{ route('admin.master.kategori.store') }}" method="POST">
+                <form action="{{ route('admin.master.unit-kerja.store') }}" method="POST">
                     @csrf
                     <div class="p-5 space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Kategori <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Unit <span class="text-red-500">*</span></label>
                             <input type="text" name="name" value="{{ old('name') }}" required
                                 class="w-full px-3 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
-                                placeholder="Contoh: Sarana dan Prasarana Kampus">
+                                placeholder="Contoh: Fakultas Teknik">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Tipe <span class="text-red-500">*</span></label>
-                            <select name="type" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500">
-                                <option value="">-- Pilih Tipe --</option>
-                                <option value="pengaduan" {{ old('type') == 'pengaduan' ? 'selected' : '' }}>Pengaduan</option>
-                                <option value="aspirasi" {{ old('type') == 'aspirasi' ? 'selected' : '' }}>Aspirasi</option>
-                                <option value="keduanya" {{ old('type') == 'keduanya' ? 'selected' : '' }}>Keduanya</option>
-                            </select>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Kode Unit</label>
+                            <input type="text" name="code" value="{{ old('code') }}"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+                                placeholder="Contoh: FT, FEB, BAAK (opsional)">
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
                             <textarea name="description" rows="3"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
-                                placeholder="Keterangan singkat tentang kategori ini">{{ old('description') }}</textarea>
+                                placeholder="Keterangan singkat tentang unit ini">{{ old('description') }}</textarea>
                         </div>
 
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="hidden" name="is_active" value="0">
                             <input type="checkbox" name="is_active" value="1" checked
                                 class="rounded border-gray-300 text-emerald-500 focus:ring-emerald-500">
-                            <span class="text-sm text-gray-700">Aktifkan kategori ini</span>
+                            <span class="text-sm text-gray-700">Aktifkan unit kerja ini</span>
                         </label>
                     </div>
 
-                    {{-- Footer --}}
                     <div class="flex items-center justify-end gap-2 px-5 py-4 border-t border-gray-200 bg-gray-50">
                         <button type="button" @click="createOpen = false"
                             class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 hover:bg-gray-100 transition">
@@ -223,7 +216,7 @@
                         </button>
                         <button type="submit"
                             class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 text-sm font-medium transition flex items-center gap-2">
-                            <i class="ri-save-line"></i> Simpan Kategori
+                            <i class="ri-save-line"></i> Simpan Unit
                         </button>
                     </div>
                 </form>
@@ -234,36 +227,30 @@
         <div x-show="editOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div class="absolute inset-0 bg-black/50" @click="editOpen = false"></div>
             <div class="relative bg-white w-full max-w-lg shadow-xl">
-                {{-- Header --}}
                 <div class="flex items-center justify-between p-5 border-b border-gray-200">
                     <div>
-                        <h2 class="text-lg font-bold text-prussian-blue-500">Edit Kategori</h2>
-                        <p class="text-xs text-gray-500">Perbarui data kategori</p>
+                        <h2 class="text-lg font-bold text-prussian-blue-500">Edit Unit Kerja</h2>
+                        <p class="text-xs text-gray-500">Perbarui data unit kerja</p>
                     </div>
                     <button @click="editOpen = false" class="text-gray-400 hover:text-gray-600 transition">
                         <i class="ri-close-line text-xl"></i>
                     </button>
                 </div>
 
-                {{-- Form Edit --}}
-                <form :action="`{{ url('admin/master/kategori') }}/${editData.id}`" method="POST">
+                <form :action="`{{ url('admin/master/unit-kerja') }}/${editData.id}`" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="p-5 space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Kategori <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Unit <span class="text-red-500">*</span></label>
                             <input type="text" name="name" x-model="editData.name" required
                                 class="w-full px-3 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Tipe <span class="text-red-500">*</span></label>
-                            <select name="type" x-model="editData.type" required
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Kode Unit</label>
+                            <input type="text" name="code" x-model="editData.code"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500">
-                                <option value="pengaduan">Pengaduan</option>
-                                <option value="aspirasi">Aspirasi</option>
-                                <option value="keduanya">Keduanya</option>
-                            </select>
                         </div>
 
                         <div>
@@ -276,11 +263,10 @@
                             <input type="hidden" name="is_active" value="0">
                             <input type="checkbox" name="is_active" value="1" x-model="editData.is_active"
                                 class="rounded border-gray-300 text-emerald-500 focus:ring-emerald-500">
-                            <span class="text-sm text-gray-700">Aktifkan kategori ini</span>
+                            <span class="text-sm text-gray-700">Aktifkan unit kerja ini</span>
                         </label>
                     </div>
 
-                    {{-- Footer --}}
                     <div class="flex items-center justify-end gap-2 px-5 py-4 border-t border-gray-200 bg-gray-50">
                         <button type="button" @click="editOpen = false"
                             class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 hover:bg-gray-100 transition">

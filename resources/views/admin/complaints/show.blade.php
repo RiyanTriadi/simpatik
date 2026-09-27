@@ -64,26 +64,110 @@
                 <div class="bg-white border border-gray-200 p-5">
                     <h3 class="text-md font-semibold text-gray-800 mb-4 border-b pb-2">Status & Prioritas</h3>
                     <div class="space-y-3 text-sm">
+
+                        {{-- ==================== STATUS ==================== --}}
                         <div class="flex justify-between items-center">
                             <span class="text-gray-500">Status</span>
-                            <span class="px-2.5 py-1 text-xs font-semibold 
-                                @if ($complaint->status == 'baru') bg-blue-100 text-blue-800
-                                @elseif($complaint->status == 'diproses') bg-yellow-100 text-yellow-800
-                                @elseif($complaint->status == 'selesai') bg-emerald-100 text-emerald-800
-                                @else bg-red-100 text-red-800 @endif">
-                                {{ ucfirst($complaint->status) }}
-                            </span>
+                            <div x-data="{ open: false }" class="relative">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="px-2.5 py-1 text-xs font-semibold 
+                        @if ($complaint->status == 'baru') bg-blue-100 text-blue-800
+                        @elseif($complaint->status == 'diproses') bg-yellow-100 text-yellow-800
+                        @elseif($complaint->status == 'selesai') bg-emerald-100 text-emerald-800
+                        @else bg-red-100 text-red-800 @endif">
+                                        {{ ucfirst($complaint->status) }}
+                                    </span>
+                                    <button @click="open = !open" @click.outside="open = false"
+                                        class="text-gray-400 hover:text-prussian-blue-500 focus:outline-none transition"
+                                        title="Ubah Status">
+                                        <i class="ri-pencil-line text-base"></i>
+                                    </button>
+                                </div>
+
+                                {{-- Dropdown Pilihan Status --}}
+                                <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-100"
+                                    x-transition:enter-start="opacity-0 scale-95"
+                                    x-transition:enter-end="opacity-100 scale-100"
+                                    x-transition:leave="transition ease-in duration-75"
+                                    x-transition:leave-start="opacity-100 scale-100"
+                                    x-transition:leave-end="opacity-0 scale-95"
+                                    class="absolute right-0 z-50 mt-2 w-40 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 border border-gray-100">
+                                    <div class="py-1">
+                                        @foreach (['baru' => 'Baru', 'diproses' => 'Diproses', 'selesai' => 'Selesai', 'ditolak' => 'Ditolak'] as $value => $label)
+                                            <form action="{{ route('admin.pengaduan.update', $complaint->id) }}"
+                                                method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <input type="hidden" name="status" value="{{ $value }}">
+                                                <button type="submit"
+                                                    class="group flex w-full items-center gap-2 px-4 py-2 text-sm text-left transition
+                                                {{ $complaint->status == $value ? 'bg-gray-50 font-semibold text-prussian-blue-500' : 'text-gray-700 hover:bg-gray-100' }}">
+                                                    @if ($complaint->status == $value)
+                                                        <i class="ri-check-line text-emerald-500"></i>
+                                                    @else
+                                                        <i class="ri-circle-line text-gray-300"></i>
+                                                    @endif
+                                                    {{ $label }}
+                                                </button>
+                                            </form>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
+                        {{-- ==================== PRIORITAS ==================== --}}
                         <div class="flex justify-between items-center">
                             <span class="text-gray-500">Prioritas</span>
-                            <span class="px-2.5 py-1 text-xs font-semibold 
-                                @if ($complaint->priority == 'urgent') bg-red-100 text-red-800
-                                @elseif($complaint->priority == 'tinggi') bg-orange-100 text-orange-800
-                                @elseif($complaint->priority == 'sedang') bg-yellow-100 text-yellow-800
-                                @else bg-gray-100 text-gray-800 @endif">
-                                {{ ucfirst($complaint->priority) }}
-                            </span>
+                            <div x-data="{ open: false }" class="relative">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="px-2.5 py-1 text-xs font-semibold 
+                                        @if ($complaint->priority == 'urgent') bg-red-100 text-red-800
+                                        @elseif($complaint->priority == 'tinggi') bg-orange-100 text-orange-800
+                                        @elseif($complaint->priority == 'sedang') bg-yellow-100 text-yellow-800
+                                        @else bg-gray-100 text-gray-800 @endif">
+                                        {{ ucfirst($complaint->priority) }}
+                                    </span>
+                                    <button @click="open = !open" @click.outside="open = false"
+                                        class="text-gray-400 hover:text-prussian-blue-500 focus:outline-none transition"
+                                        title="Ubah Prioritas">
+                                        <i class="ri-pencil-line text-base"></i>
+                                    </button>
+                                </div>
+
+                                {{-- Dropdown Pilihan Prioritas --}}
+                                <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-100"
+                                    x-transition:enter-start="opacity-0 scale-95"
+                                    x-transition:enter-end="opacity-100 scale-100"
+                                    x-transition:leave="transition ease-in duration-75"
+                                    x-transition:leave-start="opacity-100 scale-100"
+                                    x-transition:leave-end="opacity-0 scale-95"
+                                    class="absolute right-0 z-50 mt-2 w-40 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 border border-gray-100">
+                                    <div class="py-1">
+                                        @foreach (['rendah' => 'Rendah', 'sedang' => 'Sedang', 'tinggi' => 'Tinggi', 'urgent' => 'Urgent'] as $value => $label)
+                                            <form action="{{ route('admin.pengaduan.update', $complaint->id) }}"
+                                                method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <input type="hidden" name="priority" value="{{ $value }}">
+                                                <button type="submit"
+                                                    class="group flex w-full items-center gap-2 px-4 py-2 text-sm text-left transition
+                                                {{ $complaint->priority == $value ? 'bg-gray-50 font-semibold text-prussian-blue-500' : 'text-gray-700 hover:bg-gray-100' }}">
+                                                    @if ($complaint->priority == $value)
+                                                        <i class="ri-check-line text-emerald-500"></i>
+                                                    @else
+                                                        <i class="ri-circle-line text-gray-300"></i>
+                                                    @endif
+                                                    {{ $label }}
+                                                </button>
+                                            </form>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
+                        {{-- ==================== KATEGORI ==================== --}}
                         <div class="flex flex-col md:flex-row justify-between md:items-center">
                             <span class="text-gray-500">Kategori</span>
                             <span class="font-medium text-gray-800">{{ $complaint->category->name }}</span>
