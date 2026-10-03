@@ -9,7 +9,7 @@
         <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
             <h1 class="text-lg font-semibold">Master Unit Kerja</h1>
             <div class="flex flex-wrap items-center gap-2">
-                <form action="{{ route('admin.master.unit-kerja.index') }}" method="GET" class="flex items-center gap-2">
+                <form action="{{ role_route('master.unit-kerja.index') }}" method="GET" class="flex items-center gap-2">
                     <select name="status" onchange="this.form.submit()"
                         class="h-8 border border-alabaster-grey-600 text-sm px-2 bg-white focus:outline-none focus:border-emerald-500">
                         <option value="">Semua Status</option>
@@ -28,7 +28,7 @@
                 </form>
 
                 <button @click="createOpen = true"
-                    class="bg-prussian-blue-500 hover:bg-prussian-blue-600 text-white text-sm h-8 px-4 flex items-center gap-1.5 transition cursor-pointer">
+                    class="bg-prussian-blue-300 hover:bg-prussian-blue-400 text-white text-sm h-8 px-4 flex items-center gap-1.5 transition cursor-pointer">
                     <i class="ri-add-line"></i> Tambah Unit
                 </button>
             </div>
@@ -132,7 +132,7 @@
                                                     Edit
                                                 </button>
 
-                                                <form action="{{ route('admin.master.unit-kerja.destroy', $unit) }}"
+                                                <form action="{{ role_route('master.unit-kerja.destroy', $unit) }}"
                                                     method="POST"
                                                     onsubmit="return confirm('Yakin ingin menghapus unit kerja ini?');">
                                                     @csrf
@@ -177,7 +177,7 @@
                     </button>
                 </div>
 
-                <form action="{{ route('admin.master.unit-kerja.store') }}" method="POST">
+                <form action="{{ role_route('master.unit-kerja.store') }}" method="POST">
                     @csrf
                     <div class="p-5 space-y-4">
                         <div>

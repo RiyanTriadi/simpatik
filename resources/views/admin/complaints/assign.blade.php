@@ -1,0 +1,238 @@
+<x-layout.admin title="Assign ke Petugas">
+    <div x-data="{
+            modalOpen: false,
+            selectedComplaint: { id: null, ticket: '', subject: '', assigned_to: null }
+        }" class="bg-white p-4">
+
+        {{-- Header --}}
+        <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
+            <div>
+                <h1 class="text-lg font-semibold">Assign Pengaduan ke Petugas</h1>
+                <p class="text-xs text-gray-500 mt-0.5">Tugaskan pengaduan kepada petugas yang tersedia</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+                <form action="{{ role_route('pengaduan.assign') }}" method="GET" class="flex flex-wrap items-center gap-2">
+                    <select name="assignment" onchange="this.form.submit()"
+                        class="h-8 border border-alabaster-grey-600 text-sm px-2 bg-white focus:outline-none focus:border-emerald-500">
+                        <option value="">Semua</option>
+                        <option value="unassigned" {{ request('assignment') == 'unassigned' ? 'selected' : '' }}>Belum Di-assign</option>
+                        <option value="assigned" {{ request('assignment') == 'assigned' ? 'selected' : '' }}>Sudah Di-assign</option>
+                    </select>
+
+                    <div class="flex">
+                        <input type="search" name="search" value="{{ request('search') }}"
+                            class="h-8 border border-alabaster-grey-600 text-sm px-4 focus:outline-none focus:border-emerald-500"
+                            placeholder="Cari Tiket / Topik / Pelapor" autocomplete="off">
+                        <button type="submit" class="bg-emerald-500 h-8 px-3 cursor-pointer text-white">
+                            <i class="ri-search-line"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {{-- Ringkasan --}}
+        <div class="grid grid-cols-2 gap-3 mt-4">
+            <div class="border border-gray-200 p-3 bg-blue-50/50">
+                <p class="text-xs text-gray-500">Belum Di-assign</p>
+                <p class="text-lg font-bold text-prussian-blue-500">
+                    {{ \App\Models\Complaint::whereNull('assigned_to')
+                        ->whereNotIn('status', [\App\Models\Complaint::STATUS_SELESAI, \App\Models\Complaint::STATUS_DITOLAK])
+                        ->count() }}
+                </p>
+            </div>
+            <div class="border border-gray-200 p-3 bg-emerald-50/50">
+                <p class="text-xs text-gray-500">Sudah Di-assign</p>
+                <p class="text-lg font-bold text-emerald-600">
+                    {{ \App\Models\Complaint::whereNotNull('assigned_to')
+                        ->whereNotIn('status', [\App\Models\Complaint::STATUS_SELESAI, \App\Models\Complaint::STATUS_DITOLAK])
+                        ->count() }}
+                </p>
+            </div>
+        </div>
+
+        {{-- Tabel --}}
+        <div class="mt-4 overflow-x-auto border border-alabaster-grey-300">
+            <table class="w-full min-w-max text-sm">
+                <thead class="bg-alabaster-grey-500">
+                    <tr class="border-b border-alabaster-grey-300">
+                        <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">No Tiket</th>
+                        <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">Topik</th>
+                        <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">Status</th>
+                        <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">Petugas</th>
+                        <th class="px-4 py-3 text-center font-semibold text-prussian-blue-500">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($complaints as $complaint)
+                        <tr class="border-b border-alabaster-grey-100 bg-white hover:bg-gray-50">
+                            <td class="px-4 py-3 font-medium text-prussian-blue-500">
+                                {{ $complaint->ticket_number }}
+                            </td>
+
+                            <td class="px-4 py-3">
+                                <p class="line-clamp-1">{{ $complaint->subject }}</p>
+                            </td>
+
+                            <td class="px-4 py-3">
+                                <span class="px-2 py-1 text-xs font-semibold 
+                                    @if ($complaint->status == 'baru') bg-blue-100 text-blue-800
+                                    @elseif($complaint->status == 'diproses') bg-yellow-100 text-yellow-800
+                                    @elseif($complaint->status == 'selesai') bg-emerald-100 text-emerald-800
+                                    @else bg-red-100 text-red-800 @endif">
+                                    {{ ucfirst($complaint->status) }}
+                                </span>
+                            </td>
+
+                            <td class="px-4 py-3">
+                                @if ($complaint->officer)
+                                    <div class="flex items-center gap-2">
+                                        @if ($complaint->officer->profile_image_path)
+                                            <img src="{{ Storage::url($complaint->officer->profile_image_path) }}"
+                                                class="w-7 h-7 rounded-full object-cover border border-gray-200">
+                                        @else
+                                            <div class="w-7 h-7 rounded-full bg-prussian-blue-500 flex items-center justify-center text-white text-xs font-semibold">
+                                                {{ strtoupper(substr($complaint->officer->name, 0, 1)) }}
+                                            </div>
+                                        @endif
+                                        <div>
+                                            <p class="text-xs font-medium text-gray-800">{{ $complaint->officer->name }}</p>
+                                            <p class="text-xs text-gray-500">{{ $complaint->officer->unit->name ?? '-' }}</p>
+                                        </div>
+                                    </div>
+                                @else
+                                    <span class="inline-flex items-center gap-1 text-xs text-gray-400">
+                                        <i class="ri-user-unfollow-line"></i>
+                                        Belum di-assign
+                                    </span>
+                                @endif
+                            </td>
+
+                            <td class="text-center px-4 py-3">
+                                <button type="button"
+                                    @click="
+                                        selectedComplaint = {
+                                            id: {{ $complaint->id }},
+                                            ticket: '{{ $complaint->ticket_number }}',
+                                            subject: {{ Js::from($complaint->subject) }},
+                                            assigned_to: {{ $complaint->assigned_to ?? 'null' }}
+                                        };
+                                        modalOpen = true;
+                                    "
+                                    class="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 border border-gray-300 hover:border-emerald-500 hover:text-emerald-600 hover:bg-emerald-50 transition">
+                                    <i class="ri-user-add-line"></i>
+                                    {{ $complaint->officer ? 'Ubah Petugas' : 'Assign' }}
+                                </button>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                                <i class="ri-inbox-line text-3xl block mb-2"></i>
+                                Tidak ada pengaduan yang perlu di-assign.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        {{ $complaints->links('components.pagination') }}
+
+        {{-- Modal Assign --}}
+        <div x-show="modalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div class="absolute inset-0 bg-black/50" @click="modalOpen = false"></div>
+            <div class="relative bg-white w-full max-w-md shadow-xl">
+                {{-- Header --}}
+                <div class="flex items-center justify-between p-5 border-b border-gray-200">
+                    <div>
+                        <h2 class="text-lg font-bold text-prussian-blue-500">Assign ke Petugas</h2>
+                        <p class="text-xs text-gray-500" x-text="`Tiket: ${selectedComplaint.ticket}`"></p>
+                    </div>
+                    <button @click="modalOpen = false" class="text-gray-400 hover:text-gray-600 transition">
+                        <i class="ri-close-line text-xl"></i>
+                    </button>
+                </div>
+
+                {{-- Info Pengaduan --}}
+                <div class="px-5 py-3 bg-gray-50 border-b border-gray-100">
+                    <p class="text-sm text-gray-700 line-clamp-2" x-text="selectedComplaint.subject"></p>
+                </div>
+
+                {{-- Form --}}
+                <form :action="`{{ url(role_prefix() . '/pengaduan') }}/${selectedComplaint.id}/assign`" method="POST">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="p-5 space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                Pilih Petugas <span class="text-red-500">*</span>
+                            </label>
+                            <select name="assigned_to" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500">
+                                <option value="">-- Pilih Petugas --</option>
+                                @foreach ($officers->groupBy(fn($o) => $o->unit->name ?? 'Tanpa Unit') as $unitName => $group)
+                                    <optgroup label="{{ $unitName }}">
+                                        @foreach ($group as $officer)
+                                            <option value="{{ $officer->id }}"
+                                                :selected="selectedComplaint.assigned_to === {{ $officer->id }}">
+                                                {{ $officer->name }}
+                                            </option>
+                                        @endforeach
+                                    </optgroup>
+                                @endforeach
+                            </select>
+                            <p class="mt-1 text-xs text-gray-500">
+                                Hanya user dengan role <strong>Petugas</strong> yang muncul di sini.
+                            </p>
+                        </div>
+
+                        @if ($officers->isEmpty())
+                            <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-3 py-2 text-xs flex items-start gap-2">
+                                <i class="ri-alert-line text-lg"></i>
+                                <span>Belum ada user dengan role petugas. <a href="{{ route('admin.users.create') }}" class="underline font-semibold">Tambah petugas</a> terlebih dahulu.</span>
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="flex items-center justify-between gap-2 px-5 py-4 border-t border-gray-200 bg-gray-50">
+                        {{-- Tombol Unassign (hanya jika sudah di-assign) --}}
+                        <template x-if="selectedComplaint.assigned_to">
+                            <button type="submit"
+                                form="unassign-form-{{ '' }}"
+                                @click.prevent="
+                                    if (confirm('Batalkan assign pengaduan ini?')) {
+                                        document.getElementById('unassign-form').submit();
+                                    }
+                                "
+                                class="text-xs text-red-600 hover:text-red-800 underline transition">
+                                Batalkan Assign
+                            </button>
+                        </template>
+
+                        <div class="flex items-center gap-2 ml-auto">
+                            <button type="button" @click="modalOpen = false"
+                                class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 hover:bg-gray-100 transition">
+                                Batal
+                            </button>
+                            <button type="submit" {{ $officers->isEmpty() ? 'disabled' : '' }}
+                                class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 text-sm font-medium transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <i class="ri-save-line"></i> Simpan
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                {{-- Form Terpisah untuk Unassign --}}
+                <form id="unassign-form" :action="`{{ url(role_prefix() . '/pengaduan') }}/${selectedComplaint.id}/assign`" method="POST" class="hidden">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="assigned_to" value="">
+                </form>
+            </div>
+        </div>
+
+    </div>
+</x-layout.admin>

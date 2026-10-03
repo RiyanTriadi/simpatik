@@ -1,58 +1,207 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SIMPATIK — Sistem Informasi Manajemen Pengaduan, Aspirasi, dan Tindak Lanjut Sivitas
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+SIMPATIK adalah aplikasi web berbasis Laravel untuk mengelola pengaduan dan aspirasi dari sivitas akademika (internal) maupun masyarakat umum (eksternal). Sistem ini menyediakan alur lengkap mulai dari pengajuan, verifikasi, penugasan ke petugas, hingga tindak lanjut dan pelaporan.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Fitur Utama
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Multi-Role Access
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Admin** — Akses penuh ke seluruh sistem termasuk manajemen user & master data
+- **Staff** — Kelola pengaduan & aspirasi, verifikasi, assign ke petugas
+- **Petugas** — Tangani tiket yang di-assign, update status, balas komentar
 
-## Learning Laravel
+### Manajemen Tiket
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- Pengaduan dari eksternal (masyarakat) & internal (sivitas)
+- Aspirasi dari sivitas akademika
+- Tracking status: baru → diproses → selesai/ditolak
+- Prioritas: rendah, sedang, tinggi, urgent
+- Sistem assign tiket ke petugas
+- Kotak Masuk terpadu (union query complaint + aspiration)
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Manajemen Master
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+- Kategori (pengaduan/aspirasi/keduanya)
+- Unit Kerja
+- User & role
 
-## Agentic Development
+### Dashboard & Laporan
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+- Statistik tiket (per status, per kategori, per unit)
+- Grafik tren 7 hari terakhir
+- Distribusi status (doughnut chart)
+- Top 5 kategori
+
+### Profil & Autentikasi
+
+- Login via Laravel Fortify
+- Manajemen profil (nama, email, telepon, foto)
+- Ganti password
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer          | Teknologi                        |
+| -------------- | -------------------------------- |
+| **Framework**  | Laravel 13.x                     |
+| **PHP**        | PHP 8.4                          |
+| **Database**   | MySQL                            |
+| **Frontend**   | Tailwind CSS 3.x + Alpine.js 3.x |
+| **Build Tool** | Vite                             |
+| **Auth**       | Laravel Fortify                  |
+| **Icon**       | Remix Icon 4.x                   |
+| **Chart**      | Chart.js 4.x                     |
+| **Testing**    | PHPUnit                          |
+
+---
+
+## 📦 Instalasi
+
+### Prasyarat
+
+- PHP >= 8.2
+- Composer
+- Node.js & NPM
+- MySQL
+
+### Langkah Setup
 
 ```bash
-composer require laravel/boost --dev
+# 1. Clone repository
+git clone <repo-url> simpatik
+cd simpatik
 
-php artisan boost:install
+# 2. Install dependencies
+composer install
+npm install
+
+# 3. Setup environment
+cp .env.example .env
+php artisan key:generate
+
+# 4. Konfigurasi database di .env
+# DB_DATABASE=simpatik
+# DB_USERNAME=root
+# DB_PASSWORD=
+
+# 5. Migrasi & seeding
+php artisan migrate --seed
+
+# 6. Buat symlink storage
+php artisan storage:link
+
+# 7. Build assets
+npm run dev
+
+# 8. Jalankan server
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### Akun Default (dari Seeder)
 
-## Contributing
+| Role    | Email                     | Password |
+| ------- | ------------------------- | -------- |
+| Admin   | admin@universitas.ac.id   | password |
+| Staff   | staff@universitas.ac.id   | password |
+| Petugas | petugas@universitas.ac.id | password |
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 🗂️ Struktur Direktori Penting
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```text
+app/
+├── Helpers/
+│   └── helpers.php                  # role_prefix(), role_route()
+├── Http/
+│   ├── Controllers/
+│   │   └── Admin/
+│   │       ├── Dashboard.php
+│   │       ├── InboxController.php
+│   │       ├── ComplaintController.php
+│   │       ├── AspirationController.php
+│   │       ├── UserController.php
+│   │       ├── ProfileController.php
+│   │       └── Master/
+│   │           ├── CategoryController.php
+│   │           └── UnitController.php
+│   ├── Middleware/
+│   │   └── RoleMiddleware.php
+│   └── Requests/
+│       └── Admin/
+│           ├── StoreUserRequest.php
+│           ├── UpdateUserRequest.php
+│           └── UpdateProfileRequest.php
+└── Models/
+    ├── Complaint.php
+    ├── Aspiration.php
+    ├── Category.php
+    ├── Unit.php
+    └── User.php
 
-## Security Vulnerabilities
+resources/views/
+├── components/
+│   ├── toast.blade.php
+│   ├── pagination.blade.php
+│   └── x-layout/
+│       └── admin.blade.php
+├── admin/
+│   ├── dashboard.blade.php
+│   ├── inbox/index.blade.php
+│   ├── complaints/{index,show,verification,assign}.blade.php
+│   ├── aspirations/{index,show,follow_up}.blade.php
+│   ├── users/{index,create,edit,officers,_form}.blade.php
+│   ├── profile/edit.blade.php
+│   └── master/
+│       ├── categories/index.blade.php
+│       └── units/index.blade.php
+└── auth/login.blade.php
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+routes/
+└── web.php                          # Role-based route loop
+```
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 🔐 Hak Akses per Role
+
+| Fitur             | Petugas            | Staff | Admin |
+| ----------------- | ------------------ | ----- | ----- |
+| Dashboard         | ✅                 | ✅    | ✅    |
+| Kotak Masuk       | ✅ (terbatas)      | ✅    | ✅    |
+| Pengaduan         | ✅ (tugas sendiri) | ✅    | ✅    |
+| Aspirasi          | ✅ (tugas sendiri) | ✅    | ✅    |
+| Verifikasi        | ❌                 | ✅    | ✅    |
+| Assign ke Petugas | ❌                 | ✅    | ✅    |
+| Daftar Petugas    | ❌                 | ✅    | ✅    |
+| Manajemen User    | ❌                 | ❌    | ✅    |
+| Master Data       | ❌                 | ❌    | ✅    |
+| Pengaturan        | ❌                 | ❌    | ✅    |
+
+---
+
+## 🎨 Panduan Development
+
+### Konvensi Umum
+
+- Selalu gunakan `role_route()` atau `role_prefix()` untuk URL yang di-prefix role
+- Validasi form di FormRequest (bukan di controller)
+- Gunakan modal untuk form dengan ≤ 6 field, halaman terpisah untuk form lebih banyak
+- Dropdown aksi di tabel harus pakai `x-teleport="body"` untuk menghindari clipping
+
+### Tailwind CSS Safelist
+
+Karena banyak class dinamis (`peer-checked:border-{color}-500`), pastikan `tailwind.config.js` punya safelist lengkap. Lihat `CONTEXT.md` untuk detail.
+
+### Debug
+
+Set `APP_DEBUG=true` di `.env` untuk melihat stack trace lengkap.
+
+---
+
+## 📝 Lisensi
+
+Copyright © 2026 Riyan Triadi. All rights reserved.

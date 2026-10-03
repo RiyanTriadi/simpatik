@@ -66,8 +66,7 @@ class UserController extends Controller
 
         User::create($validated);
 
-        return redirect()->route('admin.users.index')
-            ->with('success', 'User berhasil ditambahkan.');
+        return redirect()->route('admin.users.index')->with('success', 'User berhasil ditambahkan.');
     }
 
     public function update(UpdateUserRequest $request, User $user)
@@ -84,8 +83,7 @@ class UserController extends Controller
             if ($user->profile_image_path && Storage::disk('public')->exists($user->profile_image_path)) {
                 Storage::disk('public')->delete($user->profile_image_path);
             }
-            $validated['profile_image_path'] = $request->file('profile_image')
-                ->store('profile-images', 'public');
+            $validated['profile_image_path'] = $request->file('profile_image')->store('profile-images', 'public');
         }
 
         unset($validated['profile_image']);
@@ -98,8 +96,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         if (auth()->id() === $user->id) {
-            return redirect()->back()
-                ->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+            return redirect()->back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
 
         if ($user->profile_image_path && Storage::disk('public')->exists($user->profile_image_path)) {
@@ -108,11 +105,40 @@ class UserController extends Controller
 
         $user->delete();
 
-        return redirect()->route('admin.users.index')
-            ->with('success', 'User berhasil dihapus.');
+        return redirect()->route('admin.users.index')->with('success', 'User berhasil dihapus.');
     }
 
+    public function officers(Request $request)
+    {
+        $query = User::where('role', User::ROLE_PETUGAS)
+            ->with('unit')
+            ->withCount([
+                'assignedComplaints as active_tasks' => function ($q) {
+                    $q->whereIn('status', [
+                        \App\Models\Complaint::STATUS_BARU,
+                        \App\Models\Complaint::STATUS_DIPROSES,
+                    ]);
+                }
+            ]);
 
+        if ($request->filled('search')) {
+            $searchTerm = '%' . $request->search . '%';
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'LIKE', $searchTerm)
+                    ->orWhere('email', 'LIKE', $searchTerm);
+            });
+        }
+
+        if ($request->filled('unit_id')) {
+            $query->where('unit_id', $request->unit_id);
+        }
+
+        $users = $query->orderBy('name')->paginate(12)->withQueryString();
+
+        $units = Unit::active()->orderBy('name')->get();
+
+        return view('admin.users.officers', compact('users', 'units'));
+    }
 
     public function show(User $user)
     {

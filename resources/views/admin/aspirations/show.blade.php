@@ -4,7 +4,7 @@
         <div
             class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 border-b border-gray-200 pb-4">
             <div class="flex items-center gap-3">
-                <a href="{{ route('admin.aspirasi.index') }}"
+                <a href="{{ role_route('aspirasi.index') }}"
                     class="p-2 text-gray-500 hover:text-prussian-blue-500 hover:bg-gray-100 transition">
                     <i class="ri-arrow-left-line text-xl"></i>
                 </a>
@@ -75,7 +75,7 @@
                                     class="absolute right-0 z-50 mt-2 w-44 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 border border-gray-100">
                                     <div class="py-1">
                                         @foreach (['baru' => 'Baru', 'dibaca' => 'Dibaca', 'ditindaklanjuti' => 'Ditindaklanjuti'] as $value => $label)
-                                                <form action="{{ route('admin.aspirasi.update', $aspiration->id) }}"
+                                                <form action="{{ role_route('aspirasi.update', $aspiration->id) }}"
                                                     method="POST">
                                                     @csrf
                                                     @method('PUT')

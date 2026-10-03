@@ -4,7 +4,7 @@
         <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
             <h1 class="text-lg font-semibold">Manajemen User</h1>
             <div class="flex flex-wrap items-center gap-2">
-                <form action="{{ route('admin.users.index') }}" method="GET" class="flex flex-wrap items-center gap-2">
+                <form action="{{ role_route('users.index') }}" method="GET" class="flex flex-wrap items-center gap-2">
                     <select name="role" onchange="this.form.submit()"
                         class="h-8 border border-alabaster-grey-600 text-sm px-2 bg-white focus:outline-none focus:border-emerald-500">
                         <option value="">Semua Role</option>
@@ -33,8 +33,8 @@
                     </div>
                 </form>
 
-                <a href="{{ route('admin.users.create') }}"
-                    class="bg-prussian-blue-500 hover:bg-prussian-blue-600 text-white text-sm h-8 px-4 flex items-center gap-1.5 transition">
+                <a href="{{ role_route('users.create') }}"
+                    class="bg-prussian-blue-300 hover:bg-prussian-blue-400 text-white text-sm h-8 px-4 flex items-center gap-1.5 transition">
                     <i class="ri-add-line"></i> Tambah User
                 </a>
             </div>
@@ -131,14 +131,14 @@
 
                                             <div class="py-1">
                                                 {{-- Link Edit --}}
-                                                <a href="{{ route('admin.users.edit', $user) }}"
+                                                <a href="{{ role_route('users.edit', $user) }}"
                                                     class="group flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-prussian-blue-500 transition">
                                                     <i class="ri-pencil-line mr-2 text-gray-400 group-hover:text-prussian-blue-500"></i>
                                                     Edit
                                                 </a>
 
                                                 {{-- Form Hapus --}}
-                                                <form action="{{ route('admin.users.destroy', $user) }}"
+                                                <form action="{{ role_route('users.destroy', $user) }}"
                                                     method="POST"
                                                     onsubmit="return confirm('Yakin ingin menghapus user ini?');">
                                                     @csrf

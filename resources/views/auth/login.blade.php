@@ -20,7 +20,7 @@
                 </div>
             </div>
             <h1 class="text-xl font-bold text-white">SIMPATIK PANEL</h1>
-            <p class="text-sm text-alabaster-grey-300 mt-1">Sistem Informasi Manajemen Pengaduan</p>
+            <p class="text-sm text-alabaster-grey-300 mt-1">Sistem Informasi Manajemen Pengaduan, Aspirasi, dan Tindak Lanjut Sivitas</p>
         </div>
 
         {{-- Form Login --}}
@@ -37,7 +37,7 @@
                         </div>
                         <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
                             class="w-full pl-10 pr-3 py-2 border border-gray-300 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 @error('email') border-red-500 @enderror"
-                            placeholder="admin@universitas.ac.id">
+                            placeholder="Masukkan Email">
                     </div>
                     @error('email')
                         <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
@@ -53,7 +53,7 @@
                         </div>
                         <input id="password" type="password" name="password" required
                             class="w-full pl-10 pr-3 py-2 border border-gray-300 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 @error('password') border-red-500 @enderror"
-                            placeholder="••••••••">
+                            placeholder="Masukkan Kata Sandi">
                     </div>
                     @error('password')
                         <p class="mt-1 text-xs text-red-500">{{ $message }}</p>

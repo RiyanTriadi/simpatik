@@ -9,7 +9,7 @@
         <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
             <h1 class="text-lg font-semibold">Master Kategori</h1>
             <div class="flex flex-wrap items-center gap-2">
-                <form action="{{ route('admin.master.kategori.index') }}" method="GET" class="flex items-center gap-2   ">
+                <form action="{{ role_route('master.kategori.index') }}" method="GET" class="flex items-center gap-2   ">
                     <select name="type" onchange="this.form.submit()"
                         class="h-8 border border-alabaster-grey-600 text-sm px-2 bg-white focus:outline-none focus:border-emerald-500">
                         <option value="">Semua Tipe</option>
@@ -29,7 +29,7 @@
                 </form>
 
                 <button @click="createOpen = true"
-                    class="bg-prussian-blue-500 hover:bg-prussian-blue-600 text-white text-sm h-8 px-4 flex items-center gap-1.5 transition cursor-pointer">
+                    class="bg-prussian-blue-300 hover:bg-prussian-blue-400 text-white text-sm h-8 px-4 flex items-center gap-1.5 transition cursor-pointer">
                     <i class="ri-add-line"></i> Tambah Kategori
                 </button>
             </div>
@@ -132,7 +132,7 @@
                                                     Edit
                                                 </button>
 
-                                                <form action="{{ route('admin.master.kategori.destroy', $category) }}"
+                                                <form action="{{ role_route('master.kategori.destroy', $category) }}"
                                                     method="POST"
                                                     onsubmit="return confirm('Yakin ingin menghapus kategori ini?');">
                                                     @csrf
@@ -179,7 +179,7 @@
                 </div>
 
                 {{-- Form --}}
-                <form action="{{ route('admin.master.kategori.store') }}" method="POST">
+                <form action="{{ role_route('master.kategori.store') }}" method="POST">
                     @csrf
                     <div class="p-5 space-y-4">
                         <div>

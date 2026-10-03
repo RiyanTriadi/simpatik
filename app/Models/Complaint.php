@@ -39,6 +39,8 @@ class Complaint extends Model
         'reporter_email',
         'status',
         'priority',
+        'assigned_to',
+        'assigned_at',
         'resolved_at',
     ];
 
@@ -48,6 +50,7 @@ class Complaint extends Model
             'is_anonymous' => 'boolean',
             'incident_date' => 'date',
             'resolved_at' => 'datetime',
+            'assigned_at' => 'datetime',
         ];
     }
 
@@ -55,6 +58,11 @@ class Complaint extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function officer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
     }
 
     // Scope
@@ -75,5 +83,22 @@ class Complaint extends Model
             'status' => self::STATUS_SELESAI,
             'resolved_at' => now(),
         ]);
+    }
+
+    public function isAssigned(): bool
+    {
+        return !is_null($this->assigned_to);
+    }
+
+    public function getCreatorLabelAttribute(): string
+    {
+        return $this->creator_type === self::CREATOR_INTERNAL ? 'Internal' : 'Eksternal';
+    }
+
+    public function getCreatorBadgeClassAttribute(): string
+    {
+        return $this->creator_type === self::CREATOR_INTERNAL
+            ? 'text-teal-500'
+            : 'text-indigo-500';
     }
 }

@@ -4,7 +4,7 @@
         <div
             class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 border-b border-gray-200 pb-4">
             <div class="flex items-center gap-3">
-                <a href="{{ route('admin.pengaduan.index') }}"
+                <a href="{{ role_route('pengaduan.index') }}"
                     class="p-2 text-gray-500 hover:text-prussian-blue-500 hover:bg-gray-100 transition">
                     <i class="ri-arrow-left-line text-xl"></i>
                 </a>
@@ -94,7 +94,7 @@
                                     class="absolute right-0 z-50 mt-2 w-40 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 border border-gray-100">
                                     <div class="py-1">
                                         @foreach (['baru' => 'Baru', 'diproses' => 'Diproses', 'selesai' => 'Selesai', 'ditolak' => 'Ditolak'] as $value => $label)
-                                            <form action="{{ route('admin.pengaduan.update', $complaint->id) }}"
+                                            <form action="{{ role_route('pengaduan.update', $complaint->id) }}"
                                                 method="POST">
                                                 @csrf
                                                 @method('PUT')
@@ -116,7 +116,7 @@
                             </div>
                         </div>
 
-                        {{-- ==================== PRIORITAS ==================== --}}
+                        {{-- Prioritas --}}
                         <div class="flex justify-between items-center">
                             <span class="text-gray-500">Prioritas</span>
                             <div x-data="{ open: false }" class="relative">
@@ -145,7 +145,7 @@
                                     class="absolute right-0 z-50 mt-2 w-40 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 border border-gray-100">
                                     <div class="py-1">
                                         @foreach (['rendah' => 'Rendah', 'sedang' => 'Sedang', 'tinggi' => 'Tinggi', 'urgent' => 'Urgent'] as $value => $label)
-                                            <form action="{{ route('admin.pengaduan.update', $complaint->id) }}"
+                                            <form action="{{ role_route('pengaduan.update', $complaint->id) }}"
                                                 method="POST">
                                                 @csrf
                                                 @method('PUT')
@@ -167,7 +167,7 @@
                             </div>
                         </div>
 
-                        {{-- ==================== KATEGORI ==================== --}}
+                        {{-- Kategori --}}
                         <div class="flex flex-col md:flex-row justify-between md:items-center">
                             <span class="text-gray-500">Kategori</span>
                             <span class="font-medium text-gray-800">{{ $complaint->category->name }}</span>
@@ -197,6 +197,37 @@
                                 <i class="ri-mail-line text-gray-400"></i>
                                 <span>{{ $complaint->reporter_email ?? '-' }}</span>
                             </div>
+                        </div>
+                    @endif
+                </div>
+
+                {{-- Petugas yang Menangani --}}
+                <div class="bg-white border border-gray-200 p-5">
+                    <h3 class="text-md font-semibold text-gray-800 mb-4 border-b pb-2">Petugas Penanganan</h3>
+                    @if ($complaint->officer)
+                        <div class="flex items-center gap-3">
+                            @if ($complaint->officer->profile_image_path)
+                                <img src="{{ Storage::url($complaint->officer->profile_image_path) }}"
+                                    class="w-12 h-12 rounded-full object-cover border border-gray-200">
+                            @else
+                                <div class="w-12 h-12 rounded-full bg-prussian-blue-500 flex items-center justify-center text-white font-semibold text-lg">
+                                    {{ strtoupper(substr($complaint->officer->name, 0, 1)) }}
+                                </div>
+                            @endif
+                            <div class="text-sm">
+                                <p class="font-medium text-gray-800">{{ $complaint->officer->name }}</p>
+                                <p class="text-xs text-gray-500">{{ $complaint->officer->unit->name ?? 'Tanpa Unit' }}</p>
+                                @if ($complaint->assigned_at)
+                                    <p class="text-xs text-gray-400 mt-0.5">
+                                        Di-assign {{ $complaint->assigned_at->diffForHumans() }}
+                                    </p>
+                                @endif
+                            </div>
+                        </div>
+                    @else
+                        <div class="flex items-center gap-2 text-gray-500 text-sm">
+                            <i class="ri-user-unfollow-line text-lg"></i>
+                            <span>Belum di-assign ke petugas</span>
                         </div>
                     @endif
                 </div>

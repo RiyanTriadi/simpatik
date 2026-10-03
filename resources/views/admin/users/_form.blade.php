@@ -136,7 +136,7 @@
 
 {{-- Tombol Aksi --}}
 <div class="mt-8 flex items-center justify-end gap-2 border-t border-gray-200 pt-5">
-    <a href="{{ route('admin.users.index') }}"
+    <a href="{{ role_route('users.index') }}"
         class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 hover:bg-gray-100 transition">
         Batal
     </a>

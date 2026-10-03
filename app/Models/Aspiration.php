@@ -31,6 +31,8 @@ class Aspiration extends Model
         'reporter_email',
         'status',
         'category_id',
+        'assigned_to',
+        'assigned_at',
     ];
 
     protected function casts(): array
@@ -46,9 +48,26 @@ class Aspiration extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function officer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
+    }
+
     // Scope
     public function scopeStatus($query, string $status)
     {
         return $query->where('status', $status);
+    }
+
+    public function getCreatorLabelAttribute(): string
+    {
+        return $this->creator_type === self::CREATOR_INTERNAL ? 'Internal' : 'Eksternal';
+    }
+
+    public function getCreatorBadgeClassAttribute(): string
+    {
+        return $this->creator_type === self::CREATOR_INTERNAL
+            ? 'text-teal-500'
+            : 'text-indigo-500';
     }
 }

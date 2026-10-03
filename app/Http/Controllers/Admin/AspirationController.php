@@ -8,44 +8,32 @@ use Illuminate\Http\Request;
 
 class AspirationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
-        $aspirations = Aspiration::latest();
+        $query = Aspiration::with('category');
+        $user = auth()->user();
 
-        if (request('search')) {
+        if ($user && $user->role === 'petugas') {
+            $query->where('assigned_to', $user->id);
+        }
+
+        if ($request->filled('search')) {
             $searchTerm = '%' . $request->search . '%';
-
-            $aspirations->where(function ($query) use ($searchTerm) {
-                $query->where('subject', 'LIKE', $searchTerm)->orWhere('reporter_name', 'LIKE', $searchTerm);
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('subject', 'LIKE', $searchTerm)
+                    ->orWhere('reporter_name', 'LIKE', $searchTerm);
             });
         }
 
-        $aspirations = $aspirations->paginate(10)->withQueryString();
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $aspirations = $query->latest()->paginate(10)->withQueryString();
+
         return view('admin.aspirations.index', compact('aspirations'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $aspiration = Aspiration::with('category')->findOrFail($id);
@@ -53,45 +41,73 @@ class AspirationController extends Controller
         return view('admin.aspirations.show', compact('aspiration'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $aspiration = Aspiration::findOrFail($id);
-        $aspiration->update($request->only('status'));
+
+        $validated = $request->validate([
+            'status' => 'sometimes|in:baru,dibaca,ditindaklanjuti,ditolak',
+        ]);
+
+        $aspiration->update($validated);
+
         return redirect()->back()->with('success', 'Status aspirasi berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        $aspiration = Aspiration::findOrFail($id);
+        $aspiration->delete();
+
+        return redirect()->route(role_prefix() . '.aspirasi.index')
+            ->with('success', 'Aspirasi berhasil dihapus.');
+    }
+
+    public function assignStore(Request $request, string $id)
+    {
+        $aspiration = Aspiration::findOrFail($id);
+
+        $validated = $request->validate([
+            'assigned_to' => 'required|exists:users,id',
+        ]);
+
+        $aspiration->update([
+            'assigned_to' => $validated['assigned_to'],
+            'assigned_at' => now(),
+            'status' => Aspiration::STATUS_DIBACA, // optional change status when assigned
+        ]);
+
+        return redirect()->back()->with('success', 'Aspirasi berhasil di-assign ke petugas.');
     }
 
     public function followUp(Request $request)
     {
-        $aspirations = Aspiration::whereIn('status', [Aspiration::STATUS_BARU, Aspiration::STATUS_DIBACA])->latest();
+        $query = Aspiration::with('category')
+            ->whereIn('status', [Aspiration::STATUS_BARU, Aspiration::STATUS_DIBACA]);
 
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $searchTerm = '%' . $request->search . '%';
-            $aspirations->where(function ($query) use ($searchTerm) {
-                $query->where('subject', 'LIKE', $searchTerm)
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('subject', 'LIKE', $searchTerm)
                     ->orWhere('reporter_name', 'LIKE', $searchTerm);
             });
         }
 
-        $aspirations = $aspirations->paginate(10)->withQueryString();
+        $aspirations = $query->latest()->paginate(10)->withQueryString();
+
         return view('admin.aspirations.follow_up', compact('aspirations'));
+    }
+
+    public function create()
+    {
+        abort(404);
+    }
+    public function store(Request $request)
+    {
+        abort(404);
+    }
+    public function edit(string $id)
+    {
+        abort(404);
     }
 }
