@@ -90,14 +90,6 @@ class ComplaintController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
-    /**
      * Generate a unique complaint ticket number.
      */
     private function generateTicketNumber(): string

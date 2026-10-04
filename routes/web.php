@@ -12,7 +12,7 @@ use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\Master\CategoryController;
 use App\Http\Controllers\Admin\Master\UnitController;
 
-// ==================== PUBLIC ====================
+// PUBLIC
 Route::get('/', function () {
     // User sudah login? Redirect ke dashboard role-nya
     if (auth()->check()) {
@@ -21,28 +21,32 @@ Route::get('/', function () {
     return view('public.index');
 })->name('public.index');
 
-Route::resource('pengaduan', PublicComplaint::class)->names('public.pengaduan');
-Route::resource('aspirasi', PublicAspiration::class)->names('public.aspirasi');
+Route::resource('pengaduan', PublicComplaint::class)
+    ->except(['destroy'])
+    ->names('public.pengaduan');
+Route::resource('aspirasi', PublicAspiration::class)
+    ->except(['destroy'])
+    ->names('public.aspirasi');
 
-// ==================== AUTHENTICATED ====================
+// AUTHENTICATED
 foreach (['admin', 'staff', 'petugas'] as $role) {
     Route::prefix($role)
         ->name("{$role}.")
         ->middleware(['auth', "role:{$role}"])
         ->group(function () use ($role) {
 
-            // === DASHBOARD (semua role) ===
+            // DASHBOARD (semua role)
             Route::get('dashboard', [Dashboard::class, 'index'])->name('dashboard');
 
-            // === PROFILE (semua role) ===
+            // PROFILE (semua role)
             Route::resource('profile', ProfileController::class)
                 ->only(['edit', 'update'])
                 ->parameters(['profile' => 'id']);
 
-            // === INBOX (semua role) ===
+            // INBOX (semua role)
             Route::get('inbox', [InboxController::class, 'index'])->name('inbox.index');
 
-            // === PENGADUAN ===
+            // PENGADUAN
             Route::prefix('pengaduan')->name('pengaduan.')->group(function () use ($role) {
                 // Route statis dulu
                 if (in_array($role, ['admin', 'staff'])) {
@@ -52,43 +56,37 @@ foreach (['admin', 'staff', 'petugas'] as $role) {
 
                 // Route dinamis
                 Route::get('/', [ComplaintController::class, 'index'])->name('index');
-                Route::get('/{complaint}', [ComplaintController::class, 'show'])->name('show');
-                Route::put('/{complaint}', [ComplaintController::class, 'update'])->name('update');
+                Route::get('/{complaint:ticket_number}/attachment/download', [ComplaintController::class, 'downloadAttachment'])->name('attachment.download');
+                Route::get('/{complaint:ticket_number}', [ComplaintController::class, 'show'])->name('show');
+                Route::put('/{complaint:ticket_number}', [ComplaintController::class, 'update'])->name('update');
 
                 if (in_array($role, ['admin', 'staff'])) {
-                    Route::put('/{complaint}/assign', [ComplaintController::class, 'assignStore'])->name('assign.store');
-                }
-
-                if ($role === 'admin') {
-                    Route::delete('/{complaint}', [ComplaintController::class, 'destroy'])->name('destroy');
+                    Route::put('/{complaint:ticket_number}/assign', [ComplaintController::class, 'assignStore'])->name('assign.store');
                 }
             });
 
-            // === ASPIRASI ===
+            // ASPIRASI
             Route::prefix('aspirasi')->name('aspirasi.')->group(function () use ($role) {
                 if (in_array($role, ['admin', 'staff'])) {
                     Route::get('/tindak-lanjut/list', [AspirationController::class, 'followUp'])->name('follow-up');
                 }
 
                 Route::get('/', [AspirationController::class, 'index'])->name('index');
-                Route::get('/{aspiration}', [AspirationController::class, 'show'])->name('show');
-                Route::put('/{aspiration}', [AspirationController::class, 'update'])->name('update');
+                Route::get('/{aspiration:ticket_number}/attachment/download', [AspirationController::class, 'downloadAttachment'])->name('attachment.download');
+                Route::get('/{aspiration:ticket_number}', [AspirationController::class, 'show'])->name('show');
+                Route::put('/{aspiration:ticket_number}', [AspirationController::class, 'update'])->name('update');
 
                 if (in_array($role, ['admin', 'staff'])) {
-                    Route::put('/{aspiration}/assign', [AspirationController::class, 'assignStore'])->name('assign.store');
-                }
-
-                if ($role === 'admin') {
-                    Route::delete('/{aspiration}', [AspirationController::class, 'destroy'])->name('destroy');
+                    Route::put('/{aspiration:ticket_number}/assign', [AspirationController::class, 'assignStore'])->name('assign.store');
                 }
             });
 
-            // === KHUSUS STAFF: Daftar Petugas (read-only) ===
+            // KHUSUS STAFF: Daftar Petugas (read-only)
             if ($role === 'staff') {
                 Route::get('petugas', [UserController::class, 'officers'])->name('petugas.index');
             }
 
-            // === KHUSUS ADMIN ===
+            // KHUSUS ADMIN
             if ($role === 'admin') {
                 Route::resource('users', UserController::class)->except(['show']);
 

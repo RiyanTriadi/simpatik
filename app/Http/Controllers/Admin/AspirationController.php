@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Aspiration;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class AspirationController extends Controller
 {
@@ -34,17 +37,46 @@ class AspirationController extends Controller
         return view('admin.aspirations.index', compact('aspirations'));
     }
 
-    public function show(string $id)
+    public function show(Aspiration $aspiration)
     {
-        $aspiration = Aspiration::with('category')->findOrFail($id);
+        $aspiration->load(['category', 'officer.unit']);
 
-        return view('admin.aspirations.show', compact('aspiration'));
+        if (auth()->user()->role === User::ROLE_PETUGAS && $aspiration->assigned_to !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki akses ke aspirasi ini.');
+        }
+
+        $officers = collect();
+        if (in_array(auth()->user()->role, [User::ROLE_ADMIN, User::ROLE_STAFF], true)) {
+            $officers = User::query()
+                ->where('role', User::ROLE_PETUGAS)
+                ->with('unit')
+                ->orderBy('name')
+                ->get(['id', 'name', 'unit_id']);
+        }
+
+        return view('admin.aspirations.show', compact('aspiration', 'officers'));
     }
 
-    public function update(Request $request, string $id)
+    public function downloadAttachment(Aspiration $aspiration)
     {
-        $aspiration = Aspiration::findOrFail($id);
+        if (auth()->user()->role === User::ROLE_PETUGAS && $aspiration->assigned_to !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki akses ke aspirasi ini.');
+        }
 
+        $path = $aspiration->attachment_path;
+
+        abort_if(!$path || !Storage::disk('public')->exists($path), 404);
+
+        $extension = pathinfo($path, PATHINFO_EXTENSION);
+
+        return Storage::disk('public')->download(
+            $path,
+            $aspiration->ticket_number . ($extension ? '.' . $extension : '')
+        );
+    }
+
+    public function update(Request $request, Aspiration $aspiration)
+    {
         $validated = $request->validate([
             'status' => 'sometimes|in:baru,dibaca,ditindaklanjuti,ditolak',
         ]);
@@ -54,27 +86,19 @@ class AspirationController extends Controller
         return redirect()->back()->with('success', 'Status aspirasi berhasil diperbarui.');
     }
 
-    public function destroy(string $id)
+    public function assignStore(Request $request, Aspiration $aspiration)
     {
-        $aspiration = Aspiration::findOrFail($id);
-        $aspiration->delete();
-
-        return redirect()->route(role_prefix() . '.aspirasi.index')
-            ->with('success', 'Aspirasi berhasil dihapus.');
-    }
-
-    public function assignStore(Request $request, string $id)
-    {
-        $aspiration = Aspiration::findOrFail($id);
-
         $validated = $request->validate([
-            'assigned_to' => 'required|exists:users,id',
+            'assigned_to' => [
+                'required',
+                Rule::exists('users', 'id')->where('role', User::ROLE_PETUGAS),
+            ],
         ]);
 
         $aspiration->update([
             'assigned_to' => $validated['assigned_to'],
             'assigned_at' => now(),
-            'status' => Aspiration::STATUS_DIBACA, // optional change status when assigned
+            'status' => Aspiration::STATUS_DITINDAKLANJUTI,
         ]);
 
         return redirect()->back()->with('success', 'Aspirasi berhasil di-assign ke petugas.');
@@ -94,18 +118,24 @@ class AspirationController extends Controller
         }
 
         $aspirations = $query->latest()->paginate(10)->withQueryString();
+        $officers = User::query()
+            ->where('role', User::ROLE_PETUGAS)
+            ->orderBy('name')
+            ->get(['id', 'name']);
 
-        return view('admin.aspirations.follow_up', compact('aspirations'));
+        return view('admin.aspirations.follow_up', compact('aspirations', 'officers'));
     }
 
     public function create()
     {
         abort(404);
     }
+
     public function store(Request $request)
     {
         abort(404);
     }
+
     public function edit(string $id)
     {
         abort(404);

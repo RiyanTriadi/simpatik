@@ -256,7 +256,7 @@
                 </div>
 
                 {{-- Kanan: Profile Dropdown --}}
-                <div x-data="{ profileOpen: false }" class="relative">
+                <div x-data="{ profileOpen: false, logoutConfirmOpen: false }" class="relative">
                     <button @click="profileOpen = !profileOpen" @click.outside="profileOpen = false" type="button"
                         class="flex items-center gap-2.5 hover:bg-gray-50 px-2 py-1.5 transition cursor-pointer">
 
@@ -304,17 +304,48 @@
                                 Profil Saya
                             </a>
 
-                            <form action="{{ route('logout') }}" method="POST"
-                                onsubmit="return confirm('Yakin ingin keluar dari akun ini?');">
-                                @csrf
-                                <button type="submit"
+                            <button type="button" @click="profileOpen = false; logoutConfirmOpen = true"
                                     class="group flex w-full items-center gap-2.5 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition border-t border-gray-100">
                                     <i class="ri-logout-box-line text-red-400 group-hover:text-red-600"></i>
                                     Logout
-                                </button>
-                            </form>
+                            </button>
                         </div>
                     </div>
+
+                    <template x-teleport="body">
+                        <div x-show="logoutConfirmOpen" x-cloak
+                            @keydown.escape.window="logoutConfirmOpen = false"
+                            @click.self="logoutConfirmOpen = false"
+                            class="fixed inset-0 z-[120] flex items-center justify-center bg-black/50 p-4">
+                            <div role="dialog" aria-modal="true" aria-labelledby="logout-confirm-title"
+                                class="w-full max-w-sm bg-white p-6 shadow-xl">
+                                <div class="flex items-start gap-3">
+                                    <i class="ri-logout-box-line text-2xl text-red-500"></i>
+                                    <div>
+                                        <h2 id="logout-confirm-title" class="text-lg font-semibold text-gray-800">
+                                            Konfirmasi Logout
+                                        </h2>
+                                        <p class="mt-1 text-sm text-gray-500">
+                                            Apakah Anda yakin ingin keluar dari akun ini?
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="mt-6 flex justify-end gap-2">
+                                    <button type="button" @click="logoutConfirmOpen = false"
+                                        class="border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                        Batal
+                                    </button>
+                                    <form action="{{ route('logout') }}" method="POST">
+                                        @csrf
+                                        <button type="submit"
+                                            class="bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700">
+                                            Ya, Logout
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                 </div>
             </header>
 

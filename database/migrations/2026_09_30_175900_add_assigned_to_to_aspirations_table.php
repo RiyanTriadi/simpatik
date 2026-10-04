@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('aspirations', function (Blueprint $table) {
-            $table->foreignId('assigned_to')->nullable()->constrained('users')->nullOnDelete();
-            $table->timestamp('assigned_at')->nullable();
+            $table->foreignId('assigned_to')->nullable()->constrained('users')->nullOnDelete()->after('category_id');
+            $table->timestamp('assigned_at')->nullable()->after('assigned_to');
         });
     }
 

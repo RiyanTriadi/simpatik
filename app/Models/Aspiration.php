@@ -39,6 +39,7 @@ class Aspiration extends Model
     {
         return [
             'is_anonymous' => 'boolean',
+            'assigned_at' => 'datetime',
         ];
     }
 
@@ -69,5 +70,10 @@ class Aspiration extends Model
         return $this->creator_type === self::CREATOR_INTERNAL
             ? 'text-teal-500'
             : 'text-indigo-500';
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'ticket_number';
     }
 }

@@ -121,27 +121,13 @@
                                             class="fixed z-[100] w-36 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 border border-gray-100">
 
                                             <div class="py-1">
-                                                <a href="{{ role_route('aspirasi.show', $aspiration->id) }}"
+                                                <a href="{{ role_route('aspirasi.show', $aspiration) }}"
                                                     class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-prussian-blue-500 transition">
                                                     <i
                                                         class="ri-eye-line mr-2 text-gray-400 group-hover:text-prussian-blue-500"></i>
                                                     Detail
                                                 </a>
 
-                                                @if (auth()->user()->role === 'admin')
-                                                <form action="{{ role_route('aspirasi.destroy', $aspiration->id) }}"
-                                                    method="POST"
-                                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus aspirasi ini?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit"
-                                                        class="group flex w-full items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition">
-                                                        <i
-                                                            class="ri-delete-bin-line mr-2 text-red-400 group-hover:text-red-600"></i>
-                                                        Hapus
-                                                    </button>
-                                                </form>
-                                                @endif
                                             </div>
                                         </div>
                                     </template>

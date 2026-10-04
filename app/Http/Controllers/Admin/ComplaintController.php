@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Complaint;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class ComplaintController extends Controller
 {
@@ -30,21 +32,46 @@ class ComplaintController extends Controller
         return view('admin.complaints.index', compact('complaints'));
     }
 
-    public function show(string $id)
+    public function show(Complaint $complaint)
     {
-        $complaint = Complaint::with(['category', 'officer.unit'])->findOrFail($id);
+        $complaint->load(['category', 'officer.unit']);
 
         if (auth()->user()->role === 'petugas' && $complaint->assigned_to !== auth()->id()) {
             abort(403, 'Anda tidak memiliki akses ke pengaduan ini.');
         }
 
-        return view('admin.complaints.show', compact('complaint'));
+        $officers = collect();
+        if (in_array(auth()->user()->role, [User::ROLE_ADMIN, User::ROLE_STAFF], true)) {
+            $officers = User::query()
+                ->where('role', User::ROLE_PETUGAS)
+                ->with('unit')
+                ->orderBy('name')
+                ->get(['id', 'name', 'unit_id']);
+        }
+
+        return view('admin.complaints.show', compact('complaint', 'officers'));
     }
 
-    public function update(Request $request, string $id)
+    public function downloadAttachment(Complaint $complaint)
     {
-        $complaint = Complaint::findOrFail($id);
+        if (auth()->user()->role === User::ROLE_PETUGAS && $complaint->assigned_to !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki akses ke pengaduan ini.');
+        }
 
+        $path = $complaint->attachment_path;
+
+        abort_if(!$path || !Storage::disk('public')->exists($path), 404);
+
+        $extension = pathinfo($path, PATHINFO_EXTENSION);
+
+        return Storage::disk('public')->download(
+            $path,
+            $complaint->ticket_number . ($extension ? '.' . $extension : '')
+        );
+    }
+
+    public function update(Request $request, Complaint $complaint)
+    {
         if (auth()->user()->role === 'petugas' && $complaint->assigned_to !== auth()->id()) {
             abort(403);
         }
@@ -57,15 +84,6 @@ class ComplaintController extends Controller
         $complaint->update($validated);
 
         return redirect()->back()->with('success', 'Pengaduan berhasil diperbarui.');
-    }
-
-    public function destroy(string $id)
-    {
-        $complaint = Complaint::findOrFail($id);
-        $complaint->delete();
-
-        return redirect()->route(role_prefix() . '.pengaduan.index')
-            ->with('success', 'Pengaduan berhasil dihapus.');
     }
 
     public function verification(Request $request)
@@ -121,15 +139,11 @@ class ComplaintController extends Controller
     public function assignStore(Request $request, Complaint $complaint)
     {
         $validated = $request->validate([
-            'assigned_to' => ['nullable', 'exists:users,id'],
+            'assigned_to' => [
+                'nullable',
+                Rule::exists('users', 'id')->where('role', User::ROLE_PETUGAS),
+            ],
         ]);
-
-        if (!empty($validated['assigned_to'])) {
-            $officer = User::find($validated['assigned_to']);
-            if ($officer->role !== User::ROLE_PETUGAS) {
-                return redirect()->back()->with('error', 'User yang dipilih bukan seorang petugas.');
-            }
-        }
 
         $complaint->update([
             'assigned_to' => $validated['assigned_to'] ?? null,

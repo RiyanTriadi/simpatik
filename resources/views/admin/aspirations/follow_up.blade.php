@@ -24,7 +24,8 @@
                 <i class="ri-information-line text-purple-500 text-lg mt-0.5"></i>
                 <p class="text-xs text-purple-700">
                     Terdapat <strong>{{ $aspirations->total() }} aspirasi</strong> yang menunggu tindak lanjut.
-                    Klik tombol aksi untuk menandai sebagai <strong>ditindaklanjuti</strong>.
+                    Pilih petugas melalui tombol aksi untuk menugaskan dan menandai aspirasi sebagai
+                    <strong>ditindaklanjuti</strong>.
                 </p>
             </div>
         @endif
@@ -88,9 +89,10 @@
                             <td class="text-center px-4 py-3">
                                 <div x-data="{
                                                 open: false,
-                                                top: 0,
-                                                left: 0,
-                                                toggle(event) {
+                                            modalOpen: @js($errors->has('assigned_to') && (string) old('aspiration_id') === (string) $aspiration->id),
+                                            top: 0,
+                                            left: 0,
+                                            toggle(event) {
                                                     if (this.open) { this.open = false; return; }
                                                     const rect = event.currentTarget.getBoundingClientRect();
                                                     this.top  = rect.bottom + 4;
@@ -117,27 +119,84 @@
 
                                             <div class="py-1">
                                                 {{-- Tindak Lanjut --}}
-                                                <form action="{{ role_route('aspirasi.update', $aspiration->id) }}"
-                                                    method="POST"
-                                                    onsubmit="return confirm('Tandai aspirasi ini sebagai ditindaklanjuti?');">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <input type="hidden" name="status"
-                                                        value="{{ \App\Models\Aspiration::STATUS_DITINDAKLANJUTI }}">
-                                                    <button type="submit"
-                                                        class="group flex w-full items-center px-4 py-2 text-sm text-emerald-600 hover:bg-emerald-50 transition">
-                                                        <i class="ri-check-double-line mr-2 text-emerald-500"></i>
-                                                        Tindak Lanjut
-                                                    </button>
-                                                </form>
+                                                <button type="button"
+                                                    @click="open = false; modalOpen = true"
+                                                    class="group flex w-full items-center px-4 py-2 text-sm text-emerald-600 hover:bg-emerald-50 transition">
+                                                    <i class="ri-check-double-line mr-2 text-emerald-500"></i>
+                                                    Tindak Lanjut
+                                                </button>
 
                                                 {{-- Detail --}}
-                                                <a href="{{ role_route('aspirasi.show', $aspiration->id) }}"
+                                                <a href="{{ role_route('aspirasi.show', $aspiration) }}"
                                                     class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-prussian-blue-500 transition border-t border-gray-100">
                                                     <i
                                                         class="ri-eye-line mr-2 text-gray-400 group-hover:text-prussian-blue-500"></i>
                                                     Detail
                                                 </a>
+                                            </div>
+                                        </div>
+                                    </template>
+
+                                    <template x-teleport="body">
+                                        <div x-show="modalOpen" x-cloak
+                                            @keydown.escape.window="modalOpen = false"
+                                            @click.self="modalOpen = false"
+                                            x-transition:enter="transition ease-out duration-200"
+                                            x-transition:enter-start="opacity-0"
+                                            x-transition:enter-end="opacity-100"
+                                            x-transition:leave="transition ease-in duration-150"
+                                            x-transition:leave-start="opacity-100"
+                                            x-transition:leave-end="opacity-0"
+                                            class="fixed inset-0 z-[110] flex items-center justify-center bg-black/50 p-4">
+                                            <div role="dialog" aria-modal="true"
+                                                aria-labelledby="assign-modal-title-{{ $aspiration->id }}"
+                                                class="w-full max-w-md bg-white p-6 shadow-xl">
+                                                <h2 id="assign-modal-title-{{ $aspiration->id }}"
+                                                    class="text-lg font-semibold text-prussian-blue-500">
+                                                    Tugaskan Aspirasi
+                                                </h2>
+                                                <p class="mt-1 text-sm text-gray-500">
+                                                    Pilih petugas yang akan menangani tiket
+                                                    <strong>{{ $aspiration->ticket_number }}</strong>.
+                                                </p>
+
+                                                <form action="{{ role_route('aspirasi.assign.store', $aspiration) }}"
+                                                    method="POST" class="mt-5">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <input type="hidden" name="aspiration_id"
+                                                        value="{{ $aspiration->id }}">
+
+                                                    <label for="assigned-to-{{ $aspiration->id }}"
+                                                        class="mb-1 block text-sm font-medium text-gray-700">
+                                                        Petugas
+                                                    </label>
+                                                    <select id="assigned-to-{{ $aspiration->id }}"
+                                                        name="assigned_to" required
+                                                        class="w-full border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none">
+                                                        <option value="">Pilih petugas</option>
+                                                        @foreach ($officers as $officer)
+                                                            <option value="{{ $officer->id }}"
+                                                                @selected(old('assigned_to') == $officer->id)>
+                                                                {{ $officer->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error('assigned_to')
+                                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                                    @enderror
+
+                                                    <div class="mt-6 flex justify-end gap-2">
+                                                        <button type="button" @click="modalOpen = false"
+                                                            class="border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                                            Batal
+                                                        </button>
+                                                        <button type="submit"
+                                                            class="bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">
+                                                            Tugaskan &amp; Tindak Lanjut
+                                                        </button>
+                                                    </div>
+                                                </form>
                                             </div>
                                         </div>
                                     </template>

@@ -1,5 +1,5 @@
 <x-layout.admin title="Manajemen User">
-    <div class="bg-white p-4">
+    <div x-data="{ deleteOpen: false, deleteAction: '', deleteName: '' }" class="bg-white p-4">
         {{-- Header --}}
         <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
             <h1 class="text-lg font-semibold">Manajemen User</h1>
@@ -138,18 +138,18 @@
                                                 </a>
 
                                                 {{-- Form Hapus --}}
-                                                <form action="{{ role_route('users.destroy', $user) }}"
-                                                    method="POST"
-                                                    onsubmit="return confirm('Yakin ingin menghapus user ini?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit"
+                                                <button type="button"
+                                                    @click="
+                                                        deleteAction = {{ Js::from(role_route('users.destroy', $user)) }};
+                                                        deleteName = {{ Js::from($user->name) }};
+                                                        deleteOpen = true;
+                                                        open = false;
+                                                    "
                                                         {{ auth()->id() === $user->id ? 'disabled' : '' }}
                                                         class="group flex w-full items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition disabled:opacity-50 disabled:cursor-not-allowed">
                                                         <i class="ri-delete-bin-line mr-2 text-red-400 group-hover:text-red-600"></i>
                                                         Hapus
-                                                    </button>
-                                                </form>
+                                                </button>
                                             </div>
                                         </div>
                                     </template>
@@ -169,6 +169,34 @@
         </div>
 
         {{ $users->links('components.pagination') }}
+
+        <template x-teleport="body">
+            <div x-show="deleteOpen" x-cloak @keydown.escape.window="deleteOpen = false"
+                @click.self="deleteOpen = false"
+                class="fixed inset-0 z-[120] flex items-center justify-center bg-black/50 p-4">
+                <div role="dialog" aria-modal="true" aria-labelledby="delete-user-title"
+                    class="w-full max-w-sm bg-white p-6 shadow-xl">
+                    <h2 id="delete-user-title" class="text-lg font-semibold text-gray-800">
+                        Hapus User?
+                    </h2>
+                    <p class="mt-2 text-sm text-gray-600">
+                        User <strong x-text="deleteName"></strong> akan dihapus. Tindakan ini tidak dapat dibatalkan.
+                    </p>
+                    <form :action="deleteAction" method="POST" class="mt-6 flex justify-end gap-2">
+                        @csrf
+                        @method('DELETE')
+                        <button type="button" @click="deleteOpen = false"
+                            class="border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                            Batal
+                        </button>
+                        <button type="submit"
+                            class="bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700">
+                            Ya, Hapus
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </template>
 
     </div>
 </x-layout.admin>

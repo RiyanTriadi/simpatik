@@ -29,12 +29,29 @@
                 </div>
 
                 {{-- Lampiran --}}
-                @if($aspiration->attachment_path)
+                @if ($aspiration->attachment_path)
                     <div class="bg-white border border-gray-200 p-5">
                         <h3 class="text-md font-semibold text-gray-800 mb-4 border-b pb-2">Lampiran</h3>
-                        <a href="{{ Storage::url($aspiration->attachment_path) }}" target="_blank"
-                            class="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium text-sm">
-                            <i class="ri-file-download-line text-lg"></i> Lihat / Unduh Lampiran
+                        @php($attachmentExtension = strtolower(pathinfo($aspiration->attachment_path, PATHINFO_EXTENSION)))
+                        @if (in_array($attachmentExtension, ['jpg', 'jpeg', 'png'], true))
+                            <a href="{{ Storage::url($aspiration->attachment_path) }}" target="_blank"
+                                rel="noopener noreferrer">
+                                <img src="{{ Storage::url($aspiration->attachment_path) }}"
+                                    alt="Lampiran aspirasi {{ $aspiration->ticket_number }}"
+                                    class="max-h-[32rem] w-full object-contain border border-gray-200 bg-gray-50">
+                            </a>
+                        @else
+                            <div class="flex items-center gap-2 text-sm text-gray-600">
+                                <i class="ri-file-text-line text-xl text-gray-400"></i>
+                                <a href="{{ Storage::url($aspiration->attachment_path) }}" target="_blank"
+                                    rel="noopener noreferrer" class="text-emerald-600 hover:text-emerald-700">
+                                    Lihat lampiran dokumen
+                                </a>
+                            </div>
+                        @endif
+                        <a href="{{ role_route('aspirasi.attachment.download', $aspiration) }}"
+                            class="mt-4 inline-flex items-center gap-2 bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-700">
+                            <i class="ri-download-line"></i> Download Lampiran
                         </a>
                     </div>
                 @endif
@@ -75,7 +92,7 @@
                                     class="absolute right-0 z-50 mt-2 w-44 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 border border-gray-100">
                                     <div class="py-1">
                                         @foreach (['baru' => 'Baru', 'dibaca' => 'Dibaca', 'ditindaklanjuti' => 'Ditindaklanjuti'] as $value => $label)
-                                                <form action="{{ role_route('aspirasi.update', $aspiration->id) }}"
+                                                <form action="{{ role_route('aspirasi.update', $aspiration) }}"
                                                     method="POST">
                                                     @csrf
                                                     @method('PUT')
@@ -100,7 +117,11 @@
                         {{-- Kategori --}}
                         <div class="flex flex-col md:flex-row justify-between md:items-center">
                             <span class="text-gray-500">Kategori</span>
-                            <span class="font-medium text-gray-800">{{ $aspiration->category->name }}</span>
+                            <span class="font-medium text-gray-800">{{ $aspiration->category->name ?? '-' }}</span>
+                        </div>
+                        <div class="flex flex-col md:flex-row justify-between md:items-center">
+                            <span class="text-gray-500">Jenis Penyampai</span>
+                            <span class="font-medium text-gray-800">{{ $aspiration->creator_label }}</span>
                         </div>
                     </div>
                 </div>
@@ -128,6 +149,55 @@
                                 <span>{{ $aspiration->reporter_email ?? '-' }}</span>
                             </div>
                         </div>
+                    @endif
+                </div>
+
+                {{-- Petugas yang Menangani --}}
+                <div class="bg-white border border-gray-200 p-5">
+                    <h3 class="text-md font-semibold text-gray-800 mb-4 border-b pb-2">Petugas Penanganan</h3>
+                    @if ($aspiration->officer)
+                        <div class="text-sm">
+                            <p class="font-medium text-gray-800">{{ $aspiration->officer->name }}</p>
+                            <p class="text-xs text-gray-500">{{ $aspiration->officer->unit->name ?? 'Tanpa Unit' }}</p>
+                            @if ($aspiration->assigned_at)
+                                <p class="mt-0.5 text-xs text-gray-400">
+                                    Di-assign {{ $aspiration->assigned_at->diffForHumans() }}
+                                </p>
+                            @endif
+                        </div>
+                    @else
+                        <div class="flex items-center gap-2 text-gray-500 text-sm">
+                            <i class="ri-user-unfollow-line text-lg"></i>
+                            <span>Belum di-assign ke petugas</span>
+                        </div>
+                    @endif
+
+                    @if (in_array(auth()->user()->role, ['admin', 'staff'], true))
+                        <form action="{{ role_route('aspirasi.assign.store', $aspiration) }}" method="POST"
+                            class="mt-5 border-t border-gray-100 pt-4">
+                            @csrf
+                            @method('PUT')
+                            <label for="assigned-to-aspiration" class="mb-1 block text-sm font-medium text-gray-700">
+                                Assign Petugas
+                            </label>
+                            <select id="assigned-to-aspiration" name="assigned_to" required
+                                class="w-full border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none">
+                                <option value="">Pilih petugas</option>
+                                @foreach ($officers as $officer)
+                                    <option value="{{ $officer->id }}"
+                                        @selected(old('assigned_to', $aspiration->assigned_to) == $officer->id)>
+                                        {{ $officer->name }}{{ $officer->unit ? ' - ' . $officer->unit->name : '' }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('assigned_to')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                            <button type="submit"
+                                class="mt-3 inline-flex items-center gap-2 bg-prussian-blue-500 px-3 py-2 text-sm font-medium text-white hover:bg-prussian-blue-600">
+                                <i class="ri-user-shared-line"></i> Simpan Petugas
+                            </button>
+                        </form>
                     @endif
                 </div>
 

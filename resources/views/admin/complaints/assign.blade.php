@@ -114,6 +114,7 @@
                                     @click="
                                         selectedComplaint = {
                                             id: {{ $complaint->id }},
+                                            ticket: {{ Js::from($complaint->ticket_number) }},
                                             ticket: '{{ $complaint->ticket_number }}',
                                             subject: {{ Js::from($complaint->subject) }},
                                             assigned_to: {{ $complaint->assigned_to ?? 'null' }}
@@ -161,7 +162,7 @@
                 </div>
 
                 {{-- Form --}}
-                <form :action="`{{ url(role_prefix() . '/pengaduan') }}/${selectedComplaint.id}/assign`" method="POST">
+                <form :action="`{{ url(role_prefix() . '/pengaduan') }}/${selectedComplaint.ticket}/assign`" method="POST">
                     @csrf
                     @method('PUT')
 
@@ -226,7 +227,7 @@
                 </form>
 
                 {{-- Form Terpisah untuk Unassign --}}
-                <form id="unassign-form" :action="`{{ url(role_prefix() . '/pengaduan') }}/${selectedComplaint.id}/assign`" method="POST" class="hidden">
+                <form id="unassign-form" :action="`{{ url(role_prefix() . '/pengaduan') }}/${selectedComplaint.ticket}/assign`" method="POST" class="hidden">
                     @csrf
                     @method('PUT')
                     <input type="hidden" name="assigned_to" value="">

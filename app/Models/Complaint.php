@@ -101,4 +101,9 @@ class Complaint extends Model
             ? 'text-teal-500'
             : 'text-indigo-500';
     }
+
+    public function getRouteKeyName(): string
+    {
+        return 'ticket_number';
+    }
 }

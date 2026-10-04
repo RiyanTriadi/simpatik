@@ -2,6 +2,9 @@
     <div x-data="{
             createOpen: false,
             editOpen: false,
+            deleteOpen: false,
+            deleteAction: '',
+            deleteName: '',
             editData: { id: null, name: '', code: '', description: '', is_active: true }
         }" class="bg-white p-4">
 
@@ -132,17 +135,17 @@
                                                     Edit
                                                 </button>
 
-                                                <form action="{{ role_route('master.unit-kerja.destroy', $unit) }}"
-                                                    method="POST"
-                                                    onsubmit="return confirm('Yakin ingin menghapus unit kerja ini?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit"
-                                                        class="group flex w-full items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition">
-                                                        <i class="ri-delete-bin-line mr-2 text-red-400 group-hover:text-red-600"></i>
-                                                        Hapus
-                                                    </button>
-                                                </form>
+                                                <button type="button"
+                                                    @click="
+                                                        deleteAction = {{ Js::from(role_route('master.unit-kerja.destroy', $unit)) }};
+                                                        deleteName = {{ Js::from($unit->name) }};
+                                                        deleteOpen = true;
+                                                        open = false;
+                                                    "
+                                                    class="group flex w-full items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition">
+                                                    <i class="ri-delete-bin-line mr-2 text-red-400 group-hover:text-red-600"></i>
+                                                    Hapus
+                                                </button>
                                             </div>
                                         </div>
                                     </template>
@@ -162,6 +165,34 @@
         </div>
 
         {{ $units->links('components.pagination') }}
+
+        <template x-teleport="body">
+            <div x-show="deleteOpen" x-cloak @keydown.escape.window="deleteOpen = false"
+                @click.self="deleteOpen = false"
+                class="fixed inset-0 z-[120] flex items-center justify-center bg-black/50 p-4">
+                <div role="dialog" aria-modal="true" aria-labelledby="delete-unit-title"
+                    class="w-full max-w-sm bg-white p-6 shadow-xl">
+                    <h2 id="delete-unit-title" class="text-lg font-semibold text-gray-800">
+                        Hapus Unit Kerja?
+                    </h2>
+                    <p class="mt-2 text-sm text-gray-600">
+                        Unit kerja <strong x-text="deleteName"></strong> akan dihapus. Tindakan ini tidak dapat dibatalkan.
+                    </p>
+                    <form :action="deleteAction" method="POST" class="mt-6 flex justify-end gap-2">
+                        @csrf
+                        @method('DELETE')
+                        <button type="button" @click="deleteOpen = false"
+                            class="border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                            Batal
+                        </button>
+                        <button type="submit"
+                            class="bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700">
+                            Ya, Hapus
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </template>
 
         {{-- Modal Create --}}
         <div x-show="createOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4">

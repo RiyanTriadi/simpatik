@@ -121,6 +121,7 @@
                                                 <button type="button" @click="
                                                                     openModal({
                                                                         id: {{ $complaint->id }},
+                                                                        ticket: {{ Js::from($complaint->ticket_number) }},
                                                                         ticket: '{{ $complaint->ticket_number }}',
                                                                         subject: {{ Js::from($complaint->subject) }},
                                                                         reporter: {{ Js::from(!$complaint->is_anonymous ? $complaint->reporter_name : 'Anonim') }},
@@ -135,7 +136,7 @@
                                                 </button>
 
                                                 {{-- Detail --}}
-                                                <a href="{{ role_route('pengaduan.show', $complaint->id) }}"
+                                                <a href="{{ role_route('pengaduan.show', $complaint) }}"
                                                     class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-prussian-blue-500 transition border-t border-gray-100">
                                                     <i
                                                         class="ri-eye-line mr-2 text-gray-400 group-hover:text-prussian-blue-500"></i>
@@ -195,7 +196,7 @@
                 </div>
 
                 {{-- Form --}}
-                <form :action="`{{ url(role_prefix() . '/pengaduan') }}/${selected.id}`" method="POST">
+                <form :action="`{{ url(role_prefix() . '/pengaduan') }}/${selected.ticket}`" method="POST">
                     @csrf
                     @method('PUT')
 

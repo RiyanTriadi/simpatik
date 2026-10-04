@@ -315,8 +315,8 @@
                                             <div class="py-1">
                                                 {{-- DETAIL --}}
                                                 <a href="{{ $ticket->type === 'complaint'
-                                                    ? role_route('pengaduan.show', $ticket->id)
-                                                    : role_route('aspirasi.show', $ticket->id) }}"
+                                                    ? role_route('pengaduan.show', $ticket->ticket_number)
+                                                        : role_route('aspirasi.show', $ticket->ticket_number) }}"
                                                     class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-prussian-blue-500 transition">
                                                     <i class="ri-eye-line mr-2 text-gray-400 group-hover:text-prussian-blue-500"></i>
                                                     Lihat Detail
@@ -418,8 +418,8 @@
                 </div>
 
                 <form :action="selected.type === 'complaint'
-                        ? `{{ url(role_prefix() . '/pengaduan') }}/${selected.id}/assign`
-                        : `{{ url(role_prefix() . '/aspirasi') }}/${selected.id}/assign`" method="POST">
+                        ? `{{ url(role_prefix() . '/pengaduan') }}/${selected.ticket}/assign`
+                        : `{{ url(role_prefix() . '/aspirasi') }}/${selected.ticket}/assign`" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="p-5">
@@ -468,8 +468,8 @@
                 </div>
 
                 <form :action="selected.type === 'complaint'
-                        ? `{{ url(role_prefix() . '/pengaduan') }}/${selected.id}`
-                        : `{{ url(role_prefix() . '/aspirasi') }}/${selected.id}`" method="POST">
+                        ? `{{ url(role_prefix() . '/pengaduan') }}/${selected.ticket}`
+                        : `{{ url(role_prefix() . '/aspirasi') }}/${selected.ticket}`" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="p-5 space-y-2">
@@ -557,7 +557,7 @@
                     <p class="text-sm text-gray-700 line-clamp-2" x-text="selected.subject"></p>
                 </div>
 
-                <form :action="`{{ url(role_prefix() . '/pengaduan') }}/${selected.id}`" method="POST">
+                <form :action="`{{ url(role_prefix() . '/pengaduan') }}/${selected.ticket}`" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="p-5 grid grid-cols-2 gap-2">

@@ -339,8 +339,8 @@
 
                                 <td class="text-center px-4 py-3">
                                     <a href="{{ $ticket->type === 'complaint'
-                                        ? role_route('pengaduan.show', $ticket->id)
-                                        : role_route('aspirasi.show', $ticket->id) }}"
+                                        ? role_route('pengaduan.show', $ticket->ticket_number)
+                                        : role_route('aspirasi.show', $ticket->ticket_number) }}"
                                         class="inline-flex items-center gap-1 text-xs text-gray-600 hover:text-prussian-blue-500 border border-gray-300 hover:border-prussian-blue-500 px-2.5 py-1 transition">
                                         <i class="ri-eye-line"></i>
                                         Detail

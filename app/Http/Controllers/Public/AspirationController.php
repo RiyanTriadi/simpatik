@@ -88,14 +88,6 @@ class AspirationController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
-    /**
      * Generate a unique aspiration ticket number.
      */
     private function generateTicketNumber(): string
