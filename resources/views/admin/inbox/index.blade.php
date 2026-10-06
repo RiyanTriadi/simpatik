@@ -49,13 +49,13 @@
             $currentStatus = request('status', 'semua');
             $currentType = request('type', 'semua');
             $chips = [
-                ['key' => 'semua',            'label' => 'Semua',            'count' => $counts['all'],             'class' => 'prussian-blue'],
-                ['key' => 'baru',             'label' => 'Baru',             'count' => $counts['baru'],            'class' => 'blue'],
-                ['key' => 'diproses',         'label' => 'Diproses',         'count' => $counts['diproses'],        'class' => 'yellow'],
-                ['key' => 'selesai',          'label' => 'Selesai',          'count' => $counts['selesai'],         'class' => 'emerald'],
-                ['key' => 'ditolak',          'label' => 'Ditolak',          'count' => $counts['ditolak'],         'class' => 'red'],
-                ['key' => 'dibaca',           'label' => 'Dibaca',           'count' => $counts['dibaca'],          'class' => 'purple'],
-                ['key' => 'ditindaklanjuti',  'label' => 'Ditindaklanjuti',  'count' => $counts['ditindaklanjuti'], 'class' => 'teal'],
+                ['key' => 'semua', 'label' => 'Semua', 'count' => $counts['all'], 'class' => 'prussian-blue'],
+                ['key' => 'baru', 'label' => 'Baru', 'count' => $counts['baru'], 'class' => 'blue'],
+                ['key' => 'diproses', 'label' => 'Diproses', 'count' => $counts['diproses'], 'class' => 'yellow'],
+                ['key' => 'selesai', 'label' => 'Selesai', 'count' => $counts['selesai'], 'class' => 'emerald'],
+                ['key' => 'ditolak', 'label' => 'Ditolak', 'count' => $counts['ditolak'], 'class' => 'red'],
+                ['key' => 'dibaca', 'label' => 'Dibaca', 'count' => $counts['dibaca'], 'class' => 'purple'],
+                ['key' => 'ditindaklanjuti', 'label' => 'Ditindaklanjuti', 'count' => $counts['ditindaklanjuti'], 'class' => 'teal'],
             ];
         @endphp
 
@@ -73,7 +73,8 @@
                 <a href="{{ $url }}"
                     class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border transition {{ $isActive ? $activeClass : $inactiveClass }}">
                     {{ $chip['label'] }}
-                    <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ $isActive ? "bg-{$chip['class']}-500 text-white" : 'bg-gray-100 text-gray-600' }}">
+                    <span
+                        class="px-1.5 py-0.5 rounded-full text-[10px] {{ $isActive ? "bg-{$chip['class']}-500 text-white" : 'bg-gray-100 text-gray-600' }}">
                         {{ $chip['count'] }}
                     </span>
                 </a>
@@ -81,10 +82,8 @@
         </div>
 
         {{-- FILTER PANEL --}}
-        <div x-show="filterOpen" x-cloak
-            x-transition:enter="transition ease-out duration-150"
-            x-transition:enter-start="opacity-0 -translate-y-2"
-            x-transition:enter-end="opacity-100 translate-y-0"
+        <div x-show="filterOpen" x-cloak x-transition:enter="transition ease-out duration-150"
+            x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
             class="mt-3 border border-gray-200 bg-gray-50 p-4">
             <form action="{{ role_route('inbox.index') }}" method="GET" class="space-y-3">
                 @if (request('search'))
@@ -101,8 +100,10 @@
                         <select name="type"
                             class="w-full h-9 border border-gray-300 text-sm px-2 bg-white focus:outline-none focus:border-emerald-500">
                             <option value="">Semua Tipe</option>
-                            <option value="complaint" {{ request('type') == 'complaint' ? 'selected' : '' }}>Pengaduan</option>
-                            <option value="aspiration" {{ request('type') == 'aspiration' ? 'selected' : '' }}>Aspirasi</option>
+                            <option value="complaint" {{ request('type') == 'complaint' ? 'selected' : '' }}>Pengaduan
+                            </option>
+                            <option value="aspiration" {{ request('type') == 'aspiration' ? 'selected' : '' }}>Aspirasi
+                            </option>
                         </select>
                     </div>
 
@@ -122,7 +123,8 @@
 
                     {{-- Prioritas --}}
                     <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">Prioritas <span class="text-gray-400">(Pengaduan)</span></label>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Prioritas <span
+                                class="text-gray-400">(Pengaduan)</span></label>
                         <select name="priority"
                             class="w-full h-9 border border-gray-300 text-sm px-2 bg-white focus:outline-none focus:border-emerald-500">
                             <option value="">Semua Prioritas</option>
@@ -135,12 +137,15 @@
 
                     {{-- Petugas --}}
                     <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">Petugas <span class="text-gray-400">(Pengaduan)</span></label>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Petugas <span
+                                class="text-gray-400">(Pengaduan)</span></label>
                         <select name="assigned_to"
                             class="w-full h-9 border border-gray-300 text-sm px-2 bg-white focus:outline-none focus:border-emerald-500">
                             <option value="">Semua Petugas</option>
-                            <option value="unassigned" {{ request('assigned_to') == 'unassigned' ? 'selected' : '' }}>— Belum Di-assign —</option>
-                            <option value="assigned" {{ request('assigned_to') == 'assigned' ? 'selected' : '' }}>— Sudah Di-assign —</option>
+                            <option value="unassigned" {{ request('assigned_to') == 'unassigned' ? 'selected' : '' }}>—
+                                Belum Di-assign —</option>
+                            <option value="assigned" {{ request('assigned_to') == 'assigned' ? 'selected' : '' }}>— Sudah
+                                Di-assign —</option>
                             @foreach ($officers as $officer)
                                 <option value="{{ $officer->id }}" {{ request('assigned_to') == $officer->id ? 'selected' : '' }}>
                                     {{ $officer->name }}
@@ -171,7 +176,8 @@
                 </div>
 
                 <div class="flex items-center justify-end gap-2 pt-2 border-t border-gray-200">
-                    <a href="{{ role_route('inbox.index') }}" class="text-xs text-gray-600 hover:text-gray-800 px-3 py-1.5">
+                    <a href="{{ role_route('inbox.index') }}"
+                        class="text-xs text-gray-600 hover:text-gray-800 px-3 py-1.5">
                         Reset Filter
                     </a>
                     <button type="submit"
@@ -185,7 +191,7 @@
         {{-- TABEL --}}
         <div class="mt-4 overflow-x-auto border border-alabaster-grey-300">
             <table class="w-full min-w-max text-sm">
-                <thead class="bg-alabaster-grey-500">
+                <thead class="bg-prussian-blue-100">
                     <tr class="border-b border-alabaster-grey-300">
                         <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500 w-12">#</th>
                         <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">No Tiket</th>
@@ -199,194 +205,199 @@
                 </thead>
                 <tbody>
                     @forelse ($tickets as $ticket)
-                        <tr class="border-b border-alabaster-grey-100 bg-white hover:bg-gray-50">
-                            <td class="px-4 py-3 text-gray-500">
-                                {{ $loop->iteration + ($tickets->currentPage() - 1) * $tickets->perPage() }}
-                            </td>
+                                                                                    <tr class="border-b border-alabaster-grey-100 bg-white hover:bg-gray-50">
+                                                                                        <td class="px-4 py-3 text-gray-500">
+                                                                                            {{ $loop->iteration + ($tickets->currentPage() - 1) * $tickets->perPage() }}
+                                                                                        </td>
 
-                            <td class="px-4 py-3 font-medium text-prussian-blue-500">
-                                {{ $ticket->ticket_number }}
-                            </td>
+                                                                                        <td class="px-4 py-3 font-medium text-prussian-blue-500">
+                                                                                            {{ $ticket->ticket_number }}
+                                                                                        </td>
 
-                            {{-- TIPE --}}
-                            <td class="px-4 py-3">
-                                @if ($ticket->type === 'complaint')
-                                    <span class="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-800">
-                                        <i class="ri-file-list-3-line"></i> Pengaduan
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold bg-purple-100 text-purple-800">
-                                        <i class="ri-message-2-line"></i> Aspirasi
-                                    </span>
-                                @endif
-                            </td>
+                                                                                        {{-- TIPE --}}
+                                                                                        <td class="px-4 py-3">
+                                                                                            @if ($ticket->type === 'complaint')
+                                                                                                <span
+                                                                                                    class="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-800">
+                                                                                                    <i class="ri-file-list-3-line"></i> Pengaduan
+                                                                                                </span>
+                                                                                            @else
+                                                                                                <span
+                                                                                                    class="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold bg-purple-100 text-purple-800">
+                                                                                                    <i class="ri-message-2-line"></i> Aspirasi
+                                                                                                </span>
+                                                                                            @endif
+                                                                                        </td>
 
-                            <td class="px-4 py-3 max-w-xs">
-                                <p class="line-clamp-1" title="{{ $ticket->subject }}">{{ $ticket->subject }}</p>
-                                <p class="text-xs text-gray-500 mt-0.5">{{ $ticket->category_name ?? '-' }}</p>
-                            </td>
+                                                                                        <td class="px-4 py-3 max-w-xs">
+                                                                                            <p class="line-clamp-1" title="{{ $ticket->subject }}">{{ $ticket->subject }}</p>
+                                                                                            <p class="text-xs text-gray-500 mt-0.5">{{ $ticket->category_name ?? '-' }}</p>
+                                                                                        </td>
 
-                            {{-- STATUS --}}
-                            <td class="px-4 py-3">
-                                <span class="px-2 py-1 text-xs font-semibold whitespace-nowrap
-                                    @if ($ticket->status == 'baru') bg-blue-100 text-blue-800
-                                    @elseif($ticket->status == 'diproses') bg-yellow-100 text-yellow-800
-                                    @elseif($ticket->status == 'selesai') bg-emerald-100 text-emerald-800
-                                    @elseif($ticket->status == 'ditolak') bg-red-100 text-red-800
-                                    @elseif($ticket->status == 'dibaca') bg-purple-100 text-purple-800
-                                    @elseif($ticket->status == 'ditindaklanjuti') bg-teal-100 text-teal-800
-                                    @endif">
-                                    {{ ucfirst($ticket->status) }}
-                                </span>
-                            </td>
+                                                                                        {{-- STATUS --}}
+                                                                                        <td class="px-4 py-3">
+                                                                                            <span class="px-2 py-1 text-xs font-semibold whitespace-nowrap
+                                                                                                                                                                    @if ($ticket->status == 'baru') bg-blue-100 text-blue-800
+                                                                                                                                                                    @elseif($ticket->status == 'diproses') bg-yellow-100 text-yellow-800
+                                                                                                                                                                    @elseif($ticket->status == 'selesai') bg-emerald-100 text-emerald-800
+                                                                                                                                                                    @elseif($ticket->status == 'ditolak') bg-red-100 text-red-800
+                                                                                                                                                                    @elseif($ticket->status == 'dibaca') bg-purple-100 text-purple-800
+                                                                                                                                                                    @elseif($ticket->status == 'ditindaklanjuti') bg-teal-100 text-teal-800
+                                                                                                                                                                    @endif">
+                                                                                                {{ ucfirst($ticket->status) }}
+                                                                                            </span>
+                                                                                        </td>
 
-                            {{-- PRIORITAS --}}
-                            <td class="px-4 py-3">
-                                @if ($ticket->priority)
-                                    <span class="px-2 py-1 text-xs font-semibold whitespace-nowrap
-                                        @if ($ticket->priority == 'urgent') bg-red-100 text-red-800
-                                        @elseif($ticket->priority == 'tinggi') bg-orange-100 text-orange-800
-                                        @elseif($ticket->priority == 'sedang') bg-yellow-100 text-yellow-800
-                                        @else bg-gray-100 text-gray-800 @endif">
-                                        {{ ucfirst($ticket->priority) }}
-                                    </span>
-                                @else
-                                    <span class="text-xs text-gray-400">—</span>
-                                @endif
-                            </td>
+                                                                                        {{-- PRIORITAS --}}
+                                                                                        <td class="px-4 py-3">
+                                                                                            @if ($ticket->priority)
+                                                                                                <span
+                                                                                                    class="px-2 py-1 text-xs font-semibold whitespace-nowrap
+                                                                                                                                                                            @if ($ticket->priority == 'urgent') bg-red-100 text-red-800
+                                                                                                                                                                            @elseif($ticket->priority == 'tinggi') bg-orange-100 text-orange-800
+                                                                                                                                                                            @elseif($ticket->priority == 'sedang') bg-yellow-100 text-yellow-800
+                                                                                                                                                                            @else bg-gray-100 text-gray-800 @endif">
+                                                                                                    {{ ucfirst($ticket->priority) }}
+                                                                                                </span>
+                                                                                            @else
+                                                                                                <span class="text-xs text-gray-400">—</span>
+                                                                                            @endif
+                                                                                        </td>
 
-                            {{-- PETUGAS --}}
-                            <td class="px-4 py-3">
-                                @if ($ticket->officer_name)
-                                    <div class="flex items-center gap-2">
-                                        @if ($ticket->officer_image)
-                                            <img src="{{ Storage::url($ticket->officer_image) }}"
-                                                class="w-7 h-7 rounded-full object-cover border border-gray-200">
-                                        @else
-                                            <div class="w-7 h-7 rounded-full bg-prussian-blue-500 flex items-center justify-center text-white text-xs font-semibold">
-                                                {{ strtoupper(substr($ticket->officer_name, 0, 1)) }}
-                                            </div>
-                                        @endif
-                                        <p class="text-xs font-medium text-gray-700">{{ $ticket->officer_name }}</p>
-                                    </div>
-                                @elseif ($ticket->type === 'complaint')
-                                    <span class="inline-flex items-center gap-1 text-xs text-gray-400">
-                                        <i class="ri-user-unfollow-line"></i> Belum di-assign
-                                    </span>
-                                @else
-                                    <span class="text-xs text-gray-400">—</span>
-                                @endif
-                            </td>
+                                                                                        {{-- PETUGAS --}}
+                                                                                        <td class="px-4 py-3">
+                                                                                            @if ($ticket->officer_name)
+                                                                                                <div class="flex items-center gap-2">
+                                                                                                    @if ($ticket->officer_image)
+                                                                                                        <img src="{{ Storage::url($ticket->officer_image) }}"
+                                                                                                            class="w-7 h-7 rounded-full object-cover border border-gray-200">
+                                                                                                    @else
+                                                                                                        <div
+                                                                                                            class="w-7 h-7 rounded-full bg-prussian-blue-500 flex items-center justify-center text-white text-xs font-semibold">
+                                                                                                            {{ strtoupper(substr($ticket->officer_name, 0, 1)) }}
+                                                                                                        </div>
+                                                                                                    @endif
+                                                                                                    <p class="text-xs font-medium text-gray-700">{{ $ticket->officer_name }}</p>
+                                                                                                </div>
+                                                                                            @elseif ($ticket->type === 'complaint')
+                                                                                                <span class="inline-flex items-center gap-1 text-xs text-gray-400">
+                                                                                                    <i class="ri-user-unfollow-line"></i> Belum di-assign
+                                                                                                </span>
+                                                                                            @else
+                                                                                                <span class="text-xs text-gray-400">—</span>
+                                                                                            @endif
+                                                                                        </td>
 
-                            {{-- AKSI --}}
-                            <td class="text-center px-4 py-3">
-                                <div x-data="{
-                                        open: false,
-                                        top: 0,
-                                        left: 0,
-                                        toggle(event) {
-                                            if (this.open) { this.open = false; return; }
-                                            const rect = event.currentTarget.getBoundingClientRect();
-                                            this.top  = rect.bottom + 4;
-                                            this.left = rect.right - 176;
-                                            this.open = true;
-                                        }
-                                    }"
-                                    @scroll.window="open = false"
-                                    @resize.window="open = false">
+                                                                                        {{-- AKSI --}}
+                                                                                        <td class="text-center px-4 py-3">
+                                                                                            <div x-data="{
+                                                                                                                                                                        open: false,
+                                                                                                                                                                        top: 0,
+                                                                                                                                                                        left: 0,
+                                                                                                                                                                        toggle(event) {
+                                                                                                                                                                            if (this.open) { this.open = false; return; }
+                                                                                                                                                                            const rect = event.currentTarget.getBoundingClientRect();
+                                                                                                                                                                            this.top  = rect.bottom + 4;
+                                                                                                                                                                            this.left = rect.right - 176;
+                                                                                                                                                                            this.open = true;
+                                                                                                                                                                        }
+                                                                                                                                                                    }"
+                                                                                                @scroll.window="open = false" @resize.window="open = false">
 
-                                    <button @click="toggle($event)"
-                                        class="cursor-pointer text-gray-500 hover:text-prussian-blue-500 focus:outline-none p-1 hover:bg-gray-100 transition">
-                                        <i class="ri-more-line text-lg"></i>
-                                    </button>
+                                                                                                <button @click="toggle($event)"
+                                                                                                    class="cursor-pointer text-gray-500 hover:text-prussian-blue-500 focus:outline-none p-1 hover:bg-gray-100 transition">
+                                                                                                    <i class="ri-more-line text-lg"></i>
+                                                                                                </button>
 
-                                    <template x-teleport="body">
-                                        <div x-show="open" x-cloak
-                                            @click.outside="open = false"
-                                            x-transition:enter="transition ease-out duration-100"
-                                            x-transition:enter-start="opacity-0 scale-95"
-                                            x-transition:enter-end="opacity-100 scale-100"
-                                            x-transition:leave="transition ease-in duration-75"
-                                            x-transition:leave-start="opacity-100 scale-100"
-                                            x-transition:leave-end="opacity-0 scale-95"
-                                            :style="`top: ${top}px; left: ${left}px;`"
-                                            class="fixed z-[100] w-44 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 border border-gray-100">
+                                                                                                <template x-teleport="body">
+                                                                                                    <div x-show="open" x-cloak @click.outside="open = false"
+                                                                                                        x-transition:enter="transition ease-out duration-100"
+                                                                                                        x-transition:enter-start="opacity-0 scale-95"
+                                                                                                        x-transition:enter-end="opacity-100 scale-100"
+                                                                                                        x-transition:leave="transition ease-in duration-75"
+                                                                                                        x-transition:leave-start="opacity-100 scale-100"
+                                                                                                        x-transition:leave-end="opacity-0 scale-95"
+                                                                                                        :style="`top: ${top}px; left: ${left}px;`"
+                                                                                                        class="fixed z-[100] w-44 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 border border-gray-100">
 
-                                            <div class="py-1">
-                                                {{-- DETAIL --}}
-                                                <a href="{{ $ticket->type === 'complaint'
-                                                    ? role_route('pengaduan.show', $ticket->ticket_number)
-                                                        : role_route('aspirasi.show', $ticket->ticket_number) }}"
-                                                    class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-prussian-blue-500 transition">
-                                                    <i class="ri-eye-line mr-2 text-gray-400 group-hover:text-prussian-blue-500"></i>
-                                                    Lihat Detail
-                                                </a>
+                                                                                                        <div class="py-1">
+                                                                                                            {{-- DETAIL --}}
+                                                                                                            <a href="{{ $ticket->type === 'complaint'
+                        ? role_route('pengaduan.show', $ticket->ticket_number)
+                        : role_route('aspirasi.show', $ticket->ticket_number) }}"
+                                                                                                                class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-prussian-blue-500 transition">
+                                                                                                                <i
+                                                                                                                    class="ri-eye-line mr-2 text-gray-400 group-hover:text-prussian-blue-500"></i>
+                                                                                                                Lihat Detail
+                                                                                                            </a>
 
-                                                {{-- ASSIGN (semua tiket) --}}
-                                                <button type="button"
-                                                    @click="
-                                                        openAssign({
-                                                            id: {{ $ticket->id }},
-                                                            ticket: '{{ $ticket->ticket_number }}',
-                                                            subject: {{ Js::from($ticket->subject) }},
-                                                            type: '{{ $ticket->type }}',
-                                                            assigned_to: {{ $ticket->assigned_to ?? 'null' }}
-                                                        });
-                                                        open = false;
-                                                    "
-                                                    class="group flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-prussian-blue-500 transition">
-                                                    <i class="ri-user-add-line mr-2 text-gray-400 group-hover:text-prussian-blue-500"></i>
-                                                    Assign Petugas
-                                                </button>
+                                                                                                            {{-- ASSIGN (semua tiket) --}}
+                                                                                                            <button type="button" @click="
+                                                                                                                                                                                        openAssign({
+                                                                                                                                                                                            id: {{ $ticket->id }},
+                                                                                                                                                                                            ticket: '{{ $ticket->ticket_number }}',
+                                                                                                                                                                                            subject: {{ Js::from($ticket->subject) }},
+                                                                                                                                                                                            type: '{{ $ticket->type }}',
+                                                                                                                                                                                            assigned_to: {{ $ticket->assigned_to ?? 'null' }}
+                                                                                                                                                                                        });
+                                                                                                                                                                                        open = false;
+                                                                                                                                                                                    "
+                                                                                                                class="group flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-prussian-blue-500 transition">
+                                                                                                                <i
+                                                                                                                    class="ri-user-add-line mr-2 text-gray-400 group-hover:text-prussian-blue-500"></i>
+                                                                                                                Assign Petugas
+                                                                                                            </button>
 
-                                                {{-- UBAH STATUS --}}
-                                                <button type="button"
-                                                    @click="
-                                                        openStatus({
-                                                            id: {{ $ticket->id }},
-                                                            ticket: '{{ $ticket->ticket_number }}',
-                                                            subject: {{ Js::from($ticket->subject) }},
-                                                            type: '{{ $ticket->type }}',
-                                                            status: '{{ $ticket->status }}'
-                                                        });
-                                                        open = false;
-                                                    "
-                                                    class="group flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-prussian-blue-500 transition">
-                                                    <i class="ri-loop-right-line mr-2 text-gray-400 group-hover:text-prussian-blue-500"></i>
-                                                    Ubah Status
-                                                </button>
+                                                                                                            {{-- UBAH STATUS --}}
+                                                                                                            <button type="button" @click="
+                                                                                                                                                                                        openStatus({
+                                                                                                                                                                                            id: {{ $ticket->id }},
+                                                                                                                                                                                            ticket: '{{ $ticket->ticket_number }}',
+                                                                                                                                                                                            subject: {{ Js::from($ticket->subject) }},
+                                                                                                                                                                                            type: '{{ $ticket->type }}',
+                                                                                                                                                                                            status: '{{ $ticket->status }}'
+                                                                                                                                                                                        });
+                                                                                                                                                                                        open = false;
+                                                                                                                                                                                    "
+                                                                                                                class="group flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-prussian-blue-500 transition">
+                                                                                                                <i
+                                                                                                                    class="ri-loop-right-line mr-2 text-gray-400 group-hover:text-prussian-blue-500"></i>
+                                                                                                                Ubah Status
+                                                                                                            </button>
 
-                                                {{-- UBAH PRIORITAS (hanya complaint) --}}
-                                                @if ($ticket->type === 'complaint')
-                                                    <button type="button"
-                                                        @click="
-                                                            openPriority({
-                                                                id: {{ $ticket->id }},
-                                                                ticket: '{{ $ticket->ticket_number }}',
-                                                                subject: {{ Js::from($ticket->subject) }},
-                                                                type: 'complaint',
-                                                                priority: '{{ $ticket->priority ?? '' }}'
-                                                            });
-                                                            open = false;
-                                                        "
-                                                        class="group flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-prussian-blue-500 transition">
-                                                        <i class="ri-flag-2-line mr-2 text-gray-400 group-hover:text-prussian-blue-500"></i>
-                                                        Ubah Prioritas
-                                                    </button>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </template>
-                                </div>
-                            </td>
-                        </tr>
+                                                                                                            {{-- UBAH PRIORITAS (hanya complaint) --}}
+                                                                                                            @if ($ticket->type === 'complaint')
+                                                                                                                <button type="button"
+                                                                                                                    @click="
+                                                                                                                                                                                                openPriority({
+                                                                                                                                                                                                    id: {{ $ticket->id }},
+                                                                                                                                                                                                    ticket: '{{ $ticket->ticket_number }}',
+                                                                                                                                                                                                    subject: {{ Js::from($ticket->subject) }},
+                                                                                                                                                                                                    type: 'complaint',
+                                                                                                                                                                                                    priority: '{{ $ticket->priority ?? '' }}'
+                                                                                                                                                                                                });
+                                                                                                                                                                                                open = false;
+                                                                                                                                                                                            "
+                                                                                                                    class="group flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-prussian-blue-500 transition">
+                                                                                                                    <i
+                                                                                                                        class="ri-flag-2-line mr-2 text-gray-400 group-hover:text-prussian-blue-500"></i>
+                                                                                                                    Ubah Prioritas
+                                                                                                                </button>
+                                                                                                            @endif
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </template>
+                                                                                            </div>
+                                                                                        </td>
+                                                                                    </tr>
                     @empty
                         <tr>
                             <td colspan="8" class="px-4 py-12 text-center text-gray-500">
                                 <i class="ri-inbox-line text-4xl block mb-2"></i>
                                 <p class="text-sm">Tidak ada tiket yang cocok dengan filter.</p>
                                 @if (request()->hasAny(['search', 'status', 'type', 'category_id', 'priority', 'date_range', 'assigned_to']))
-                                    <a href="{{ role_route('inbox.index') }}" class="text-xs text-emerald-600 hover:underline mt-1 inline-block">
+                                    <a href="{{ role_route('inbox.index') }}"
+                                        class="text-xs text-emerald-600 hover:underline mt-1 inline-block">
                                         Reset semua filter
                                     </a>
                                 @endif
@@ -423,13 +434,13 @@
                     @csrf
                     @method('PUT')
                     <div class="p-5">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Pilih Petugas <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Pilih Petugas <span
+                                class="text-red-500">*</span></label>
                         <select name="assigned_to" required
                             class="w-full px-3 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500">
                             <option value="">-- Pilih Petugas --</option>
                             @foreach ($officers as $officer)
-                                <option value="{{ $officer->id }}"
-                                    :selected="selected.assigned_to === {{ $officer->id }}">
+                                <option value="{{ $officer->id }}" :selected="selected.assigned_to === {{ $officer->id }}">
                                     {{ $officer->name }}{{ $officer->unit ? ' — ' . $officer->unit->name : '' }}
                                 </option>
                             @endforeach
@@ -478,24 +489,24 @@
                         <template x-if="selected.type === 'complaint'">
                             <div class="space-y-2">
                                 @foreach ([
-                                    'baru'     => ['label' => 'Baru', 'desc' => 'Tiket baru masuk', 'color' => 'blue'],
-                                    'diproses' => ['label' => 'Diproses', 'desc' => 'Sedang ditangani', 'color' => 'yellow'],
-                                    'selesai'  => ['label' => 'Selesai', 'desc' => 'Sudah diselesaikan', 'color' => 'emerald'],
-                                    'ditolak'  => ['label' => 'Ditolak', 'desc' => 'Tidak valid', 'color' => 'red'],
-                                ] as $value => $opt)
-                                    <label class="cursor-pointer block">
-                                        <input type="radio" name="status" value="{{ $value }}"
-                                            x-model="selected.status" class="peer sr-only">
-                                        <div class="flex items-center gap-3 border-2 border-gray-200 p-3 transition
-                                            peer-checked:border-{{ $opt['color'] }}-500 peer-checked:bg-{{ $opt['color'] }}-50
-                                            hover:border-{{ $opt['color'] }}-300">
-                                            <span class="w-3 h-3 rounded-full bg-{{ $opt['color'] }}-500"></span>
-                                            <div>
-                                                <p class="text-sm font-semibold text-gray-800">{{ $opt['label'] }}</p>
-                                                <p class="text-xs text-gray-500">{{ $opt['desc'] }}</p>
-                                            </div>
-                                        </div>
-                                    </label>
+                                        'baru' => ['label' => 'Baru', 'desc' => 'Tiket baru masuk', 'color' => 'blue'],
+                                        'diproses' => ['label' => 'Diproses', 'desc' => 'Sedang ditangani', 'color' => 'yellow'],
+                                        'selesai' => ['label' => 'Selesai', 'desc' => 'Sudah diselesaikan', 'color' => 'emerald'],
+                                        'ditolak' => ['label' => 'Ditolak', 'desc' => 'Tidak valid', 'color' => 'red'],
+                                    ] as $value => $opt)
+                                                <label class="cursor-pointer block">
+                                                    <input type="radio" name="status" value="{{ $value }}" x-model="selected.status"
+                                                        class="peer sr-only">
+                                                    <div class="flex items-center gap-3 border-2 border-gray-200 p-3 transition
+                                                                            peer-checked:border-{{ $opt['color'] }}-500 peer-checked:bg-{{ $opt['color'] }}-50
+                                                                            hover:border-{{ $opt['color'] }}-300">
+                                                        <span class="w-3 h-3 rounded-full bg-{{ $opt['color'] }}-500"></span>
+                                                        <div>
+                                                            <p class="text-sm font-semibold text-gray-800">{{ $opt['label'] }}</p>
+                                                            <p class="text-xs text-gray-500">{{ $opt['desc'] }}</p>
+                                                        </div>
+                                                    </div>
+                                                </label>
                                 @endforeach
                             </div>
                         </template>
@@ -504,23 +515,23 @@
                         <template x-if="selected.type === 'aspiration'">
                             <div class="space-y-2">
                                 @foreach ([
-                                    'baru'            => ['label' => 'Baru', 'desc' => 'Aspirasi baru masuk', 'color' => 'blue'],
-                                    'dibaca'          => ['label' => 'Dibaca', 'desc' => 'Sudah dibaca admin', 'color' => 'purple'],
-                                    'ditindaklanjuti' => ['label' => 'Ditindaklanjuti', 'desc' => 'Sudah ditindaklanjuti', 'color' => 'emerald'],
-                                ] as $value => $opt)
-                                    <label class="cursor-pointer block">
-                                        <input type="radio" name="status" value="{{ $value }}"
-                                            x-model="selected.status" class="peer sr-only">
-                                        <div class="flex items-center gap-3 border-2 border-gray-200 p-3 transition
-                                            peer-checked:border-{{ $opt['color'] }}-500 peer-checked:bg-{{ $opt['color'] }}-50
-                                            hover:border-{{ $opt['color'] }}-300">
-                                            <span class="w-3 h-3 rounded-full bg-{{ $opt['color'] }}-500"></span>
-                                            <div>
-                                                <p class="text-sm font-semibold text-gray-800">{{ $opt['label'] }}</p>
-                                                <p class="text-xs text-gray-500">{{ $opt['desc'] }}</p>
-                                            </div>
-                                        </div>
-                                    </label>
+                                        'baru' => ['label' => 'Baru', 'desc' => 'Aspirasi baru masuk', 'color' => 'blue'],
+                                        'dibaca' => ['label' => 'Dibaca', 'desc' => 'Sudah dibaca admin', 'color' => 'purple'],
+                                        'ditindaklanjuti' => ['label' => 'Ditindaklanjuti', 'desc' => 'Sudah ditindaklanjuti', 'color' => 'emerald'],
+                                    ] as $value => $opt)
+                                                <label class="cursor-pointer block">
+                                                    <input type="radio" name="status" value="{{ $value }}" x-model="selected.status"
+                                                        class="peer sr-only">
+                                                    <div class="flex items-center gap-3 border-2 border-gray-200 p-3 transition
+                                                                            peer-checked:border-{{ $opt['color'] }}-500 peer-checked:bg-{{ $opt['color'] }}-50
+                                                                            hover:border-{{ $opt['color'] }}-300">
+                                                        <span class="w-3 h-3 rounded-full bg-{{ $opt['color'] }}-500"></span>
+                                                        <div>
+                                                            <p class="text-sm font-semibold text-gray-800">{{ $opt['label'] }}</p>
+                                                            <p class="text-xs text-gray-500">{{ $opt['desc'] }}</p>
+                                                        </div>
+                                                    </div>
+                                                </label>
                                 @endforeach
                             </div>
                         </template>
@@ -562,29 +573,37 @@
                     @method('PUT')
                     <div class="p-5 grid grid-cols-2 gap-2">
                         <label class="cursor-pointer">
-                            <input type="radio" name="priority" value="rendah" x-model="selected.priority" class="peer sr-only">
-                            <div class="flex items-center gap-2 border-2 border-gray-200 px-3 py-2 transition peer-checked:border-gray-500 peer-checked:bg-gray-50 hover:border-gray-300">
+                            <input type="radio" name="priority" value="rendah" x-model="selected.priority"
+                                class="peer sr-only">
+                            <div
+                                class="flex items-center gap-2 border-2 border-gray-200 px-3 py-2 transition peer-checked:border-gray-500 peer-checked:bg-gray-50 hover:border-gray-300">
                                 <i class="ri-arrow-down-line text-gray-500 text-lg"></i>
                                 <span class="text-sm font-medium text-gray-700">Rendah</span>
                             </div>
                         </label>
                         <label class="cursor-pointer">
-                            <input type="radio" name="priority" value="sedang" x-model="selected.priority" class="peer sr-only">
-                            <div class="flex items-center gap-2 border-2 border-gray-200 px-3 py-2 transition peer-checked:border-yellow-500 peer-checked:bg-yellow-50 hover:border-yellow-300">
+                            <input type="radio" name="priority" value="sedang" x-model="selected.priority"
+                                class="peer sr-only">
+                            <div
+                                class="flex items-center gap-2 border-2 border-gray-200 px-3 py-2 transition peer-checked:border-yellow-500 peer-checked:bg-yellow-50 hover:border-yellow-300">
                                 <i class="ri-subtract-line text-yellow-500 text-lg"></i>
                                 <span class="text-sm font-medium text-gray-700">Sedang</span>
                             </div>
                         </label>
                         <label class="cursor-pointer">
-                            <input type="radio" name="priority" value="tinggi" x-model="selected.priority" class="peer sr-only">
-                            <div class="flex items-center gap-2 border-2 border-gray-200 px-3 py-2 transition peer-checked:border-orange-500 peer-checked:bg-orange-50 hover:border-orange-300">
+                            <input type="radio" name="priority" value="tinggi" x-model="selected.priority"
+                                class="peer sr-only">
+                            <div
+                                class="flex items-center gap-2 border-2 border-gray-200 px-3 py-2 transition peer-checked:border-orange-500 peer-checked:bg-orange-50 hover:border-orange-300">
                                 <i class="ri-arrow-up-line text-orange-500 text-lg"></i>
                                 <span class="text-sm font-medium text-gray-700">Tinggi</span>
                             </div>
                         </label>
                         <label class="cursor-pointer">
-                            <input type="radio" name="priority" value="urgent" x-model="selected.priority" class="peer sr-only">
-                            <div class="flex items-center gap-2 border-2 border-gray-200 px-3 py-2 transition peer-checked:border-red-500 peer-checked:bg-red-50 hover:border-red-300">
+                            <input type="radio" name="priority" value="urgent" x-model="selected.priority"
+                                class="peer sr-only">
+                            <div
+                                class="flex items-center gap-2 border-2 border-gray-200 px-3 py-2 transition peer-checked:border-red-500 peer-checked:bg-red-50 hover:border-red-300">
                                 <i class="ri-alarm-warning-line text-red-500 text-lg"></i>
                                 <span class="text-sm font-medium text-gray-700">Urgent</span>
                             </div>

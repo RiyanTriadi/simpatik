@@ -38,16 +38,16 @@
                 <p class="text-xs text-gray-500">Belum Di-assign</p>
                 <p class="text-lg font-bold text-prussian-blue-500">
                     {{ \App\Models\Complaint::whereNull('assigned_to')
-                        ->whereNotIn('status', [\App\Models\Complaint::STATUS_SELESAI, \App\Models\Complaint::STATUS_DITOLAK])
-                        ->count() }}
+    ->whereNotIn('status', [\App\Models\Complaint::STATUS_SELESAI, \App\Models\Complaint::STATUS_DITOLAK])
+    ->count() }}
                 </p>
             </div>
             <div class="border border-gray-200 p-3 bg-emerald-50/50">
                 <p class="text-xs text-gray-500">Sudah Di-assign</p>
                 <p class="text-lg font-bold text-emerald-600">
                     {{ \App\Models\Complaint::whereNotNull('assigned_to')
-                        ->whereNotIn('status', [\App\Models\Complaint::STATUS_SELESAI, \App\Models\Complaint::STATUS_DITOLAK])
-                        ->count() }}
+    ->whereNotIn('status', [\App\Models\Complaint::STATUS_SELESAI, \App\Models\Complaint::STATUS_DITOLAK])
+    ->count() }}
                 </p>
             </div>
         </div>
@@ -55,7 +55,7 @@
         {{-- Tabel --}}
         <div class="mt-4 overflow-x-auto border border-alabaster-grey-300">
             <table class="w-full min-w-max text-sm">
-                <thead class="bg-alabaster-grey-500">
+                <thead class="bg-prussian-blue-100">
                     <tr class="border-b border-alabaster-grey-300">
                         <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">No Tiket</th>
                         <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">Topik</th>

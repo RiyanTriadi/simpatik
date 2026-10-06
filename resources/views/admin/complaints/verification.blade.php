@@ -46,7 +46,7 @@
         {{-- Tabel --}}
         <div class="mt-4 overflow-x-auto border border-alabaster-grey-300">
             <table class="w-full min-w-max text-sm">
-                <thead class="bg-alabaster-grey-500">
+                <thead class="bg-prussian-blue-100">
                     <tr class="border-b border-alabaster-grey-300">
                         <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500 w-12">#</th>
                         <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">No Tiket</th>
@@ -88,17 +88,18 @@
                             {{-- AKSI --}}
                             <td class="text-center px-4 py-3">
                                 <div x-data="{
-                                                    open: false,
-                                                    top: 0,
-                                                    left: 0,
-                                                    toggle(event) {
-                                                        if (this.open) { this.open = false; return; }
-                                                        const rect = event.currentTarget.getBoundingClientRect();
-                                                        this.top  = rect.bottom + 4;
-                                                        this.left = rect.right - 144;
-                                                        this.open = true;
-                                                    }
-                                                }" @scroll.window="open = false" @resize.window="open = false">
+                                                                                        open: false,
+                                                                                        top: 0,
+                                                                                        left: 0,
+                                                                                        toggle(event) {
+                                                                                            if (this.open) { this.open = false; return; }
+                                                                                            const rect = event.currentTarget.getBoundingClientRect();
+                                                                                            this.top  = rect.bottom + 4;
+                                                                                            this.left = rect.right - 144;
+                                                                                            this.open = true;
+                                                                                        }
+                                                                                    }" @scroll.window="open = false"
+                                    @resize.window="open = false">
 
                                     <button @click="toggle($event)"
                                         class="cursor-pointer text-gray-500 hover:text-prussian-blue-500 focus:outline-none p-1 hover:bg-gray-100 transition">
@@ -119,17 +120,17 @@
                                             <div class="py-1">
                                                 {{-- Verifikasi --}}
                                                 <button type="button" @click="
-                                                                    openModal({
-                                                                        id: {{ $complaint->id }},
-                                                                        ticket: {{ Js::from($complaint->ticket_number) }},
-                                                                        ticket: '{{ $complaint->ticket_number }}',
-                                                                        subject: {{ Js::from($complaint->subject) }},
-                                                                        reporter: {{ Js::from(!$complaint->is_anonymous ? $complaint->reporter_name : 'Anonim') }},
-                                                                        status: '{{ \App\Models\Complaint::STATUS_DIPROSES }}',
-                                                                        priority: '{{ $complaint->priority ?? \App\Models\Complaint::PRIORITY_SEDANG }}'
-                                                                    });
-                                                                    open = false;
-                                                                "
+                                                                                                        openModal({
+                                                                                                            id: {{ $complaint->id }},
+                                                                                                            ticket: {{ Js::from($complaint->ticket_number) }},
+                                                                                                            ticket: '{{ $complaint->ticket_number }}',
+                                                                                                            subject: {{ Js::from($complaint->subject) }},
+                                                                                                            reporter: {{ Js::from(!$complaint->is_anonymous ? $complaint->reporter_name : 'Anonim') }},
+                                                                                                            status: '{{ \App\Models\Complaint::STATUS_DIPROSES }}',
+                                                                                                            priority: '{{ $complaint->priority ?? \App\Models\Complaint::PRIORITY_SEDANG }}'
+                                                                                                        });
+                                                                                                        open = false;
+                                                                                                    "
                                                     class="group flex w-full items-center px-4 py-2 text-sm text-emerald-600 hover:bg-emerald-50 transition">
                                                     <i class="ri-shield-check-line mr-2 text-emerald-500"></i>
                                                     Verifikasi

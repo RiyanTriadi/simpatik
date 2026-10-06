@@ -6,7 +6,9 @@
                 <div class="flex items-start justify-between">
                     <div>
                         <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Pengaduan</p>
-                        <p class="text-2xl md:text-3xl font-bold text-prussian-blue-500 mt-1">{{ $stats['complaints_total'] }}</p>
+                        <p class="text-2xl md:text-3xl font-bold text-prussian-blue-500 mt-1">
+                            {{ $stats['complaints_total'] }}
+                        </p>
                     </div>
                     <div class="w-10 h-10 bg-blue-100 flex items-center justify-center">
                         <i class="ri-file-list-3-line text-blue-500 text-xl"></i>
@@ -26,7 +28,8 @@
                 <div class="flex items-start justify-between">
                     <div>
                         <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Aspirasi</p>
-                        <p class="text-2xl md:text-3xl font-bold text-purple-600 mt-1">{{ $stats['aspirations_total'] }}</p>
+                        <p class="text-2xl md:text-3xl font-bold text-purple-600 mt-1">{{ $stats['aspirations_total'] }}
+                        </p>
                     </div>
                     <div class="w-10 h-10 bg-purple-100 flex items-center justify-center">
                         <i class="ri-message-2-line text-purple-500 text-xl"></i>
@@ -46,7 +49,9 @@
                 <div class="flex items-start justify-between">
                     <div>
                         <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Sedang Diproses</p>
-                        <p class="text-2xl md:text-3xl font-bold text-yellow-600 mt-1">{{ $stats['complaints_processing'] }}</p>
+                        <p class="text-2xl md:text-3xl font-bold text-yellow-600 mt-1">
+                            {{ $stats['complaints_processing'] }}
+                        </p>
                     </div>
                     <div class="w-10 h-10 bg-yellow-100 flex items-center justify-center">
                         <i class="ri-loader-4-line text-yellow-500 text-xl"></i>
@@ -173,11 +178,11 @@
 
                 <div class="mt-4 space-y-1.5">
                     @foreach ([
-                        'baru'     => ['label' => 'Baru',     'color' => 'bg-blue-500'],
-                        'diproses' => ['label' => 'Diproses', 'color' => 'bg-yellow-500'],
-                        'selesai'  => ['label' => 'Selesai',  'color' => 'bg-emerald-500'],
-                        'ditolak'  => ['label' => 'Ditolak',  'color' => 'bg-red-500'],
-                    ] as $key => $item)
+                            'baru' => ['label' => 'Baru', 'color' => 'bg-blue-500'],
+                            'diproses' => ['label' => 'Diproses', 'color' => 'bg-yellow-500'],
+                            'selesai' => ['label' => 'Selesai', 'color' => 'bg-emerald-500'],
+                            'ditolak' => ['label' => 'Ditolak', 'color' => 'bg-red-500'],
+                        ] as $key => $item)
                         <div class="flex items-center justify-between text-xs">
                             <div class="flex items-center gap-2">
                                 <span class="w-2.5 h-2.5 rounded-full {{ $item['color'] }}"></span>
@@ -199,10 +204,10 @@
 
                 <div class="mt-4 space-y-1.5">
                     @foreach ([
-                        'baru'            => ['label' => 'Baru',            'color' => 'bg-blue-500'],
-                        'dibaca'          => ['label' => 'Dibaca',          'color' => 'bg-purple-500'],
-                        'ditindaklanjuti' => ['label' => 'Ditindaklanjuti', 'color' => 'bg-emerald-500'],
-                    ] as $key => $item)
+                            'baru' => ['label' => 'Baru', 'color' => 'bg-blue-500'],
+                            'dibaca' => ['label' => 'Dibaca', 'color' => 'bg-purple-500'],
+                            'ditindaklanjuti' => ['label' => 'Ditindaklanjuti', 'color' => 'bg-emerald-500'],
+                        ] as $key => $item)
                         <div class="flex items-center justify-between text-xs">
                             <div class="flex items-center gap-2">
                                 <span class="w-2.5 h-2.5 rounded-full {{ $item['color'] }}"></span>
@@ -220,49 +225,52 @@
 
                 <div class="space-y-2">
                     @if(in_array(auth()->user()->role, ['admin', 'staff']))
-                    <a href="{{ role_route('pengaduan.verification') }}"
-                        class="flex items-center gap-3 p-3 border border-gray-200 hover:border-emerald-500 hover:bg-emerald-50 transition group">
-                        <div class="w-9 h-9 bg-emerald-100 flex items-center justify-center group-hover:bg-emerald-500 transition">
-                            <i class="ri-shield-check-line text-emerald-600 group-hover:text-white transition"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-gray-800">Verifikasi Pengaduan</p>
-                            <p class="text-xs text-gray-500">{{ $stats['complaints_new'] }} menunggu</p>
-                        </div>
-                        <i class="ri-arrow-right-s-line text-gray-400 group-hover:text-emerald-500 transition"></i>
-                    </a>
+                        <a href="{{ role_route('pengaduan.verification') }}"
+                            class="flex items-center gap-3 p-3 border border-gray-200 hover:border-emerald-500 hover:bg-emerald-50 transition group">
+                            <div
+                                class="w-9 h-9 bg-emerald-100 flex items-center justify-center group-hover:bg-emerald-500 transition">
+                                <i class="ri-shield-check-line text-emerald-600 group-hover:text-white transition"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-800">Verifikasi Pengaduan</p>
+                                <p class="text-xs text-gray-500">{{ $stats['complaints_new'] }} menunggu</p>
+                            </div>
+                            <i class="ri-arrow-right-s-line text-gray-400 group-hover:text-emerald-500 transition"></i>
+                        </a>
                     @endif
 
                     @if(in_array(auth()->user()->role, ['admin', 'staff']))
-                    <a href="{{ role_route('pengaduan.assign') }}"
-                        class="flex items-center gap-3 p-3 border border-gray-200 hover:border-orange-500 hover:bg-orange-50 transition group">
-                        <div class="w-9 h-9 bg-orange-100 flex items-center justify-center group-hover:bg-orange-500 transition">
-                            <i class="ri-user-add-line text-orange-600 group-hover:text-white transition"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-gray-800">Assign ke Petugas</p>
-                            <p class="text-xs text-gray-500">{{ $stats['unassigned'] }} belum di-assign</p>
-                        </div>
-                        <i class="ri-arrow-right-s-line text-gray-400 group-hover:text-orange-500 transition"></i>
-                    </a>
+                        <a href="{{ role_route('pengaduan.assign') }}"
+                            class="flex items-center gap-3 p-3 border border-gray-200 hover:border-orange-500 hover:bg-orange-50 transition group">
+                            <div
+                                class="w-9 h-9 bg-orange-100 flex items-center justify-center group-hover:bg-orange-500 transition">
+                                <i class="ri-user-add-line text-orange-600 group-hover:text-white transition"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-800">Assign ke Petugas</p>
+                                <p class="text-xs text-gray-500">{{ $stats['unassigned'] }} belum di-assign</p>
+                            </div>
+                            <i class="ri-arrow-right-s-line text-gray-400 group-hover:text-orange-500 transition"></i>
+                        </a>
                     @endif
 
                     @if(in_array(auth()->user()->role, ['admin', 'staff']))
-                    <a href="{{ role_route('aspirasi.follow-up') }}"
-                        class="flex items-center gap-3 p-3 border border-gray-200 hover:border-purple-500 hover:bg-purple-50 transition group">
-                        <div class="w-9 h-9 bg-purple-100 flex items-center justify-center group-hover:bg-purple-500 transition">
-                            <i class="ri-flag-2-line text-purple-600 group-hover:text-white transition"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-gray-800">Tindak Lanjut Aspirasi</p>
-                            <p class="text-xs text-gray-500">Tindak lanjut aspirasi baru</p>
-                        </div>
-                        <i class="ri-arrow-right-s-line text-gray-400 group-hover:text-purple-500 transition"></i>
-                    </a>
+                        <a href="{{ role_route('aspirasi.follow-up') }}"
+                            class="flex items-center gap-3 p-3 border border-gray-200 hover:border-purple-500 hover:bg-purple-50 transition group">
+                            <div
+                                class="w-9 h-9 bg-purple-100 flex items-center justify-center group-hover:bg-purple-500 transition">
+                                <i class="ri-flag-2-line text-purple-600 group-hover:text-white transition"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-800">Tindak Lanjut Aspirasi</p>
+                                <p class="text-xs text-gray-500">Tindak lanjut aspirasi baru</p>
+                            </div>
+                            <i class="ri-arrow-right-s-line text-gray-400 group-hover:text-purple-500 transition"></i>
+                        </a>
                     @endif
-                    
+
                     @if(auth()->user()->role === 'petugas')
-                    <p class="text-sm text-gray-500">Aksi cepat hanya tersedia untuk Staff & Admin.</p>
+                        <p class="text-sm text-gray-500">Aksi cepat hanya tersedia untuk Staff & Admin.</p>
                     @endif
                 </div>
             </div>
@@ -283,7 +291,7 @@
 
             <div class="overflow-x-auto">
                 <table class="w-full min-w-max text-sm">
-                    <thead class="bg-gray-50">
+                    <thead class="bg-prussian-blue-100">
                         <tr class="border-b border-gray-200">
                             <th class="px-4 py-3 text-left font-semibold text-gray-700">No Tiket</th>
                             <th class="px-4 py-3 text-left font-semibold text-gray-700">Tipe</th>
@@ -295,58 +303,60 @@
                     </thead>
                     <tbody>
                         @forelse ($recentTickets as $ticket)
-                            <tr class="border-b border-gray-100 hover:bg-gray-50">
-                                <td class="px-4 py-3 font-medium text-prussian-blue-500">
-                                    {{ $ticket->ticket_number }}
-                                </td>
+                                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                                <td class="px-4 py-3 font-medium text-prussian-blue-500">
+                                                    {{ $ticket->ticket_number }}
+                                                </td>
 
-                                <td class="px-4 py-3">
-                                    @if ($ticket->type === 'complaint')
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-700">
-                                            <i class="ri-file-list-3-line"></i> Pengaduan
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-purple-100 text-purple-700">
-                                            <i class="ri-message-2-line"></i> Aspirasi
-                                        </span>
-                                    @endif
-                                </td>
+                                                <td class="px-4 py-3">
+                                                    @if ($ticket->type === 'complaint')
+                                                        <span
+                                                            class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-700">
+                                                            <i class="ri-file-list-3-line"></i> Pengaduan
+                                                        </span>
+                                                    @else
+                                                        <span
+                                                            class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-purple-100 text-purple-700">
+                                                            <i class="ri-message-2-line"></i> Aspirasi
+                                                        </span>
+                                                    @endif
+                                                </td>
 
-                                <td class="px-4 py-3 max-w-xs">
-                                    <p class="line-clamp-1 text-gray-800" title="{{ $ticket->subject }}">
-                                        {{ $ticket->subject }}
-                                    </p>
-                                    <p class="text-xs text-gray-500 mt-0.5">{{ $ticket->category->name ?? '-' }}</p>
-                                </td>
+                                                <td class="px-4 py-3 max-w-xs">
+                                                    <p class="line-clamp-1 text-gray-800" title="{{ $ticket->subject }}">
+                                                        {{ $ticket->subject }}
+                                                    </p>
+                                                    <p class="text-xs text-gray-500 mt-0.5">{{ $ticket->category->name ?? '-' }}</p>
+                                                </td>
 
-                                <td class="px-4 py-3">
-                                    <span class="px-2 py-0.5 text-xs font-semibold whitespace-nowrap
-                                        @if ($ticket->status == 'baru') bg-blue-100 text-blue-800
-                                        @elseif($ticket->status == 'diproses') bg-yellow-100 text-yellow-800
-                                        @elseif($ticket->status == 'selesai') bg-emerald-100 text-emerald-800
-                                        @elseif($ticket->status == 'ditolak') bg-red-100 text-red-800
-                                        @elseif($ticket->status == 'dibaca') bg-purple-100 text-purple-800
-                                        @elseif($ticket->status == 'ditindaklanjuti') bg-teal-100 text-teal-800
-                                        @endif">
-                                        {{ ucfirst($ticket->status) }}
-                                    </span>
-                                </td>
+                                                <td class="px-4 py-3">
+                                                    <span class="px-2 py-0.5 text-xs font-semibold whitespace-nowrap
+                                                                                @if ($ticket->status == 'baru') bg-blue-100 text-blue-800
+                                                                                @elseif($ticket->status == 'diproses') bg-yellow-100 text-yellow-800
+                                                                                @elseif($ticket->status == 'selesai') bg-emerald-100 text-emerald-800
+                                                                                @elseif($ticket->status == 'ditolak') bg-red-100 text-red-800
+                                                                                @elseif($ticket->status == 'dibaca') bg-purple-100 text-purple-800
+                                                                                @elseif($ticket->status == 'ditindaklanjuti') bg-teal-100 text-teal-800
+                                                                                @endif">
+                                                        {{ ucfirst($ticket->status) }}
+                                                    </span>
+                                                </td>
 
-                                <td class="px-4 py-3 text-xs text-gray-600">
-                                    <p>{{ $ticket->created_at->diffForHumans() }}</p>
-                                    <p class="text-gray-400">{{ $ticket->created_at->translatedFormat('d M Y, H:i') }}</p>
-                                </td>
+                                                <td class="px-4 py-3 text-xs text-gray-600">
+                                                    <p>{{ $ticket->created_at->diffForHumans() }}</p>
+                                                    <p class="text-gray-400">{{ $ticket->created_at->translatedFormat('d M Y, H:i') }}</p>
+                                                </td>
 
-                                <td class="text-center px-4 py-3">
-                                    <a href="{{ $ticket->type === 'complaint'
-                                        ? role_route('pengaduan.show', $ticket->ticket_number)
-                                        : role_route('aspirasi.show', $ticket->ticket_number) }}"
-                                        class="inline-flex items-center gap-1 text-xs text-gray-600 hover:text-prussian-blue-500 border border-gray-300 hover:border-prussian-blue-500 px-2.5 py-1 transition">
-                                        <i class="ri-eye-line"></i>
-                                        Detail
-                                    </a>
-                                </td>
-                            </tr>
+                                                <td class="text-center px-4 py-3">
+                                                    <a href="{{ $ticket->type === 'complaint'
+                            ? role_route('pengaduan.show', $ticket->ticket_number)
+                            : role_route('aspirasi.show', $ticket->ticket_number) }}"
+                                                        class="inline-flex items-center gap-1 text-xs text-gray-600 hover:text-prussian-blue-500 border border-gray-300 hover:border-prussian-blue-500 px-2.5 py-1 transition">
+                                                        <i class="ri-eye-line"></i>
+                                                        Detail
+                                                    </a>
+                                                </td>
+                                            </tr>
                         @empty
                             <tr>
                                 <td colspan="6" class="px-4 py-12 text-center text-gray-500">

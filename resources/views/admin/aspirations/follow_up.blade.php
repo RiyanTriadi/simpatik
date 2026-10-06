@@ -33,7 +33,7 @@
         {{-- Tabel --}}
         <div class="mt-4 overflow-x-auto border border-alabaster-grey-300">
             <table class="w-full min-w-max text-sm">
-                <thead class="bg-alabaster-grey-500">
+                <thead class="bg-prussian-blue-100">
                     <tr class="border-b border-alabaster-grey-300">
                         <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500 w-12">#</th>
                         <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">No Tiket</th>
@@ -70,10 +70,10 @@
                             {{-- STATUS BADGE --}}
                             <td class="px-4 py-3">
                                 <span class="px-2 py-1 text-xs font-semibold whitespace-nowrap
-                                            @if ($aspiration->status == 'baru') bg-blue-100 text-blue-800
-                                            @elseif($aspiration->status == 'dibaca') bg-purple-100 text-purple-800
-                                            @elseif($aspiration->status == 'ditindaklanjuti') bg-emerald-100 text-emerald-800
-                                            @endif">
+                                                    @if ($aspiration->status == 'baru') bg-blue-100 text-blue-800
+                                                    @elseif($aspiration->status == 'dibaca') bg-purple-100 text-purple-800
+                                                    @elseif($aspiration->status == 'ditindaklanjuti') bg-emerald-100 text-emerald-800
+                                                    @endif">
                                     {{ ucfirst($aspiration->status) }}
                                 </span>
                             </td>
@@ -88,18 +88,18 @@
                             {{-- AKSI --}}
                             <td class="text-center px-4 py-3">
                                 <div x-data="{
-                                                open: false,
-                                            modalOpen: @js($errors->has('assigned_to') && (string) old('aspiration_id') === (string) $aspiration->id),
-                                            top: 0,
-                                            left: 0,
-                                            toggle(event) {
-                                                    if (this.open) { this.open = false; return; }
-                                                    const rect = event.currentTarget.getBoundingClientRect();
-                                                    this.top  = rect.bottom + 4;
-                                                    this.left = rect.right - 176;
-                                                    this.open = true;
-                                                }
-                                            }" @scroll.window="open = false" @resize.window="open = false">
+                                                        open: false,
+                                                    modalOpen: @js($errors->has('assigned_to') && (string) old('aspiration_id') === (string) $aspiration->id),
+                                                    top: 0,
+                                                    left: 0,
+                                                    toggle(event) {
+                                                            if (this.open) { this.open = false; return; }
+                                                            const rect = event.currentTarget.getBoundingClientRect();
+                                                            this.top  = rect.bottom + 4;
+                                                            this.left = rect.right - 176;
+                                                            this.open = true;
+                                                        }
+                                                    }" @scroll.window="open = false" @resize.window="open = false">
 
                                     <button @click="toggle($event)"
                                         class="cursor-pointer text-gray-500 hover:text-prussian-blue-500 focus:outline-none p-1 hover:bg-gray-100 transition">
@@ -119,8 +119,7 @@
 
                                             <div class="py-1">
                                                 {{-- Tindak Lanjut --}}
-                                                <button type="button"
-                                                    @click="open = false; modalOpen = true"
+                                                <button type="button" @click="open = false; modalOpen = true"
                                                     class="group flex w-full items-center px-4 py-2 text-sm text-emerald-600 hover:bg-emerald-50 transition">
                                                     <i class="ri-check-double-line mr-2 text-emerald-500"></i>
                                                     Tindak Lanjut
@@ -138,15 +137,12 @@
                                     </template>
 
                                     <template x-teleport="body">
-                                        <div x-show="modalOpen" x-cloak
-                                            @keydown.escape.window="modalOpen = false"
+                                        <div x-show="modalOpen" x-cloak @keydown.escape.window="modalOpen = false"
                                             @click.self="modalOpen = false"
                                             x-transition:enter="transition ease-out duration-200"
-                                            x-transition:enter-start="opacity-0"
-                                            x-transition:enter-end="opacity-100"
+                                            x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
                                             x-transition:leave="transition ease-in duration-150"
-                                            x-transition:leave-start="opacity-100"
-                                            x-transition:leave-end="opacity-0"
+                                            x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
                                             class="fixed inset-0 z-[110] flex items-center justify-center bg-black/50 p-4">
                                             <div role="dialog" aria-modal="true"
                                                 aria-labelledby="assign-modal-title-{{ $aspiration->id }}"
@@ -164,15 +160,14 @@
                                                     method="POST" class="mt-5">
                                                     @csrf
                                                     @method('PUT')
-                                                    <input type="hidden" name="aspiration_id"
-                                                        value="{{ $aspiration->id }}">
+                                                    <input type="hidden" name="aspiration_id" value="{{ $aspiration->id }}">
 
                                                     <label for="assigned-to-{{ $aspiration->id }}"
                                                         class="mb-1 block text-sm font-medium text-gray-700">
                                                         Petugas
                                                     </label>
-                                                    <select id="assigned-to-{{ $aspiration->id }}"
-                                                        name="assigned_to" required
+                                                    <select id="assigned-to-{{ $aspiration->id }}" name="assigned_to"
+                                                        required
                                                         class="w-full border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none">
                                                         <option value="">Pilih petugas</option>
                                                         @foreach ($officers as $officer)

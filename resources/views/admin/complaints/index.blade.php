@@ -47,7 +47,7 @@
         {{-- Tabel --}}
         <div class="mt-4 overflow-x-auto border border-alabaster-grey-300">
             <table class="w-full min-w-max text-sm">
-                <thead class="bg-alabaster-grey-500">
+                <thead class="bg-prussian-blue-100">
                     <tr class="border-b border-alabaster-grey-300">
                         <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500 w-12">#</th>
                         <th class="px-4 py-3 text-left font-semibold text-prussian-blue-500">No Tiket</th>
@@ -83,22 +83,23 @@
 
                             <td class="px-4 py-3">
                                 <span class="px-2 py-1 text-xs font-semibold whitespace-nowrap
-                                            @if ($complaint->status == 'baru') bg-blue-100 text-blue-800
-                                            @elseif($complaint->status == 'diproses') bg-yellow-100 text-yellow-800
-                                            @elseif($complaint->status == 'selesai') bg-emerald-100 text-emerald-800
-                                            @elseif($complaint->status == 'ditolak') bg-red-100 text-red-800
-                                            @endif">
+                                                                            @if ($complaint->status == 'baru') bg-blue-100 text-blue-800
+                                                                            @elseif($complaint->status == 'diproses') bg-yellow-100 text-yellow-800
+                                                                            @elseif($complaint->status == 'selesai') bg-emerald-100 text-emerald-800
+                                                                            @elseif($complaint->status == 'ditolak') bg-red-100 text-red-800
+                                                                            @endif">
                                     {{ ucfirst($complaint->status) }}
                                 </span>
                             </td>
 
                             <td class="px-4 py-3">
                                 @if ($complaint->priority)
-                                    <span class="px-2 py-1 text-xs font-semibold whitespace-nowrap
-                                                        @if ($complaint->priority == 'urgent') bg-red-100 text-red-800
-                                                        @elseif($complaint->priority == 'tinggi') bg-orange-100 text-orange-800
-                                                        @elseif($complaint->priority == 'sedang') bg-yellow-100 text-yellow-800
-                                                        @else bg-gray-100 text-gray-800 @endif">
+                                    <span
+                                        class="px-2 py-1 text-xs font-semibold whitespace-nowrap
+                                                                                                                        @if ($complaint->priority == 'urgent') bg-red-100 text-red-800
+                                                                                                                        @elseif($complaint->priority == 'tinggi') bg-orange-100 text-orange-800
+                                                                                                                        @elseif($complaint->priority == 'sedang') bg-yellow-100 text-yellow-800
+                                                                                                                        @else bg-gray-100 text-gray-800 @endif">
                                         {{ ucfirst($complaint->priority) }}
                                     </span>
                                 @else
@@ -114,7 +115,8 @@
                             </td>
 
                             <td class="text-center px-4 py-3">
-                                <a href="{{ role_route('pengaduan.show', $complaint) }}" class="inline-flex items-center gap-1 text-xs text-gray-600 hover:text-prussian-blue-500 border border-gray-300 hover:border-prussian-blue-500 px-2.5 py-1 transition">
+                                <a href="{{ role_route('pengaduan.show', $complaint) }}"
+                                    class="inline-flex items-center gap-1 text-xs text-gray-600 hover:text-prussian-blue-500 border border-gray-300 hover:border-prussian-blue-500 px-2.5 py-1 transition">
                                     <i class="ri-eye-line"></i>
                                     Detail
                                 </a>
