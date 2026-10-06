@@ -411,9 +411,9 @@
         {{ $tickets->links('components.pagination') }}
 
         {{-- MODAL ASSIGN --}}
-        <div x-show="assignOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div x-show="assignOpen" x-cloak x-transition:enter="transition-opacity duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div class="absolute inset-0 bg-black/50" @click="assignOpen = false"></div>
-            <div class="relative bg-white w-full max-w-md shadow-xl">
+            <div class="modal-panel relative bg-white w-full max-w-md shadow-xl">
                 <div class="flex items-center justify-between p-5 border-b border-gray-200">
                     <div>
                         <h2 class="text-lg font-bold text-prussian-blue-500">Assign Petugas</h2>
@@ -461,9 +461,9 @@
         </div>
 
         {{-- MODAL UBAH STATUS --}}
-        <div x-show="statusOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div x-show="statusOpen" x-cloak x-transition:enter="transition-opacity duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div class="absolute inset-0 bg-black/50" @click="statusOpen = false"></div>
-            <div class="relative bg-white w-full max-w-md shadow-xl">
+            <div class="modal-panel relative bg-white w-full max-w-md shadow-xl">
                 <div class="flex items-center justify-between p-5 border-b border-gray-200">
                     <div>
                         <h2 class="text-lg font-bold text-prussian-blue-500">Ubah Status</h2>
@@ -551,9 +551,9 @@
         </div>
 
         {{-- MODAL UBAH PRIORITAS --}}
-        <div x-show="priorityOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div x-show="priorityOpen" x-cloak x-transition:enter="transition-opacity duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div class="absolute inset-0 bg-black/50" @click="priorityOpen = false"></div>
-            <div class="relative bg-white w-full max-w-md shadow-xl">
+            <div class="modal-panel relative bg-white w-full max-w-md shadow-xl">
                 <div class="flex items-center justify-between p-5 border-b border-gray-200">
                     <div>
                         <h2 class="text-lg font-bold text-prussian-blue-500">Ubah Prioritas</h2>

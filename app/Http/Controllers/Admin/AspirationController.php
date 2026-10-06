@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Aspiration;
 use App\Models\User;
+use App\Notifications\SystemNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -83,6 +84,13 @@ class AspirationController extends Controller
 
         $aspiration->update($validated);
 
+        User::whereIn('role', [User::ROLE_ADMIN, User::ROLE_STAFF])
+            ->each(fn (User $user) => $user->notify(new SystemNotification(
+                'Status aspirasi berubah',
+                "Status {$aspiration->ticket_number} diperbarui menjadi {$aspiration->status}.",
+                route($user->role . '.aspirasi.show', $aspiration->ticket_number),
+            )));
+
         return redirect()->back()->with('success', 'Status aspirasi berhasil diperbarui.');
     }
 
@@ -100,6 +108,13 @@ class AspirationController extends Controller
             'assigned_at' => now(),
             'status' => Aspiration::STATUS_DITINDAKLANJUTI,
         ]);
+
+        $officer = User::find($validated['assigned_to']);
+        $officer?->notify(new SystemNotification(
+            'Aspirasi ditugaskan',
+            "Anda mendapat tugas untuk tiket {$aspiration->ticket_number}.",
+            route(User::ROLE_PETUGAS . '.aspirasi.show', $aspiration->ticket_number),
+        ));
 
         return redirect()->back()->with('success', 'Aspirasi berhasil di-assign ke petugas.');
     }

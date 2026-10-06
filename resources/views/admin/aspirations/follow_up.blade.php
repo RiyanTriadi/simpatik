@@ -92,6 +92,12 @@
                                                     modalOpen: @js($errors->has('assigned_to') && (string) old('aspiration_id') === (string) $aspiration->id),
                                                     top: 0,
                                                     left: 0,
+                                                    officerOpen: false,
+                                                    officerSearch: '',
+                                                    selectedOfficer: {{ Js::from((string) old('assigned_to', '')) }},
+                                                    officers: {{ Js::from($officers->map(fn ($officer) => ['id' => (string) $officer->id, 'name' => $officer->name, 'unit' => $officer->unit->name ?? 'Tanpa Unit'])) }},
+                                                    get filteredOfficers() { return this.officers.filter((officer) => `${officer.name} ${officer.unit}`.toLowerCase().includes(this.officerSearch.toLowerCase())); },
+                                                    chooseOfficer(officer) { this.selectedOfficer = officer.id; this.officerSearch = officer.name; this.officerOpen = false; },
                                                     toggle(event) {
                                                             if (this.open) { this.open = false; return; }
                                                             const rect = event.currentTarget.getBoundingClientRect();
@@ -146,7 +152,7 @@
                                             class="fixed inset-0 z-[110] flex items-center justify-center bg-black/50 p-4">
                                             <div role="dialog" aria-modal="true"
                                                 aria-labelledby="assign-modal-title-{{ $aspiration->id }}"
-                                                class="w-full max-w-md bg-white p-6 shadow-xl">
+                                                class="modal-panel w-full max-w-md bg-white p-6 shadow-xl">
                                                 <h2 id="assign-modal-title-{{ $aspiration->id }}"
                                                     class="text-lg font-semibold text-prussian-blue-500">
                                                     Tugaskan Aspirasi
@@ -166,17 +172,23 @@
                                                         class="mb-1 block text-sm font-medium text-gray-700">
                                                         Petugas
                                                     </label>
-                                                    <select id="assigned-to-{{ $aspiration->id }}" name="assigned_to"
-                                                        required
-                                                        class="w-full border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none">
-                                                        <option value="">Pilih petugas</option>
-                                                        @foreach ($officers as $officer)
-                                                            <option value="{{ $officer->id }}"
-                                                                @selected(old('assigned_to') == $officer->id)>
-                                                                {{ $officer->name }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
+                                                    <input type="hidden" name="assigned_to" :value="selectedOfficer">
+                                                    <input type="hidden" name="officer_search" :value="officerSearch">
+                                                    <div class="relative">
+                                                        <input id="assigned-to-{{ $aspiration->id }}" type="search" x-model="officerSearch"
+                                                            @focus="officerOpen = true" @input="selectedOfficer = ''; officerOpen = true"
+                                                            @click.outside="officerOpen = false" placeholder="Cari nama atau unit petugas..."
+                                                            class="w-full border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none">
+                                                        <div x-show="officerOpen" x-cloak class="absolute z-20 mt-1 max-h-48 w-full overflow-y-auto border border-gray-200 bg-white shadow-lg">
+                                                            <template x-for="officer in filteredOfficers" :key="officer.id">
+                                                                <button type="button" @click="chooseOfficer(officer)" class="block w-full px-3 py-2 text-left text-sm hover:bg-emerald-50">
+                                                                    <span class="block" x-text="officer.name"></span>
+                                                                    <span class="block text-xs text-gray-500" x-text="officer.unit"></span>
+                                                                </button>
+                                                            </template>
+                                                            <p x-show="filteredOfficers.length === 0" class="px-3 py-2 text-sm text-gray-500">Petugas tidak ditemukan.</p>
+                                                        </div>
+                                                    </div>
                                                     @error('assigned_to')
                                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                                     @enderror

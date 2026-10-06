@@ -8,7 +8,6 @@
                     <select name="role" onchange="this.form.submit()"
                         class="h-8 border border-alabaster-grey-600 text-sm px-2 bg-white focus:outline-none focus:border-emerald-500">
                         <option value="">Semua Role</option>
-                        <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>Admin</option>
                         <option value="staff" {{ request('role') == 'staff' ? 'selected' : '' }}>Staff</option>
                         <option value="petugas" {{ request('role') == 'petugas' ? 'selected' : '' }}>Petugas</option>
                     </select>
@@ -168,11 +167,11 @@
         {{ $users->links('components.pagination') }}
 
         <template x-teleport="body">
-            <div x-show="deleteOpen" x-cloak @keydown.escape.window="deleteOpen = false"
+            <div x-show="deleteOpen" x-cloak x-transition:enter="transition-opacity duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @keydown.escape.window="deleteOpen = false"
                 @click.self="deleteOpen = false"
                 class="fixed inset-0 z-[120] flex items-center justify-center bg-black/50 p-4">
                 <div role="dialog" aria-modal="true" aria-labelledby="delete-user-title"
-                    class="w-full max-w-sm bg-white p-6 shadow-xl">
+                    class="modal-panel w-full max-w-sm bg-white p-6 shadow-xl">
                     <h2 id="delete-user-title" class="text-lg font-semibold text-gray-800">
                         Hapus User?
                     </h2>

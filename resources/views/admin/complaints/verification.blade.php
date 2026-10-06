@@ -87,27 +87,37 @@
 
                             {{-- AKSI --}}
                             <td class="text-center px-4 py-3">
-                                <div x-data="{
-                                                                                        open: false,
-                                                                                        top: 0,
-                                                                                        left: 0,
-                                                                                        toggle(event) {
-                                                                                            if (this.open) { this.open = false; return; }
-                                                                                            const rect = event.currentTarget.getBoundingClientRect();
-                                                                                            this.top  = rect.bottom + 4;
-                                                                                            this.left = rect.right - 144;
-                                                                                            this.open = true;
-                                                                                        }
-                                                                                    }" @scroll.window="open = false"
-                                    @resize.window="open = false">
-
-                                    <button @click="toggle($event)"
-                                        class="cursor-pointer text-gray-500 hover:text-prussian-blue-500 focus:outline-none p-1 hover:bg-gray-100 transition">
+                                <div
+                                    x-data="{
+                                        open: false,
+                                        top: 0,
+                                        left: 0,
+                                        toggle(event) {
+                                            if (this.open) {
+                                                this.open = false;
+                                                return;
+                                            }
+                                            const rect = event.currentTarget.getBoundingClientRect();
+                                            this.top = rect.bottom + 4;
+                                            this.left = rect.right - 144;
+                                            this.open = true;
+                                        }
+                                    }"
+                                    @scroll.window="open = false"
+                                    @resize.window="open = false"
+                                >
+                                    <button
+                                        @click="toggle($event)"
+                                        class="cursor-pointer text-gray-500 hover:text-prussian-blue-500 focus:outline-none p-1 hover:bg-gray-100 transition"
+                                    >
                                         <i class="ri-more-line text-lg"></i>
                                     </button>
 
                                     <template x-teleport="body">
-                                        <div x-show="open" x-cloak @click.outside="open = false"
+                                        <div
+                                            x-show="open"
+                                            x-cloak
+                                            @click.outside="open = false"
                                             x-transition:enter="transition ease-out duration-100"
                                             x-transition:enter-start="opacity-0 scale-95"
                                             x-transition:enter-end="opacity-100 scale-100"
@@ -115,32 +125,36 @@
                                             x-transition:leave-start="opacity-100 scale-100"
                                             x-transition:leave-end="opacity-0 scale-95"
                                             :style="`top: ${top}px; left: ${left}px;`"
-                                            class="fixed z-[100] w-36 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 border border-gray-100">
-
+                                            class="fixed z-[100] w-36 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 border border-gray-100"
+                                        >
                                             <div class="py-1">
                                                 {{-- Verifikasi --}}
-                                                <button type="button" @click="
-                                                                                                        openModal({
-                                                                                                            id: {{ $complaint->id }},
-                                                                                                            ticket: {{ Js::from($complaint->ticket_number) }},
-                                                                                                            ticket: '{{ $complaint->ticket_number }}',
-                                                                                                            subject: {{ Js::from($complaint->subject) }},
-                                                                                                            reporter: {{ Js::from(!$complaint->is_anonymous ? $complaint->reporter_name : 'Anonim') }},
-                                                                                                            status: '{{ \App\Models\Complaint::STATUS_DIPROSES }}',
-                                                                                                            priority: '{{ $complaint->priority ?? \App\Models\Complaint::PRIORITY_SEDANG }}'
-                                                                                                        });
-                                                                                                        open = false;
-                                                                                                    "
-                                                    class="group flex w-full items-center px-4 py-2 text-sm text-emerald-600 hover:bg-emerald-50 transition">
+                                                <button
+                                                    type="button"
+                                                    @click="
+                                                        openModal({
+                                                            id: {{ $complaint->id }},
+                                                            ticket: {{ Js::from($complaint->ticket_number) }},
+                                                            ticket: '{{ $complaint->ticket_number }}',
+                                                            subject: {{ Js::from($complaint->subject) }},
+                                                            reporter: {{ Js::from(!$complaint->is_anonymous ? $complaint->reporter_name : 'Anonim') }},
+                                                            status: '{{ \App\Models\Complaint::STATUS_DIPROSES }}',
+                                                            priority: '{{ $complaint->priority ?? \App\Models\Complaint::PRIORITY_SEDANG }}'
+                                                        });
+                                                        open = false;
+                                                    "
+                                                    class="group flex w-full items-center px-4 py-2 text-sm text-emerald-600 hover:bg-emerald-50 transition"
+                                                >
                                                     <i class="ri-shield-check-line mr-2 text-emerald-500"></i>
                                                     Verifikasi
                                                 </button>
 
                                                 {{-- Detail --}}
-                                                <a href="{{ role_route('pengaduan.show', $complaint) }}"
-                                                    class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-prussian-blue-500 transition border-t border-gray-100">
-                                                    <i
-                                                        class="ri-eye-line mr-2 text-gray-400 group-hover:text-prussian-blue-500"></i>
+                                                <a
+                                                    href="{{ role_route('pengaduan.show', $complaint) }}"
+                                                    class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-prussian-blue-500 transition border-t border-gray-100"
+                                                >
+                                                    <i class="ri-eye-line mr-2 text-gray-400 group-hover:text-prussian-blue-500"></i>
                                                     Detail
                                                 </a>
                                             </div>
@@ -173,10 +187,10 @@
         {{ $complaints->links('components.pagination') }}
 
         {{-- ==================== MODAL VERIFIKASI ==================== --}}
-        <div x-show="modalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div x-show="modalOpen" x-cloak x-transition:enter="transition-opacity duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div class="absolute inset-0 bg-black/50" @click="modalOpen = false"></div>
 
-            <div class="relative bg-white w-full max-w-lg shadow-xl max-h-[90vh] overflow-y-auto">
+            <div class="modal-panel relative bg-white w-full max-w-lg shadow-xl max-h-[90vh] overflow-y-auto">
                 {{-- Header --}}
                 <div class="flex items-center justify-between p-5 border-b border-gray-200 sticky top-0 bg-white z-10">
                     <div>

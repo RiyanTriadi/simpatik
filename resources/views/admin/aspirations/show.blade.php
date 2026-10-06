@@ -174,22 +174,36 @@
 
                     @if (in_array(auth()->user()->role, ['admin', 'staff'], true))
                         <form action="{{ role_route('aspirasi.assign.store', $aspiration) }}" method="POST"
-                            class="mt-5 border-t border-gray-100 pt-4">
+                            class="mt-5 border-t border-gray-100 pt-4" x-data="{
+                                officerOpen: false,
+                                officerSearch: {{ Js::from($aspiration->officer?->name ?? '') }},
+                                selectedOfficer: {{ Js::from((string) old('assigned_to', $aspiration->assigned_to)) }},
+                                officers: {{ Js::from($officers->map(fn ($officer) => ['id' => (string) $officer->id, 'name' => $officer->name, 'unit' => $officer->unit->name ?? 'Tanpa Unit'])) }},
+                                get filteredOfficers() { return this.officers.filter((officer) => `${officer.name} ${officer.unit}`.toLowerCase().includes(this.officerSearch.toLowerCase())); },
+                                chooseOfficer(officer) { this.selectedOfficer = officer.id; this.officerSearch = officer.name; this.officerOpen = false; }
+                            }">
                             @csrf
                             @method('PUT')
                             <label for="assigned-to-aspiration" class="mb-1 block text-sm font-medium text-gray-700">
                                 Assign Petugas
                             </label>
-                            <select id="assigned-to-aspiration" name="assigned_to" required
-                                class="w-full border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none">
-                                <option value="">Pilih petugas</option>
-                                @foreach ($officers as $officer)
-                                    <option value="{{ $officer->id }}"
-                                        @selected(old('assigned_to', $aspiration->assigned_to) == $officer->id)>
-                                        {{ $officer->name }}{{ $officer->unit ? ' - ' . $officer->unit->name : '' }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <input type="hidden" name="assigned_to" :value="selectedOfficer">
+                            <input type="hidden" name="officer_search" :value="officerSearch">
+                            <div class="relative">
+                                <input id="assigned-to-aspiration" type="search" x-model="officerSearch"
+                                    @focus="officerOpen = true" @input="selectedOfficer = ''; officerOpen = true"
+                                    @click.outside="officerOpen = false" placeholder="Cari nama atau unit petugas..."
+                                    class="w-full border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none">
+                                <div x-show="officerOpen" x-cloak class="absolute z-20 mt-1 max-h-48 w-full overflow-y-auto border border-gray-200 bg-white shadow-lg">
+                                    <template x-for="officer in filteredOfficers" :key="officer.id">
+                                        <button type="button" @click="chooseOfficer(officer)" class="block w-full px-3 py-2 text-left text-sm hover:bg-emerald-50">
+                                            <span class="block" x-text="officer.name"></span>
+                                            <span class="block text-xs text-gray-500" x-text="officer.unit"></span>
+                                        </button>
+                                    </template>
+                                    <p x-show="filteredOfficers.length === 0" class="px-3 py-2 text-sm text-gray-500">Petugas tidak ditemukan.</p>
+                                </div>
+                            </div>
                             @error('assigned_to')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror

@@ -169,11 +169,11 @@
         {{ $categories->links('components.pagination') }}
 
         <template x-teleport="body">
-            <div x-show="deleteOpen" x-cloak @keydown.escape.window="deleteOpen = false"
+            <div x-show="deleteOpen" x-cloak x-transition:enter="transition-opacity duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @keydown.escape.window="deleteOpen = false"
                 @click.self="deleteOpen = false"
                 class="fixed inset-0 z-[120] flex items-center justify-center bg-black/50 p-4">
                 <div role="dialog" aria-modal="true" aria-labelledby="delete-category-title"
-                    class="w-full max-w-sm bg-white p-6 shadow-xl">
+                    class="modal-panel w-full max-w-sm bg-white p-6 shadow-xl">
                     <h2 id="delete-category-title" class="text-lg font-semibold text-gray-800">
                         Hapus Kategori?
                     </h2>
@@ -198,9 +198,9 @@
         </template>
 
         {{-- Modal Create --}}
-        <div x-show="createOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div x-show="createOpen" x-cloak x-transition:enter="transition-opacity duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div class="absolute inset-0 bg-black/50" @click="createOpen = false"></div>
-            <div class="relative bg-white w-full max-w-lg shadow-xl">
+            <div class="modal-panel relative bg-white w-full max-w-lg shadow-xl">
                 {{-- Header --}}
                 <div class="flex items-center justify-between p-5 border-b border-gray-200">
                     <div>
@@ -270,9 +270,9 @@
         </div>
 
         {{-- Modal Edit --}}
-        <div x-show="editOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div x-show="editOpen" x-cloak x-transition:enter="transition-opacity duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div class="absolute inset-0 bg-black/50" @click="editOpen = false"></div>
-            <div class="relative bg-white w-full max-w-lg shadow-xl">
+            <div class="modal-panel relative bg-white w-full max-w-lg shadow-xl">
                 {{-- Header --}}
                 <div class="flex items-center justify-between p-5 border-b border-gray-200">
                     <div>

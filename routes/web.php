@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\Master\CategoryController;
 use App\Http\Controllers\Admin\Master\UnitController;
+use Illuminate\Notifications\DatabaseNotification;
 
 // PUBLIC
 Route::get('/', function () {
@@ -45,6 +46,15 @@ foreach (['admin', 'staff', 'petugas'] as $role) {
 
             // INBOX (semua role)
             Route::get('inbox', [InboxController::class, 'index'])->name('inbox.index');
+            Route::post('notifications/read-all', function () {
+                auth()->user()->unreadNotifications->markAsRead();
+                return redirect()->back();
+            })->name('notifications.read-all');
+            Route::post('notifications/{notification}/read', function (DatabaseNotification $notification) {
+                abort_unless((string) $notification->notifiable_id === (string) auth()->id(), 403);
+                $notification->markAsRead();
+                return redirect()->back();
+            })->name('notifications.read');
 
             // PENGADUAN
             Route::prefix('pengaduan')->name('pengaduan.')->group(function () use ($role) {

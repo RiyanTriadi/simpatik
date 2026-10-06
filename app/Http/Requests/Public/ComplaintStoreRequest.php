@@ -17,7 +17,12 @@ class ComplaintStoreRequest extends FormRequest
     {
         return [
             'creator_type' => ['required', Rule::in([Complaint::CREATOR_INTERNAL, Complaint::CREATOR_EKSTERNAL,]),],
-            'category_id' => ['required', 'exists:categories,id',],
+            'category_id' => [
+                'required',
+                Rule::exists('categories', 'id')->where(fn ($query) => $query
+                    ->where('is_active', true)
+                    ->whereIn('type', ['pengaduan', 'keduanya'])),
+            ],
             'subject' => ['required', 'string', 'max:255',],
             'description' => ['required', 'string',],
             'incident_date' => ['required', 'date', 'before_or_equal:today',],

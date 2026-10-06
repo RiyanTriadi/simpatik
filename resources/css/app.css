@@ -95,6 +95,52 @@
     display: none !important;
 }
 
+/* Keep sidebar scrollbar compact and blended with its dark surface. */
+#sidebar,
+#sidebar nav {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.55) transparent;
+}
+
+#sidebar::-webkit-scrollbar,
+#sidebar nav::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+#sidebar::-webkit-scrollbar-track,
+#sidebar nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#sidebar::-webkit-scrollbar-thumb,
+#sidebar nav::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.55);
+    border-radius: 9999px;
+    border: none;
+}
+
+#sidebar::-webkit-scrollbar-thumb:hover,
+#sidebar nav::-webkit-scrollbar-thumb:hover {
+    background: #fca311;
+}
+
+@keyframes modal-pop {
+    from {
+        opacity: 0;
+        transform: translateY(0.75rem) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-panel {
+    animation: modal-pop 200ms ease-out both;
+}
+
 /* Flyout & icon default */
 .nav-flyout {
     display: none;
@@ -109,7 +155,6 @@
         width: 5rem !important;
     }
 
-    html.sidebar-collapsed .sidebar-label,
     html.sidebar-collapsed .sidebar-chevron,
     html.sidebar-collapsed .sidebar-title,
     html.sidebar-collapsed .submenu-panel {
@@ -129,5 +174,44 @@
 
     html.sidebar-collapsed .nav-item-group:hover .nav-flyout {
         display: block;
+    }
+
+    html.sidebar-collapsed #sidebar {
+        width: 5rem !important;
+    }
+
+    html.sidebar-collapsed #sidebar a {
+        justify-content: center;
+        gap: 0;
+    }
+
+    html.sidebar-collapsed body:not(.public-layout) .sidebar-label {
+        display: none !important;
+    }
+
+    .public-layout .sidebar-label {
+        max-width: 12rem;
+        overflow: hidden;
+        opacity: 1;
+        transition: max-width 300ms ease-in-out, opacity 200ms ease-in-out;
+    }
+
+    html.sidebar-collapsed .public-layout .sidebar-label {
+        display: inline-block !important;
+        max-width: 0;
+        opacity: 0;
+    }
+
+    html.sidebar-collapsed .public-layout .nav-flyout {
+        display: none;
+        opacity: 0;
+        transform: translateX(-0.5rem);
+        transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    html.sidebar-collapsed .public-layout .nav-item-group:hover .nav-flyout {
+        display: block;
+        opacity: 1;
+        transform: translateX(0);
     }
 }

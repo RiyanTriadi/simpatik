@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Complaint;
 use App\Models\User;
+use App\Notifications\SystemNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -83,6 +84,13 @@ class ComplaintController extends Controller
 
         $complaint->update($validated);
 
+        User::whereIn('role', [User::ROLE_ADMIN, User::ROLE_STAFF])
+            ->each(fn (User $user) => $user->notify(new SystemNotification(
+                'Status pengaduan berubah',
+                "Status {$complaint->ticket_number} diperbarui menjadi {$complaint->status}.",
+                route($user->role . '.pengaduan.show', $complaint->ticket_number),
+            )));
+
         return redirect()->back()->with('success', 'Pengaduan berhasil diperbarui.');
     }
 
@@ -145,10 +153,25 @@ class ComplaintController extends Controller
             ],
         ]);
 
+        if ($request->filled('officer_search') && empty($validated['assigned_to'])) {
+            return redirect()->back()
+                ->withErrors(['assigned_to' => 'Pilih petugas dari daftar yang tersedia.'])
+                ->withInput();
+        }
+
         $complaint->update([
             'assigned_to' => $validated['assigned_to'] ?? null,
             'assigned_at' => !empty($validated['assigned_to']) ? now() : null,
         ]);
+
+        if (!empty($validated['assigned_to'])) {
+            $officer = User::find($validated['assigned_to']);
+            $officer?->notify(new SystemNotification(
+                'Pengaduan ditugaskan',
+                "Anda mendapat tugas untuk tiket {$complaint->ticket_number}.",
+                route(User::ROLE_PETUGAS . '.pengaduan.show', $complaint->ticket_number),
+            ));
+        }
 
         return redirect()->back()->with(
             'success',

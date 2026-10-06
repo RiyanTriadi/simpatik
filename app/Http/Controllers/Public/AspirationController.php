@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Public\AspirationStoreRequest;
 use App\Models\Aspiration;
 use App\Models\Category;
+use App\Models\User;
+use App\Notifications\SystemNotification;
 use Illuminate\Support\Str;
 
 class AspirationController extends Controller
@@ -57,6 +59,13 @@ class AspirationController extends Controller
             'reporter_phone' => $isAnonymous ? null : $validated['reporter_phone'],
             'reporter_email' => $validated['reporter_email'] ?? null,
         ]);
+
+        User::whereIn('role', [User::ROLE_ADMIN, User::ROLE_STAFF, User::ROLE_PETUGAS])
+            ->each(fn (User $user) => $user->notify(new SystemNotification(
+                'Aspirasi baru',
+                "Tiket {$aspiration->ticket_number} membutuhkan perhatian.",
+                route($user->role . '.aspirasi.show', $aspiration->ticket_number),
+            )));
 
         return redirect()
             ->route('public.aspirasi.index')

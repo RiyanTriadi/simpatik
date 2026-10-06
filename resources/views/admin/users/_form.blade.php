@@ -6,22 +6,27 @@
 <div class="space-y-5">
 
     {{-- Profile Image --}}
-    <div>
+    <div x-data="profileImagePreview('{{ old('profile_image_data') }}')">
         <label class="block text-sm font-medium text-gray-700 mb-1">Foto Profil</label>
         <div class="flex items-center gap-4">
             {{-- Preview Foto --}}
-            @if (isset($user) && $user->profile_image_path)
-                <img src="{{ Storage::url($user->profile_image_path) }}"
+                <template x-if="preview">
+                    <img :src="preview" alt="Preview foto profil"
+                        class="w-16 h-16 object-cover border border-gray-200 flex-shrink-0">
+                </template>
+                @if (isset($user) && $user->profile_image_path)
+                    <img src="{{ Storage::url($user->profile_image_path) }}"
+                        x-show="!preview"
                     alt="{{ $user->name }}"
                     class="w-16 h-16 object-cover border border-gray-200 flex-shrink-0">
-            @else
-                <div class="w-16 h-16 bg-prussian-blue-500 flex items-center justify-center text-white font-semibold text-xl flex-shrink-0">
-                    {{ isset($user) ? strtoupper(substr($user->name, 0, 1)) : '?' }}
-                </div>
-            @endif
+                @else
+                    <div x-show="!preview" class="w-16 h-16 bg-prussian-blue-500 flex items-center justify-center text-white font-semibold text-xl flex-shrink-0">
+                        {{ isset($user) ? strtoupper(substr($user->name, 0, 1)) : '?' }}
+                    </div>
+                @endif
 
             <div class="flex-1">
-                <input type="file" name="profile_image" accept="image/*"
+                <input type="file" name="profile_image" accept="image/*" @change="readImage($event)"
                     class="w-full px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 file:mr-3 file:py-1 file:px-3 file:border-0 file:text-xs file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 @error('profile_image') border-red-500 @enderror">
                 <p class="mt-1 text-xs text-gray-500">
                     Format: JPG, PNG, WEBP. Maks 2MB.
@@ -32,6 +37,7 @@
                 @error('profile_image')
                     <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                 @enderror
+                <input type="hidden" name="profile_image_data" x-model="data">
             </div>
         </div>
     </div>
@@ -96,7 +102,6 @@
             <select name="role" required
                 class="w-full px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 @error('role') border-red-500 @enderror">
                 <option value="">-- Pilih Role --</option>
-                <option value="admin" {{ old('role', $user->role ?? '') == 'admin' ? 'selected' : '' }}>Admin</option>
                 <option value="staff" {{ old('role', $user->role ?? '') == 'staff' ? 'selected' : '' }}>Staff</option>
                 <option value="petugas" {{ old('role', $user->role ?? '') == 'petugas' ? 'selected' : '' }}>Petugas</option>
             </select>
@@ -146,3 +151,22 @@
         {{ isset($user) ? 'Simpan Perubahan' : 'Simpan User' }}
     </button>
 </div>
+
+<script>
+    function profileImagePreview(initial) {
+        return {
+            preview: initial || '',
+            data: initial || '',
+            readImage(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (loadEvent) => {
+                    this.preview = loadEvent.target.result;
+                    this.data = loadEvent.target.result;
+                };
+                reader.readAsDataURL(file);
+            },
+        };
+    }
+</script>

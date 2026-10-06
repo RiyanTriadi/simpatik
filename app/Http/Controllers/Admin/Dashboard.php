@@ -30,6 +30,13 @@ class Dashboard extends Controller
             'unassigned' => (clone $complaintQuery)->whereNull('assigned_to')
                 ->whereIn('status', [Complaint::STATUS_BARU, Complaint::STATUS_DIPROSES])
                 ->count(),
+            'unassigned_aspirations' => (clone $aspirationQuery)->whereNull('assigned_to')
+                ->whereIn('status', [Aspiration::STATUS_BARU, Aspiration::STATUS_DIBACA])
+                ->count(),
+            'active_tickets' => (clone $complaintQuery)->whereIn('status', [Complaint::STATUS_BARU, Complaint::STATUS_DIPROSES])->count()
+                + (clone $aspirationQuery)->whereIn('status', [Aspiration::STATUS_BARU, Aspiration::STATUS_DIBACA, Aspiration::STATUS_DITINDAKLANJUTI])->count(),
+            'month_total' => (clone $complaintQuery)->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count()
+                + (clone $aspirationQuery)->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count(),
             'today_complaints' => (clone $complaintQuery)->whereDate('created_at', today())->count(),
             'today_aspirations' => (clone $aspirationQuery)->whereDate('created_at', today())->count(),
         ];

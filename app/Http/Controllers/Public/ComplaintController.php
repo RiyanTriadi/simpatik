@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Public\ComplaintStoreRequest;
 use App\Models\Category;
 use App\Models\Complaint;
+use App\Models\User;
+use App\Notifications\SystemNotification;
 use Illuminate\Support\Str;
 
 class ComplaintController extends Controller
@@ -59,6 +61,13 @@ class ComplaintController extends Controller
             'reporter_phone' => $isAnonymous ? null : $validated['reporter_phone'],
             'reporter_email' => $validated['reporter_email'] ?? null,
         ]);
+
+        User::whereIn('role', [User::ROLE_ADMIN, User::ROLE_STAFF, User::ROLE_PETUGAS])
+            ->each(fn (User $user) => $user->notify(new SystemNotification(
+                'Pengaduan baru',
+                "Tiket {$complaint->ticket_number} membutuhkan perhatian.",
+                route($user->role . '.pengaduan.show', $complaint->ticket_number),
+            )));
 
         return redirect()
             ->route('public.pengaduan.index')

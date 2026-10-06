@@ -48,70 +48,39 @@
             <div class="bg-white border border-gray-200 p-4 hover:shadow-md transition">
                 <div class="flex items-start justify-between">
                     <div>
-                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Sedang Diproses</p>
+                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Tiket Aktif</p>
                         <p class="text-2xl md:text-3xl font-bold text-yellow-600 mt-1">
-                            {{ $stats['complaints_processing'] }}
+                            {{ $stats['active_tickets'] }}
                         </p>
                     </div>
                     <div class="w-10 h-10 bg-yellow-100 flex items-center justify-center">
                         <i class="ri-loader-4-line text-yellow-500 text-xl"></i>
                     </div>
                 </div>
-                <p class="text-xs text-gray-400 mt-2">Pengaduan aktif</p>
+                <p class="text-xs text-gray-400 mt-2">Pengaduan dan aspirasi belum selesai</p>
             </div>
 
             <div class="bg-white border border-gray-200 p-4 hover:shadow-md transition">
                 <div class="flex items-start justify-between">
                     <div>
                         <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Belum Di-assign</p>
-                        <p class="text-2xl md:text-3xl font-bold text-orange-600 mt-1">{{ $stats['unassigned'] }}</p>
+                        <p class="text-2xl md:text-3xl font-bold text-orange-600 mt-1">{{ $stats['unassigned'] + $stats['unassigned_aspirations'] }}</p>
                     </div>
                     <div class="w-10 h-10 bg-orange-100 flex items-center justify-center">
                         <i class="ri-user-unfollow-line text-orange-500 text-xl"></i>
                     </div>
                 </div>
-                @if ($stats['unassigned'] > 0)
+                @if ($stats['unassigned'] + $stats['unassigned_aspirations'] > 0)
                     <a href="{{ role_route('pengaduan.assign') }}"
                         class="text-xs text-orange-600 hover:text-orange-700 font-medium mt-2 flex items-center gap-1">
                         <i class="ri-arrow-right-line"></i>
-                        Assign sekarang
+                        {{ $stats['unassigned'] + $stats['unassigned_aspirations'] }} tiket perlu assign
                     </a>
                 @else
                     <p class="text-xs text-emerald-600 mt-2 flex items-center gap-1">
                         <i class="ri-checkbox-circle-line"></i> Semua sudah di-assign
                     </p>
                 @endif
-            </div>
-        </div>
-
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div class="bg-white p-3 flex items-center justify-between">
-                <div>
-                    <p class="text-xs text-gray-500">Pengaduan Baru</p>
-                    <p class="text-lg font-bold text-gray-800">{{ $stats['complaints_new'] }}</p>
-                </div>
-                <i class="ri-alarm-warning-line text-blue-400 text-2xl"></i>
-            </div>
-            <div class="bg-white p-3 flex items-center justify-between">
-                <div>
-                    <p class="text-xs text-gray-500">Pengaduan Selesai</p>
-                    <p class="text-lg font-bold text-gray-800">{{ $stats['complaints_completed'] }}</p>
-                </div>
-                <i class="ri-checkbox-circle-line text-emerald-400 text-2xl"></i>
-            </div>
-            <div class="bg-white p-3 flex items-center justify-between">
-                <div>
-                    <p class="text-xs text-gray-500">Aspirasi Baru</p>
-                    <p class="text-lg font-bold text-gray-800">{{ $stats['aspirations_new'] }}</p>
-                </div>
-                <i class="ri-notification-3-line text-purple-400 text-2xl"></i>
-            </div>
-            <div class="bg-white p-3 flex items-center justify-between">
-                <div>
-                    <p class="text-xs text-gray-500">Ditindaklanjuti</p>
-                    <p class="text-lg font-bold text-gray-800">{{ $stats['aspirations_follow_up'] }}</p>
-                </div>
-                <i class="ri-flag-2-line text-teal-400 text-2xl"></i>
             </div>
         </div>
 

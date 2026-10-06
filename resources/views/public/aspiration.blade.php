@@ -44,15 +44,18 @@
                 <div class="grid grid-cols-4 gap-4 mb-4">
                     <h3 class="text-alabaster-grey-800 text-md font-medium col-span-4 md:col-span-1">Kategori Aspirasi
                     </h3>
-                    <div class="col-span-4 md:col-span-3">
-                        <select class="border border-gray-300 p-2" name="category_id" id="category_id">
-                            <option value="">Pilih Kategori</option>
-                            @foreach ($categories as $category)
-                                <option value="{{ $category->id }}" @selected(old('category_id') == $category->id)>
-                                    {{ $category->name }}
-                                </option>
-                            @endforeach
-                        </select>
+                    <div class="col-span-4 md:col-span-3" x-data="categorySearch({{ Js::from($categories->map(fn ($category) => ['id' => $category->id, 'name' => $category->name])) }}, '{{ old('category_id') }}')">
+                        <input type="hidden" name="category_id" x-model="selectedId">
+                        <div class="relative">
+                            <input type="search" x-model="search" @input="selectedId = ''" @focus="open = true" @click.outside="open = false"
+                                placeholder="Cari kategori..." class="border border-gray-300 p-2 w-full" autocomplete="off">
+                            <div x-show="open" x-cloak class="absolute z-20 mt-1 w-full border border-gray-200 bg-white shadow-lg max-h-48 overflow-y-auto">
+                                <template x-for="category in filtered" :key="category.id">
+                                    <button type="button" @click="select(category)" class="block w-full px-3 py-2 text-left text-sm hover:bg-orange-50" x-text="category.name"></button>
+                                </template>
+                                <p x-show="filtered.length === 0" class="px-3 py-2 text-sm text-gray-500">Kategori tidak ditemukan.</p>
+                            </div>
+                        </div>
                         @error('category_id')
                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -149,4 +152,23 @@
             </div>
         </form>
     </div>
+    <script>
+        function categorySearch(categories, selectedId) {
+            const selected = categories.find((category) => String(category.id) === String(selectedId));
+            return {
+                categories,
+                search: selected?.name || '',
+                selectedId: selectedId || '',
+                open: false,
+                get filtered() {
+                    return this.categories.filter((category) => category.name.toLowerCase().includes(this.search.toLowerCase()));
+                },
+                select(category) {
+                    this.selectedId = category.id;
+                    this.search = category.name;
+                    this.open = false;
+                },
+            };
+        }
+    </script>
 </x-layout.main>

@@ -1,7 +1,18 @@
 <x-layout.admin title="Assign ke Petugas">
     <div x-data="{
             modalOpen: false,
-            selectedComplaint: { id: null, ticket: '', subject: '', assigned_to: null }
+            selectedComplaint: { id: null, ticket: '', subject: '', assigned_to: null },
+            officerSearch: '',
+            selectedOfficer: '',
+            officerOpen: false,
+            officers: {{ Js::from($officers->map(fn ($officer) => ['id' => $officer->id, 'name' => $officer->name, 'unit' => $officer->unit->name ?? 'Tanpa Unit'])) }},
+            get filteredOfficers() {
+                return this.officers.filter((officer) => `${officer.name} ${officer.unit}`.toLowerCase().includes(this.officerSearch.toLowerCase()));
+            },
+            chooseOfficer(officer) {
+                this.selectedOfficer = officer.id;
+                this.officerSearch = `${officer.name} - ${officer.unit}`;
+            }
         }" class="bg-white p-4">
 
         {{-- Header --}}
@@ -110,21 +121,82 @@
                             </td>
 
                             <td class="text-center px-4 py-3">
-                                <button type="button"
-                                    @click="
-                                        selectedComplaint = {
-                                            id: {{ $complaint->id }},
-                                            ticket: {{ Js::from($complaint->ticket_number) }},
-                                            ticket: '{{ $complaint->ticket_number }}',
-                                            subject: {{ Js::from($complaint->subject) }},
-                                            assigned_to: {{ $complaint->assigned_to ?? 'null' }}
-                                        };
-                                        modalOpen = true;
-                                    "
-                                    class="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 border border-gray-300 hover:border-emerald-500 hover:text-emerald-600 hover:bg-emerald-50 transition">
-                                    <i class="ri-user-add-line"></i>
-                                    {{ $complaint->officer ? 'Ubah Petugas' : 'Assign' }}
-                                </button>
+                                <div
+                                    x-data="{
+                                        open: false,
+                                        top: 0,
+                                        left: 0,
+                                        toggle(event) {
+                                            if (this.open) {
+                                                this.open = false;
+                                                return;
+                                            }
+                                            const rect = event.currentTarget.getBoundingClientRect();
+                                            this.top = rect.bottom + 4;
+                                            this.left = rect.right - 144;
+                                            this.open = true;
+                                        }
+                                    }"
+                                    @scroll.window="open = false"
+                                    @resize.window="open = false"
+                                >
+                                    <button
+                                        @click="toggle($event)"
+                                        class="cursor-pointer text-gray-500 hover:text-prussian-blue-500 focus:outline-none p-1 hover:bg-gray-100 transition"
+                                    >
+                                        <i class="ri-more-line text-lg"></i>
+                                    </button>
+
+                                    <template x-teleport="body">
+                                        <div
+                                            x-show="open"
+                                            x-cloak
+                                            @click.outside="open = false"
+                                            x-transition:enter="transition ease-out duration-100"
+                                            x-transition:enter-start="opacity-0 scale-95"
+                                            x-transition:enter-end="opacity-100 scale-100"
+                                            x-transition:leave="transition ease-in duration-75"
+                                            x-transition:leave-start="opacity-100 scale-100"
+                                            x-transition:leave-end="opacity-0 scale-95"
+                                            :style="`top: ${top}px; left: ${left}px;`"
+                                            class="fixed z-[100] w-36 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 border border-gray-100"
+                                        >
+                                            <div class="py-1">
+                                                {{-- Assign / Ubah Petugas --}}
+                                                <button
+                                                    type="button"
+                                                    @click="
+                                                        selectedComplaint = {
+                                                            id: {{ $complaint->id }},
+                                                            ticket: {{ Js::from($complaint->ticket_number) }},
+                                                            ticket: '{{ $complaint->ticket_number }}',
+                                                            subject: {{ Js::from($complaint->subject) }},
+                                                            assigned_to: {{ $complaint->assigned_to ?? 'null' }}
+                                                        };
+                                                        selectedOfficer = {{ $complaint->assigned_to ?? 'null' }};
+                                                        officerSearch = '';
+                                                        officerOpen = false;
+                                                        modalOpen = true;
+                                                        open = false;
+                                                    "
+                                                    class="group flex w-full items-center px-4 py-2 text-sm text-emerald-600 hover:bg-emerald-50 transition border-t border-gray-100"
+                                                >
+                                                    <i class="ri-user-add-line mr-2 text-emerald-500"></i>
+                                                    {{ $complaint->officer ? 'Ubah Petugas' : 'Assign' }}
+                                                </button>
+
+                                                {{-- Detail --}}
+                                                <a
+                                                    href="{{ role_route('pengaduan.show', $complaint) }}"
+                                                    class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-prussian-blue-500 transition"
+                                                >
+                                                    <i class="ri-eye-line mr-2 text-gray-400 group-hover:text-prussian-blue-500"></i>
+                                                    Detail
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -142,9 +214,9 @@
         {{ $complaints->links('components.pagination') }}
 
         {{-- Modal Assign --}}
-        <div x-show="modalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div x-show="modalOpen" x-cloak x-transition:enter="transition-opacity duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div class="absolute inset-0 bg-black/50" @click="modalOpen = false"></div>
-            <div class="relative bg-white w-full max-w-md shadow-xl">
+            <div class="modal-panel relative bg-white w-full max-w-md shadow-xl">
                 {{-- Header --}}
                 <div class="flex items-center justify-between p-5 border-b border-gray-200">
                     <div>
@@ -171,20 +243,22 @@
                             <label class="block text-sm font-medium text-gray-700 mb-1">
                                 Pilih Petugas <span class="text-red-500">*</span>
                             </label>
-                            <select name="assigned_to" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500">
-                                <option value="">-- Pilih Petugas --</option>
-                                @foreach ($officers->groupBy(fn($o) => $o->unit->name ?? 'Tanpa Unit') as $unitName => $group)
-                                    <optgroup label="{{ $unitName }}">
-                                        @foreach ($group as $officer)
-                                            <option value="{{ $officer->id }}"
-                                                :selected="selectedComplaint.assigned_to === {{ $officer->id }}">
-                                                {{ $officer->name }}
-                                            </option>
-                                        @endforeach
-                                    </optgroup>
-                                @endforeach
-                            </select>
+                            <input type="hidden" name="assigned_to" :value="selectedOfficer">
+                            <input type="hidden" name="officer_search" :value="officerSearch">
+                            <div class="relative">
+                                <input type="search" x-model="officerSearch" @focus="officerOpen = true" @input="selectedOfficer = ''; officerOpen = true" @click.outside="officerOpen = false"
+                                    placeholder="Cari nama atau unit petugas..."
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500">
+                                <div x-show="officerOpen" x-cloak class="absolute z-20 mt-1 w-full max-h-48 overflow-y-auto border border-gray-200 bg-white shadow-lg">
+                                    <template x-for="officer in filteredOfficers" :key="officer.id">
+                                        <button type="button" @click="chooseOfficer(officer)" class="block w-full px-3 py-2 text-left text-sm hover:bg-emerald-50">
+                                            <span x-text="officer.name"></span>
+                                            <span class="block text-xs text-gray-500" x-text="officer.unit"></span>
+                                        </button>
+                                    </template>
+                                    <p x-show="filteredOfficers.length === 0" class="px-3 py-2 text-sm text-gray-500">Petugas tidak ditemukan.</p>
+                                </div>
+                            </div>
                             <p class="mt-1 text-xs text-gray-500">
                                 Hanya user dengan role <strong>Petugas</strong> yang muncul di sini.
                             </p>

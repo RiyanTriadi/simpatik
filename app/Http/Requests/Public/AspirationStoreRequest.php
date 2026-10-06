@@ -23,7 +23,12 @@ class AspirationStoreRequest extends FormRequest
     {
         return [
             'creator_type' => ['required', Rule::in([Aspiration::CREATOR_INTERNAL, Aspiration::CREATOR_EKSTERNAL,]),],
-            'category_id' => ['nullable', 'exists:categories,id',],
+            'category_id' => [
+                'required',
+                Rule::exists('categories', 'id')->where(fn ($query) => $query
+                    ->where('is_active', true)
+                    ->whereIn('type', ['aspirasi', 'keduanya'])),
+            ],
             'subject' => ['nullable', 'string', 'max:255',],
             'description' => ['required', 'string',],
             'attachment' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:2048',],
@@ -39,6 +44,7 @@ class AspirationStoreRequest extends FormRequest
         return [
             'creator_type.required' => 'Silakan pilih penyampai aspirasi.',
             'creator_type.in' => 'Penyampai aspirasi tidak valid.',
+            'category_id.required' => 'Silakan pilih kategori aspirasi.',
             'category_id.exists' => 'Kategori aspirasi tidak ditemukan.',
             'description.required' => 'Deskripsi aspirasi wajib diisi.',
             'attachment.mimes' => 'Lampiran harus berupa JPG, JPEG, PNG, atau PDF.',

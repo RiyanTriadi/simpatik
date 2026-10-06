@@ -42,15 +42,15 @@
 
     <x-toast />
 
-    <div class="flex min-h-screen">
+    <div class="flex h-screen overflow-hidden">
 
         {{-- Overlay Mobile --}}
-        <div x-show="mobileOpen" x-cloak @click="mobileOpen = false" class="fixed inset-0 z-40 bg-black/50 lg:hidden">
+        <div x-show="mobileOpen" x-cloak x-transition:enter="transition-opacity duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="mobileOpen = false" class="fixed inset-0 z-40 bg-black/50 lg:hidden">
         </div>
 
         {{-- Sidebar --}}
         <aside id="sidebar"
-            class="fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-prussian-blue-600 text-white transition-all duration-300 lg:static lg:translate-x-0"
+            class="fixed inset-y-0 left-0 z-50 flex h-screen w-72 flex-col overflow-y-auto bg-prussian-blue-600 text-white transition-all duration-300 lg:static lg:translate-x-0"
             :class="{
             '-translate-x-full': !mobileOpen,
             'translate-x-0': mobileOpen,
@@ -238,7 +238,7 @@
         </aside>
 
         {{-- Main Area --}}
-        <div class="flex min-w-0 flex-1 flex-col">
+        <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto overscroll-contain">
 
             {{-- Header --}}
             <header
@@ -255,7 +255,43 @@
                     </button>
                 </div>
 
-                {{-- Kanan: Profile Dropdown --}}
+                {{-- Kanan: Notifikasi dan profile --}}
+                @php($unreadCount = auth()->user()->unreadNotifications()->count())
+                <div class="flex items-center gap-3">
+                <div x-data="{ notificationOpen: false }" class="relative">
+                    <button @click="notificationOpen = !notificationOpen" @click.outside="notificationOpen = false" type="button"
+                        class="relative p-2 text-gray-500 hover:bg-gray-50 hover:text-prussian-blue-500">
+                        <i class="ri-notification-3-line text-xl"></i>
+                        @if ($unreadCount)
+                            <span class="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] text-white">
+                                {{ $unreadCount > 99 ? '99+' : $unreadCount }}
+                            </span>
+                        @endif
+                    </button>
+                    <div x-show="notificationOpen" x-cloak x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95 -translate-y-1" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 -translate-y-1" class="absolute right-0 z-50 mt-2 w-80 origin-top-right bg-white shadow-lg ring-1 ring-black/5">
+                        <div class="flex items-center justify-between border-b border-gray-100 px-4 py-3">
+                            <p class="font-semibold text-gray-800">Notifikasi</p>
+                            <form action="{{ role_route('notifications.read-all') }}" method="POST">
+                                @csrf
+                                <button class="text-xs text-blue-600 hover:underline">Tandai dibaca</button>
+                            </form>
+                        </div>
+                        <div class="max-h-80 overflow-y-auto">
+                            @forelse (auth()->user()->notifications()->latest()->limit(8)->get() as $notification)
+                                <form action="{{ role_route('notifications.read', $notification->id) }}" method="POST">
+                                    @csrf
+                                    <button class="block w-full border-b border-gray-50 px-4 py-3 text-left hover:bg-gray-50 {{ $notification->read_at ? '' : 'bg-orange-50' }}">
+                                        <p class="text-sm font-medium text-gray-800">{{ $notification->data['title'] ?? 'Notifikasi' }}</p>
+                                        <p class="mt-0.5 text-xs text-gray-500">{{ $notification->data['message'] ?? '' }}</p>
+                                        <p class="mt-1 text-[10px] text-gray-400">{{ $notification->created_at->diffForHumans() }}</p>
+                                    </button>
+                                </form>
+                            @empty
+                                <p class="px-4 py-8 text-center text-sm text-gray-500">Belum ada notifikasi.</p>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
                 <div x-data="{ profileOpen: false, logoutConfirmOpen: false }" class="relative">
                     <button @click="profileOpen = !profileOpen" @click.outside="profileOpen = false" type="button"
                         class="flex items-center gap-2.5 hover:bg-gray-50 px-2 py-1.5 transition cursor-pointer">
@@ -313,12 +349,12 @@
                     </div>
 
                     <template x-teleport="body">
-                        <div x-show="logoutConfirmOpen" x-cloak
+                        <div x-show="logoutConfirmOpen" x-cloak x-transition:enter="transition-opacity duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
                             @keydown.escape.window="logoutConfirmOpen = false"
                             @click.self="logoutConfirmOpen = false"
                             class="fixed inset-0 z-[120] flex items-center justify-center bg-black/50 p-4">
                             <div role="dialog" aria-modal="true" aria-labelledby="logout-confirm-title"
-                                class="w-full max-w-sm bg-white p-6 shadow-xl">
+                                class="modal-panel w-full max-w-sm bg-white p-6 shadow-xl">
                                 <div class="flex items-start gap-3">
                                     <i class="ri-logout-box-line text-2xl text-red-500"></i>
                                     <div>
@@ -346,6 +382,7 @@
                             </div>
                         </div>
                     </template>
+                </div>
                 </div>
             </header>
 

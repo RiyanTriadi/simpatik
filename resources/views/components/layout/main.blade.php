@@ -12,17 +12,18 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.9.1/fonts/remixicon.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 </head>
 
-<body class="bg-gray-100 text-gray-800">
+<body class="public-layout bg-gray-100 text-gray-800">
 
 
-    <div class="flex min-h-screen">
+    <div class="flex h-screen overflow-hidden">
 
         {{-- Sidebar --}}
         <aside id="sidebar"
-            class="fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-prussian-blue-600 text-white transition-transform duration-300 lg:static lg:translate-x-0 -translate-x-full">
+            class="fixed inset-y-0 left-0 z-50 flex h-screen w-72 flex-col overflow-y-auto bg-prussian-blue-600 text-white transition-all duration-300 ease-in-out lg:static lg:translate-x-0 -translate-x-full">
 
             {{-- Logo --}}
             <div class="flex h-16 shrink-0 items-center px-6">
@@ -30,33 +31,39 @@
                     <div class="flex h-10 w-10 items-center justify-center bg-orange-500">
                         <span class="text-lg font-bold text-black">S</span>
                     </div>
-                    <h1 class="text-lg font-bold">SIMPATIK</h1>
+                    <h1 class="sidebar-label text-lg font-bold">SIMPATIK</h1>
                 </div>
             </div>
 
             {{-- Navigation --}}
             <nav class="flex-1 space-y-1 overflow-y-auto p-4">
-                <p class="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                    Menu Utama
-                </p>
 
-                <a href="{{ route('public.index') }}"
-                    class="flex items-center gap-3 {{ request()->routeIs('public.index') ? 'text-black bg-orange-500' : 'transition hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium ">
-                    <i class="ri-home-3-line"></i>
-                    Beranda
-                </a>
+                <div class="nav-item-group relative">
+                    <a href="{{ route('public.index') }}"
+                        class="nav-item flex items-center gap-3 {{ request()->routeIs('public.index') ? 'text-black bg-orange-500' : 'transition hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium ">
+                        <i class="ri-home-3-line"></i>
+                        <span class="sidebar-label">Beranda</span>
+                    </a>
+                    <span class="nav-flyout absolute left-full top-0 z-[60] pl-2"><span class="block whitespace-nowrap bg-gray-900 px-3 py-2 text-sm text-white shadow-lg">Beranda</span></span>
+                </div>
 
-                <a href="{{ route('public.pengaduan.index') }}"
-                    class="flex items-center gap-3 {{ request()->routeIs('public.pengaduan.index') ? 'text-black bg-orange-500' : 'transition hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
-                    <i class="ri-file-list-line"></i>
-                    Pengaduan
-                </a>
+                <div class="nav-item-group relative">
+                    <a href="{{ route('public.pengaduan.index') }}"
+                        class="nav-item flex items-center gap-3 {{ request()->routeIs('public.pengaduan.index') ? 'text-black bg-orange-500' : 'transition hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
+                        <i class="ri-file-list-line"></i>
+                        <span class="sidebar-label">Pengaduan</span>
+                    </a>
+                    <span class="nav-flyout absolute left-full top-0 z-[60] pl-2"><span class="block whitespace-nowrap bg-gray-900 px-3 py-2 text-sm text-white shadow-lg">Pengaduan</span></span>
+                </div>
 
-                <a href="{{ route('public.aspirasi.index') }}"
-                    class="flex items-center gap-3 {{ request()->routeIs('public.aspirasi.index') ? 'text-black bg-orange-500' : 'transition hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
-                    <i class="ri-message-2-line"></i>
-                    Aspirasi
-                </a>
+                <div class="nav-item-group relative">
+                    <a href="{{ route('public.aspirasi.index') }}"
+                        class="nav-item flex items-center gap-3 {{ request()->routeIs('public.aspirasi.index') ? 'text-black bg-orange-500' : 'transition hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium">
+                        <i class="ri-message-2-line"></i>
+                        <span class="sidebar-label">Aspirasi</span>
+                    </a>
+                    <span class="nav-flyout absolute left-full top-0 z-[60] pl-2"><span class="block whitespace-nowrap bg-gray-900 px-3 py-2 text-sm text-white shadow-lg">Aspirasi</span></span>
+                </div>
             </nav>
         </aside>
 
@@ -66,7 +73,7 @@
 
 
         {{-- Main Area --}}
-        <div class="flex min-w-0 flex-1 flex-col">
+        <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto overscroll-contain">
 
             {{-- Header --}}
             <header
@@ -80,11 +87,11 @@
                                 d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                     </button>
+                    <button id="sidebar-collapse-toggle" type="button" class="hidden p-2 text-gray-600 hover:bg-gray-100 lg:block" title="Ciutkan sidebar">
+                        <i class="ri-layout-left-line text-xl"></i>
+                    </button>
 
                     <div class="flex items-center gap-3">
-                        <div class="flex h-10 w-10 items-center justify-center bg-orange-500">
-                            <span class="text-lg font-bold text-black">RT</span>
-                        </div>
                         <h2 class="text-lg font-bold text-gray-800">
                             UNIVERSITASKU
                         </h2>
@@ -127,6 +134,13 @@
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebar-overlay');
         const toggle = document.getElementById('sidebar-toggle');
+        const collapseToggle = document.getElementById('sidebar-collapse-toggle');
+
+        try {
+            if (localStorage.getItem('public-sidebar-collapsed') === 'true') {
+                document.documentElement.classList.add('sidebar-collapsed');
+            }
+        } catch (e) {}
 
         function openSidebar() {
             sidebar.classList.remove('-translate-x-full');
@@ -140,6 +154,12 @@
 
         toggle?.addEventListener('click', openSidebar);
         overlay?.addEventListener('click', closeSidebar);
+        collapseToggle?.addEventListener('click', () => {
+            document.documentElement.classList.toggle('sidebar-collapsed');
+            try {
+                localStorage.setItem('public-sidebar-collapsed', document.documentElement.classList.contains('sidebar-collapsed') ? 'true' : 'false');
+            } catch (e) {}
+        });
 
         (function() {
             const toast = document.getElementById('toast-success');

@@ -15,7 +15,7 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $users = User::with('unit');
+        $users = User::with('unit')->where('role', '!=', User::ROLE_ADMIN);
 
         if ($request->filled('search')) {
             $searchTerm = '%' . $request->search . '%';
@@ -27,7 +27,7 @@ class UserController extends Controller
         }
 
         if ($request->filled('role')) {
-            $users->where('role', $request->role);
+            $users->where('role', $request->role)->where('role', '!=', User::ROLE_ADMIN);
         }
 
         if ($request->filled('unit_id')) {
@@ -48,6 +48,7 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
+        abort_if($user->role === User::ROLE_ADMIN, 404);
         $units = Unit::active()->orderBy('name')->get();
         return view('admin.users.edit', compact('user', 'units'));
     }
@@ -60,9 +61,12 @@ class UserController extends Controller
         if ($request->hasFile('profile_image')) {
             $validated['profile_image_path'] = $request->file('profile_image')
                 ->store('profile-images', 'public');
+        } elseif ($request->filled('profile_image_data')) {
+            $validated['profile_image_path'] = $this->storeProfileImageData($request->string('profile_image_data')->toString());
         }
 
         unset($validated['profile_image']);
+        unset($validated['profile_image_data']);
 
         User::create($validated);
 
@@ -71,6 +75,7 @@ class UserController extends Controller
 
     public function update(UpdateUserRequest $request, User $user)
     {
+        abort_if($user->role === User::ROLE_ADMIN, 404);
         $validated = $request->validated();
 
         if (!empty($validated['password'])) {
@@ -84,9 +89,12 @@ class UserController extends Controller
                 Storage::disk('public')->delete($user->profile_image_path);
             }
             $validated['profile_image_path'] = $request->file('profile_image')->store('profile-images', 'public');
+        } elseif ($request->filled('profile_image_data') && !$user->profile_image_path) {
+            $validated['profile_image_path'] = $this->storeProfileImageData($request->string('profile_image_data')->toString());
         }
 
         unset($validated['profile_image']);
+        unset($validated['profile_image_data']);
 
         $user->update($validated);
 
@@ -95,6 +103,9 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+        if ($user->role === User::ROLE_ADMIN) {
+            return redirect()->back()->with('error', 'Data admin tidak dikelola melalui daftar user.');
+        }
         if (auth()->id() === $user->id) {
             return redirect()->back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
@@ -143,5 +154,26 @@ class UserController extends Controller
     public function show(User $user)
     {
         abort(404);
+    }
+
+    private function storeProfileImageData(string $data): string
+    {
+        if (!preg_match('/^data:image\/(jpeg|png|webp);base64,(.+)$/', $data, $matches)) {
+            abort(422, 'Format foto profil tidak valid.');
+        }
+
+        $contents = base64_decode($matches[2], true);
+        if ($contents === false || strlen($contents) > 2 * 1024 * 1024) {
+            abort(422, 'Ukuran foto profil maksimal 2MB.');
+        }
+
+        $mime = (new \finfo(FILEINFO_MIME_TYPE))->buffer($contents);
+        abort_unless(in_array($mime, ['image/jpeg', 'image/png', 'image/webp'], true), 422, 'Format foto profil tidak valid.');
+
+        $extension = $matches[1] === 'jpeg' ? 'jpg' : $matches[1];
+        $path = 'profile-images/' . uniqid('', true) . '.' . $extension;
+        abort_unless(Storage::disk('public')->put($path, $contents), 422, 'Foto profil gagal disimpan.');
+
+        return $path;
     }
 }
