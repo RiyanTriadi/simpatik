@@ -10,7 +10,7 @@ SIMPATIK adalah aplikasi web berbasis Laravel untuk mengelola pengaduan dan aspi
 
 - **Admin** — Akses penuh ke seluruh sistem termasuk manajemen user & master data
 - **Staff** — Kelola pengaduan & aspirasi, verifikasi, assign pengaduan ke petugas
-- **Petugas** — Menangani pengaduan yang di-assign; halaman pengaduan dan aspirasi read-only
+- **Petugas** — Menangani pengaduan yang di-assign melalui menu Tugas Saya
 
 ### Manajemen Tiket
 
@@ -20,7 +20,10 @@ SIMPATIK adalah aplikasi web berbasis Laravel untuk mengelola pengaduan dan aspi
 - Status aspirasi: baru → ditindaklanjuti → selesai/ditolak
 - Prioritas pengaduan: rendah, sedang, tinggi, urgent; ditentukan saat verifikasi
 - Assignment hanya berlaku untuk pengaduan
-- Kotak Masuk terpadu (union query complaint + aspiration)
+- Kotak Masuk terpadu untuk Admin dan Staff (union query complaint + aspiration)
+- Menu Petugas dibatasi menjadi Dashboard dan Tugas Saya
+- Tugas Saya Petugas hanya menampilkan pengaduan yang di-assign ke user terkait
+- Aspirasi hanya tersedia untuk Admin dan Staff; tidak tersedia di route atau sidebar Petugas
 
 ### Manajemen Master
 
@@ -172,7 +175,7 @@ routes/
 | Fitur             | Petugas            | Staff | Admin |
 | ----------------- | ------------------ | ----- | ----- |
 | Dashboard         | ✅                 | ✅    | ✅    |
-| Kotak Masuk       | ✅ (terbatas)      | ✅    | ✅    |
+| Kotak Masuk       | ❌                 | ✅    | ✅    |
 | Pengaduan         | ✅ (tugas sendiri) | ✅    | ✅    |
 | Aspirasi          | ❌                  | ✅    | ✅    |
 | Verifikasi        | ❌                 | ✅    | ✅    |

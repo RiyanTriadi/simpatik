@@ -22,10 +22,18 @@ Route didefinisikan **via loop** di `routes/web.php`:
 foreach (['admin', 'staff', 'petugas'] as $role) {
     Route::prefix($role)->name("{$role}.")->middleware(['auth', "role:{$role}"])
         ->group(function () use ($role) {
-            // ... route yang sama untuk ketiga role
+            // Route Pengaduan untuk semua role
+            // Route Aspirasi hanya untuk admin dan staff
         });
 }
 ```
+
+**Batasan Petugas:**
+
+- Sidebar hanya menampilkan Dashboard dan Tugas Saya.
+- Tugas Saya mengarah ke daftar Pengaduan yang di-assign ke Petugas tersebut.
+- Menu Kotak Masuk, Pengaduan dropdown, dan Aspirasi tidak tersedia.
+- Route Aspirasi hanya didaftarkan untuk `admin` dan `staff`.
 
 **Keuntungan:**
 
@@ -139,6 +147,8 @@ Didaftarkan via `composer.json` → `autoload.files`.
 ### `sessions`
 
 Tabel standar Laravel untuk session driver database.
+
+**Batasan assignment:** tabel `aspirations` tidak memiliki kolom `assigned_to`; Aspirasi dikelola Admin/Staff tanpa assignment Petugas.
 
 ---
 
@@ -301,6 +311,8 @@ baru → diverifikasi → di_assign → diproses → selesai
        └────────────→ ditolak
 
 Petugas hanya dapat di_assign → diproses → selesai. Admin/staff dapat mengubah status tanpa batasan transisi.
+
+Menu Petugas hanya Dashboard dan Tugas Saya. Tugas Saya menampilkan Pengaduan yang ditugaskan kepada Petugas.
 ```
 
 ### Aspirasi
@@ -325,6 +337,7 @@ Aspirasi dikelola admin/staff tanpa assignment petugas.
 | 2026-09-28 | Assign ke Petugas, profil user                                |
 | 2026-09-29 | Kotak Masuk terpadu (union query), Dashboard                  |
 | 2026-09-30 | Multi-role URL (`/admin`, `/staff`, `/petugas`), petugas view |
+| 2026-10-08 | Workflow Aspirasi, modal konfirmasi, pembatasan route/menu Petugas |
 
 ---
 
