@@ -93,16 +93,20 @@
                                 <div class="flex items-center gap-1.5">
                                     <span class="px-2.5 py-1 text-xs font-semibold 
                         @if ($complaint->status == 'baru') bg-blue-100 text-blue-800
-                        @elseif($complaint->status == 'diproses') bg-yellow-100 text-yellow-800
+                                                @elseif($complaint->status == 'diverifikasi') bg-teal-100 text-teal-800
+                                                @elseif($complaint->status == 'di_assign') bg-purple-100 text-purple-800
+                                                @elseif($complaint->status == 'diproses') bg-yellow-100 text-yellow-800
                         @elseif($complaint->status == 'selesai') bg-emerald-100 text-emerald-800
                         @else bg-red-100 text-red-800 @endif">
                                         {{ ucfirst($complaint->status) }}
                                     </span>
+                                    @if (auth()->user()->role !== 'petugas')
                                     <button @click="open = !open" @click.outside="open = false"
                                         class="text-gray-400 hover:text-prussian-blue-500 focus:outline-none transition"
                                         title="Ubah Status">
                                         <i class="ri-pencil-line text-base"></i>
                                     </button>
+                                    @endif
                                 </div>
 
                                 {{-- Dropdown Pilihan Status --}}
@@ -114,7 +118,7 @@
                                     x-transition:leave-end="opacity-0 scale-95"
                                     class="absolute right-0 z-50 mt-2 w-40 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 border border-gray-100">
                                     <div class="py-1">
-                                        @foreach (['baru' => 'Baru', 'diproses' => 'Diproses', 'selesai' => 'Selesai', 'ditolak' => 'Ditolak'] as $value => $label)
+                                        @foreach (auth()->user()->role === 'petugas' ? (match ($complaint->status) { 'di_assign' => ['diproses' => 'Diproses'], 'diproses' => ['selesai' => 'Selesai'], default => [] }) : ['baru' => 'Baru', 'diverifikasi' => 'Diverifikasi', 'di_assign' => 'Di-assign', 'diproses' => 'Diproses', 'selesai' => 'Selesai', 'ditolak' => 'Ditolak'] as $value => $label)
                                             <form action="{{ role_route('pengaduan.update', $complaint) }}"
                                                 method="POST">
                                                 @csrf
@@ -149,11 +153,13 @@
                                         @else bg-gray-100 text-gray-800 @endif">
                                         {{ ucfirst($complaint->priority) }}
                                     </span>
+                                    @if (auth()->user()->role !== 'petugas')
                                     <button @click="open = !open" @click.outside="open = false"
                                         class="text-gray-400 hover:text-prussian-blue-500 focus:outline-none transition"
                                         title="Ubah Prioritas">
                                         <i class="ri-pencil-line text-base"></i>
                                     </button>
+                                    @endif
                                 </div>
 
                                 {{-- Dropdown Pilihan Prioritas --}}

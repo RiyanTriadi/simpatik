@@ -174,8 +174,8 @@
                 <div class="mt-4 space-y-1.5">
                     @foreach ([
                             'baru' => ['label' => 'Baru', 'color' => 'bg-blue-500'],
-                            'dibaca' => ['label' => 'Dibaca', 'color' => 'bg-purple-500'],
                             'ditindaklanjuti' => ['label' => 'Ditindaklanjuti', 'color' => 'bg-emerald-500'],
+                            'selesai' => ['label' => 'Selesai', 'color' => 'bg-teal-500'],
                         ] as $key => $item)
                         <div class="flex items-center justify-between text-xs">
                             <div class="flex items-center gap-2">
@@ -446,12 +446,12 @@
                 new Chart(aspirationCtx, {
                     type: 'doughnut',
                     data: {
-                        labels: ['Baru', 'Dibaca', 'Ditindaklanjuti'],
+                        labels: ['Baru', 'Ditindaklanjuti', 'Selesai'],
                         datasets: [{
                             data: [
                                 {{ $aspirationStatusData['baru'] }},
-                                {{ $aspirationStatusData['dibaca'] }},
                                 {{ $aspirationStatusData['ditindaklanjuti'] }},
+                                {{ $aspirationStatusData['selesai'] }},
                             ],
                             backgroundColor: ['#3b82f6', '#a855f7', '#10b981'],
                             borderWidth: 0,

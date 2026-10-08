@@ -111,7 +111,7 @@ Didaftarkan via `composer.json` → `autoload.files`.
 | reporter_name           | varchar nullable     |                                  |
 | reporter_phone          | varchar(20) nullable |                                  |
 | reporter_email          | varchar nullable     |                                  |
-| status                  | enum                 | baru, diproses, selesai, ditolak |
+| status                  | enum                 | baru, diverifikasi, di_assign, diproses, selesai, ditolak |
 | priority                | enum                 | rendah, sedang, tinggi, urgent   |
 | assigned_to             | FK nullable          | references users, nullOnDelete   |
 | assigned_at             | timestamp nullable   |                                  |
@@ -133,9 +133,7 @@ Didaftarkan via `composer.json` → `autoload.files`.
 | reporter_name           | varchar nullable     |                                                                      |
 | reporter_phone          | varchar(20) nullable |                                                                      |
 | reporter_email          | varchar nullable     |                                                                      |
-| status                  | enum                 | baru, dibaca, ditindaklanjuti, ditolak                               |
-| assigned_to             | FK nullable          | references users, nullOnDelete (opsional — perlu migration tambahan) |
-| assigned_at             | timestamp nullable   | (opsional)                                                           |
+| status                  | enum                 | baru, ditindaklanjuti, selesai, ditolak                              |
 | timestamps, softDeletes |                      |                                                                      |
 
 ### `sessions`
@@ -149,7 +147,6 @@ Tabel standar Laravel untuk session driver database.
 ```text
 User belongsTo Unit
 User hasMany Complaint (assigned_to)
-User hasMany Aspiration (assigned_to)
 
 Unit hasMany User
 Unit hasMany Complaint (via unit_id di complaint — opsional)
@@ -161,7 +158,6 @@ Complaint belongsTo Category
 Complaint belongsTo User (as officer, via assigned_to)
 
 Aspiration belongsTo Category
-Aspiration belongsTo User (as officer, via assigned_to)
 ```
 
 ---
@@ -301,14 +297,19 @@ Bukan `-transate-x-full` (typo).
 ### Pengaduan (Complaint)
 
 ```text
-baru → [verifikasi] → diproses → [selesai] → selesai
-                    → [tolak]  → ditolak
+baru → diverifikasi → di_assign → diproses → selesai
+       └────────────→ ditolak
+
+Petugas hanya dapat di_assign → diproses → selesai. Admin/staff dapat mengubah status tanpa batasan transisi.
 ```
 
 ### Aspirasi
 
 ```text
-baru → dibaca → ditindaklanjuti
+baru → ditindaklanjuti → selesai
+       └──────────────→ ditolak
+
+Aspirasi dikelola admin/staff tanpa assignment petugas.
 ```
 
 ---

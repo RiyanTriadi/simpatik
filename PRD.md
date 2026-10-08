@@ -110,7 +110,7 @@ SIMPATIK hadir sebagai solusi terpusat yang menyediakan alur lengkap dari pengaj
 - **FR-INBOX-01**: Menampilkan semua tiket (complaint + aspiration) dalam satu tabel
 - **FR-INBOX-02**: Filter:
     - Tipe (pengaduan/aspirasi)
-    - Status (baru, diproses, selesai, ditolak, dibaca, ditindaklanjuti)
+    - Status (baru, diverifikasi, di_assign, diproses, selesai, ditolak, ditindaklanjuti)
     - Kategori
     - Prioritas
     - Rentang tanggal (hari ini, 7 hari, 30 hari, custom)
@@ -136,12 +136,14 @@ SIMPATIK hadir sebagai solusi terpusat yang menyediakan alur lengkap dari pengaj
 
 - **FR-PGD-04**: List pengaduan dengan status `baru`
 - **FR-PGD-05**: Modal verifikasi:
-    - Setujui (status → diproses) → wajib set prioritas
+    - Setujui (status → diverifikasi) → wajib set prioritas
     - Tolak (status → ditolak)
+- **FR-PGD-05a**: Admin/staff dapat assign pengaduan berstatus `diverifikasi`; status berubah menjadi `di_assign`.
+- **FR-PGD-05b**: Re-assign mengembalikan status menjadi `di_assign`.
 
 #### 4.5.2 Assign ke Petugas (Staff & Admin)
 
-- **FR-PGD-06**: List pengaduan aktif (baru + diproses)
+- **FR-PGD-06**: List pengaduan aktif (diverifikasi + di_assign + diproses)
 - **FR-PGD-07**: Filter: belum di-assign / sudah di-assign
 - **FR-PGD-08**: Modal assign dengan dropdown petugas (grouped by unit)
 - **FR-PGD-09**: Tombol "Batalkan Assign"
@@ -150,9 +152,11 @@ SIMPATIK hadir sebagai solusi terpusat yang menyediakan alur lengkap dari pengaj
 
 - **FR-ASP-01**: List semua aspirasi (dengan filter status, search)
 - **FR-ASP-02**: Halaman detail
-- **FR-ASP-03**: Inline edit status
-- **FR-ASP-04**: List tindak lanjut (aspirasi baru + dibaca)
+- **FR-ASP-03**: Admin/staff dapat mengubah status aspirasi
+- **FR-ASP-04**: List tindak lanjut menampilkan aspirasi berstatus `baru` dan `ditindaklanjuti`
 - **FR-ASP-05**: Tombol tindak lanjut → status `ditindaklanjuti`
+- **FR-ASP-06**: Aspirasi tidak memiliki assignment petugas; seluruh pengelolaan dilakukan admin/staff.
+- **FR-ASP-07**: Status aspirasi dapat diubah menjadi `selesai` atau `ditolak`.
 
 ### 4.7 Modul Manajemen User (Admin Only)
 
@@ -193,11 +197,11 @@ SIMPATIK hadir sebagai solusi terpusat yang menyediakan alur lengkap dari pengaj
 | Dashboard                 | ✅                  | ✅    | ✅    |
 | Kotak Masuk               | ✅ (hanya tugasnya) | ✅    | ✅    |
 | Pengaduan — lihat         | ✅ (hanya tugasnya) | ✅    | ✅    |
-| Pengaduan — update status | ✅ (hanya tugasnya) | ✅    | ✅    |
+| Pengaduan — update status | ❌ (read-only)       | ✅    | ✅    |
 | Pengaduan — verifikasi    | ❌                  | ✅    | ✅    |
 | Pengaduan — assign        | ❌                  | ✅    | ✅    |
 | Pengaduan — hapus         | ❌                  | ❌    | ✅    |
-| Aspirasi — lihat          | ✅                  | ✅    | ✅    |
+| Aspirasi — lihat          | ❌                  | ✅    | ✅    |
 | Aspirasi — tindak lanjut  | ❌                  | ✅    | ✅    |
 | Aspirasi — hapus          | ❌                  | ❌    | ✅    |
 | Daftar Petugas            | ❌                  | ✅    | ✅    |
@@ -218,15 +222,18 @@ Sistem generate nomor tiket (PGD-...)
         ↓
 Staff melihat di "Verifikasi"
         ↓
-Staff approve/tolak + set prioritas
+Admin/staff verifikasi: setujui + set prioritas → diverifikasi
+        ├── Tolak → ditolak
         ↓
-Staff assign ke Petugas (via "Assign ke Petugas")
+Admin/staff assign ke petugas → di_assign
         ↓
 Petugas melihat tiket di "Tugas Saya"
         ↓
-Petugas menangani & update status → diproses → selesai
+Petugas pilih Proses → diproses
         ↓
-Status akhir: selesai
+Petugas pilih Selesai → selesai
+
+Petugas tidak dapat melompati status diproses.
 ```
 
 ### 6.2 Alur Aspirasi
@@ -238,9 +245,9 @@ Sistem generate nomor tiket (ASP-...)
         ↓
 Staff melihat di "Tindak Lanjut"
         ↓
-Staff update status → dibaca → ditindaklanjuti
+Admin/staff update status → ditindaklanjuti → selesai
         ↓
-Status akhir: ditindaklanjuti
+Status dapat berakhir sebagai selesai atau ditolak
 ```
 
 ---
@@ -306,7 +313,6 @@ Status akhir: ditindaklanjuti
 - Notifikasi email
 - Sistem komentar pada tiket
 - Export laporan PDF/Excel
-- Assign aspirasi ke petugas
 - Pengaturan sistem
 
 ### Fase 3 — Advanced (Rencana)

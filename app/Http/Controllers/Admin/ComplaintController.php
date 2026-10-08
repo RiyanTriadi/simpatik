@@ -73,14 +73,27 @@ class ComplaintController extends Controller
 
     public function update(Request $request, Complaint $complaint)
     {
-        if (auth()->user()->role === 'petugas' && $complaint->assigned_to !== auth()->id()) {
+        if (auth()->user()->role === User::ROLE_PETUGAS && $complaint->assigned_to !== auth()->id()) {
             abort(403);
         }
 
-        $validated = $request->validate([
-            'status' => 'sometimes|in:baru,diproses,selesai,ditolak',
-            'priority' => 'sometimes|in:rendah,sedang,tinggi,urgent',
-        ]);
+        $rules = [
+            'status' => 'sometimes|in:baru,diverifikasi,di_assign,diproses,selesai,ditolak',
+        ];
+
+        if (auth()->user()->role !== User::ROLE_PETUGAS) {
+            $rules['priority'] = 'sometimes|in:rendah,sedang,tinggi,urgent';
+        }
+
+        $validated = $request->validate($rules);
+
+        if (($validated['status'] ?? null) === Complaint::STATUS_DIVERIFIKASI && empty($validated['priority'])) {
+            return redirect()->back()->withErrors(['priority' => 'Prioritas wajib ditentukan saat verifikasi.'])->withInput();
+        }
+
+        if (isset($validated['status']) && !$complaint->canTransitionTo($validated['status'], auth()->user())) {
+            return redirect()->back()->withErrors(['status' => 'Transisi status tidak diizinkan.']);
+        }
 
         $complaint->update($validated);
 
@@ -115,7 +128,7 @@ class ComplaintController extends Controller
     public function assign(Request $request)
     {
         $query = Complaint::with(['category', 'officer.unit'])
-            ->whereIn('status', [Complaint::STATUS_BARU, Complaint::STATUS_DIPROSES]);
+            ->whereIn('status', [Complaint::STATUS_DIVERIFIKASI, Complaint::STATUS_DI_ASSIGN, Complaint::STATUS_DIPROSES]);
 
         if ($request->filled('assignment')) {
             if ($request->assignment === 'unassigned') {
@@ -134,7 +147,10 @@ class ComplaintController extends Controller
             });
         }
 
-        $complaints = $query->latest()->paginate(10)->withQueryString();
+        $complaints = $query
+            ->orderByRaw("CASE status WHEN 'diverifikasi' THEN 1 WHEN 'di_assign' THEN 2 WHEN 'diproses' THEN 3 ELSE 4 END")
+            ->orderByRaw("CASE WHEN status = 'diverifikasi' THEN created_at WHEN status IN ('di_assign', 'diproses') THEN assigned_at ELSE updated_at END DESC")
+            ->paginate(10)->withQueryString();
 
         $officers = User::where('role', User::ROLE_PETUGAS)
             ->with('unit')
@@ -162,6 +178,7 @@ class ComplaintController extends Controller
         $complaint->update([
             'assigned_to' => $validated['assigned_to'] ?? null,
             'assigned_at' => !empty($validated['assigned_to']) ? now() : null,
+            'status' => !empty($validated['assigned_to']) ? Complaint::STATUS_DI_ASSIGN : Complaint::STATUS_DIVERIFIKASI,
         ]);
 
         if (!empty($validated['assigned_to'])) {

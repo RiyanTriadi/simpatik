@@ -15,8 +15,8 @@ class Aspiration extends Model
     public const CREATOR_EKSTERNAL = 'eksternal';
 
     public const STATUS_BARU = 'baru';
-    public const STATUS_DIBACA = 'dibaca';
     public const STATUS_DITINDAKLANJUTI = 'ditindaklanjuti';
+    public const STATUS_SELESAI = 'selesai';
     public const STATUS_DITOLAK = 'ditolak';
 
     protected $fillable = [
@@ -31,15 +31,12 @@ class Aspiration extends Model
         'reporter_email',
         'status',
         'category_id',
-        'assigned_to',
-        'assigned_at',
     ];
 
     protected function casts(): array
     {
         return [
             'is_anonymous' => 'boolean',
-            'assigned_at' => 'datetime',
         ];
     }
 
@@ -47,11 +44,6 @@ class Aspiration extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
-    }
-
-    public function officer(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'assigned_to');
     }
 
     // Scope

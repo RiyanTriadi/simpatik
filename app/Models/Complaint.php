@@ -15,6 +15,8 @@ class Complaint extends Model
     public const CREATOR_EKSTERNAL = 'eksternal';
 
     public const STATUS_BARU = 'baru';
+    public const STATUS_DIVERIFIKASI = 'diverifikasi';
+    public const STATUS_DI_ASSIGN = 'di_assign';
     public const STATUS_DIPROSES = 'diproses';
     public const STATUS_SELESAI = 'selesai';
     public const STATUS_DITOLAK = 'ditolak';
@@ -88,6 +90,23 @@ class Complaint extends Model
     public function isAssigned(): bool
     {
         return !is_null($this->assigned_to);
+    }
+
+    public function canTransitionTo(string $to, User $user): bool
+    {
+        if ($user->role === User::ROLE_ADMIN || $user->role === User::ROLE_STAFF) {
+            return in_array($to, [self::STATUS_BARU, self::STATUS_DIVERIFIKASI, self::STATUS_DI_ASSIGN, self::STATUS_DIPROSES, self::STATUS_SELESAI, self::STATUS_DITOLAK], true);
+        }
+
+        if ($user->role !== User::ROLE_PETUGAS || $this->assigned_to !== $user->id) {
+            return false;
+        }
+
+        return match ($this->status) {
+            self::STATUS_DI_ASSIGN => $to === self::STATUS_DIPROSES,
+            self::STATUS_DIPROSES => $to === self::STATUS_SELESAI,
+            default => false,
+        };
     }
 
     public function getCreatorLabelAttribute(): string

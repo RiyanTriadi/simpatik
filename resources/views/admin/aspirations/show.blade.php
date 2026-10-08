@@ -71,15 +71,17 @@
                                 <div class="flex items-center gap-1.5">
                                     <span class="px-2.5 py-1 text-xs font-semibold 
                                         @if ($aspiration->status == 'baru') bg-blue-100 text-blue-800
-                                        @elseif($aspiration->status == 'dibaca') bg-yellow-100 text-yellow-800
+                                        @elseif($aspiration->status == 'di_assign') bg-yellow-100 text-yellow-800
                                         @else bg-emerald-100 text-emerald-800 @endif">
                                         {{ ucfirst($aspiration->status) }}
                                     </span>
+                                    @if (auth()->user()->role !== 'petugas')
                                     <button @click="open = !open" @click.outside="open = false"
                                         class="text-gray-400 hover:text-prussian-blue-500 focus:outline-none transition"
                                         title="Ubah Status">
                                         <i class="ri-pencil-line text-base"></i>
                                     </button>
+                                    @endif
                                 </div>
 
                                 {{-- Dropdown Pilihan Status --}}
@@ -91,7 +93,7 @@
                                     x-transition:leave-end="opacity-0 scale-95"
                                     class="absolute right-0 z-50 mt-2 w-44 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 border border-gray-100">
                                     <div class="py-1">
-                                        @foreach (['baru' => 'Baru', 'dibaca' => 'Dibaca', 'ditindaklanjuti' => 'Ditindaklanjuti'] as $value => $label)
+                                        @foreach (['baru' => 'Baru', 'ditindaklanjuti' => 'Ditindaklanjuti', 'selesai' => 'Selesai', 'ditolak' => 'Ditolak'] as $value => $label)
                                                 <form action="{{ role_route('aspirasi.update', $aspiration) }}"
                                                     method="POST">
                                                     @csrf
@@ -149,69 +151,6 @@
                                 <span>{{ $aspiration->reporter_email ?? '-' }}</span>
                             </div>
                         </div>
-                    @endif
-                </div>
-
-                {{-- Petugas yang Menangani --}}
-                <div class="bg-white border border-gray-200 p-5">
-                    <h3 class="text-md font-semibold text-gray-800 mb-4 border-b pb-2">Petugas Penanganan</h3>
-                    @if ($aspiration->officer)
-                        <div class="text-sm">
-                            <p class="font-medium text-gray-800">{{ $aspiration->officer->name }}</p>
-                            <p class="text-xs text-gray-500">{{ $aspiration->officer->unit->name ?? 'Tanpa Unit' }}</p>
-                            @if ($aspiration->assigned_at)
-                                <p class="mt-0.5 text-xs text-gray-400">
-                                    Di-assign {{ $aspiration->assigned_at->diffForHumans() }}
-                                </p>
-                            @endif
-                        </div>
-                    @else
-                        <div class="flex items-center gap-2 text-gray-500 text-sm">
-                            <i class="ri-user-unfollow-line text-lg"></i>
-                            <span>Belum di-assign ke petugas</span>
-                        </div>
-                    @endif
-
-                    @if (in_array(auth()->user()->role, ['admin', 'staff'], true))
-                        <form action="{{ role_route('aspirasi.assign.store', $aspiration) }}" method="POST"
-                            class="mt-5 border-t border-gray-100 pt-4" x-data="{
-                                officerOpen: false,
-                                officerSearch: {{ Js::from($aspiration->officer?->name ?? '') }},
-                                selectedOfficer: {{ Js::from((string) old('assigned_to', $aspiration->assigned_to)) }},
-                                officers: {{ Js::from($officers->map(fn ($officer) => ['id' => (string) $officer->id, 'name' => $officer->name, 'unit' => $officer->unit->name ?? 'Tanpa Unit'])) }},
-                                get filteredOfficers() { return this.officers.filter((officer) => `${officer.name} ${officer.unit}`.toLowerCase().includes(this.officerSearch.toLowerCase())); },
-                                chooseOfficer(officer) { this.selectedOfficer = officer.id; this.officerSearch = officer.name; this.officerOpen = false; }
-                            }">
-                            @csrf
-                            @method('PUT')
-                            <label for="assigned-to-aspiration" class="mb-1 block text-sm font-medium text-gray-700">
-                                Assign Petugas
-                            </label>
-                            <input type="hidden" name="assigned_to" :value="selectedOfficer">
-                            <input type="hidden" name="officer_search" :value="officerSearch">
-                            <div class="relative">
-                                <input id="assigned-to-aspiration" type="search" x-model="officerSearch"
-                                    @focus="officerOpen = true" @input="selectedOfficer = ''; officerOpen = true"
-                                    @click.outside="officerOpen = false" placeholder="Cari nama atau unit petugas..."
-                                    class="w-full border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none">
-                                <div x-show="officerOpen" x-cloak class="absolute z-20 mt-1 max-h-48 w-full overflow-y-auto border border-gray-200 bg-white shadow-lg">
-                                    <template x-for="officer in filteredOfficers" :key="officer.id">
-                                        <button type="button" @click="chooseOfficer(officer)" class="block w-full px-3 py-2 text-left text-sm hover:bg-emerald-50">
-                                            <span class="block" x-text="officer.name"></span>
-                                            <span class="block text-xs text-gray-500" x-text="officer.unit"></span>
-                                        </button>
-                                    </template>
-                                    <p x-show="filteredOfficers.length === 0" class="px-3 py-2 text-sm text-gray-500">Petugas tidak ditemukan.</p>
-                                </div>
-                            </div>
-                            @error('assigned_to')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                            <button type="submit"
-                                class="mt-3 inline-flex items-center gap-2 bg-prussian-blue-500 px-3 py-2 text-sm font-medium text-white hover:bg-prussian-blue-600">
-                                <i class="ri-user-shared-line"></i> Simpan Petugas
-                            </button>
-                        </form>
                     @endif
                 </div>
 

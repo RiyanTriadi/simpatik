@@ -138,7 +138,7 @@
                                                             ticket: '{{ $complaint->ticket_number }}',
                                                             subject: {{ Js::from($complaint->subject) }},
                                                             reporter: {{ Js::from(!$complaint->is_anonymous ? $complaint->reporter_name : 'Anonim') }},
-                                                            status: '{{ \App\Models\Complaint::STATUS_DIPROSES }}',
+                                                            status: '{{ \App\Models\Complaint::STATUS_DIVERIFIKASI }}',
                                                             priority: '{{ $complaint->priority ?? \App\Models\Complaint::PRIORITY_SEDANG }}'
                                                         });
                                                         open = false;
@@ -227,7 +227,7 @@
                                 {{-- Setujui --}}
                                 <label class="relative cursor-pointer">
                                     <input type="radio" name="status"
-                                        value="{{ \App\Models\Complaint::STATUS_DIPROSES }}" x-model="selected.status"
+                                        value="{{ \App\Models\Complaint::STATUS_DIVERIFIKASI }}" x-model="selected.status"
                                         class="peer sr-only">
                                     <div class="border-2 border-gray-200 p-4 text-center transition
                                         peer-checked:border-emerald-500 peer-checked:bg-emerald-50
@@ -255,7 +255,7 @@
                         </div>
 
                         {{-- Prioritas (muncul jika Setujui) --}}
-                        <div x-show="selected.status === '{{ \App\Models\Complaint::STATUS_DIPROSES }}'"
+                        <div x-show="selected.status === '{{ \App\Models\Complaint::STATUS_DIVERIFIKASI }}'"
                             x-transition:enter="transition ease-out duration-200"
                             x-transition:enter-start="opacity-0 -translate-y-2"
                             x-transition:enter-end="opacity-100 translate-y-0">

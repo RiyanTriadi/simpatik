@@ -51,11 +51,10 @@
             $chips = [
                 ['key' => 'semua', 'label' => 'Semua', 'count' => $counts['all'], 'class' => 'prussian-blue'],
                 ['key' => 'baru', 'label' => 'Baru', 'count' => $counts['baru'], 'class' => 'blue'],
+                ['key' => 'di_assign', 'label' => 'Di-assign', 'count' => $counts['di_assign'], 'class' => 'purple'],
                 ['key' => 'diproses', 'label' => 'Diproses', 'count' => $counts['diproses'], 'class' => 'yellow'],
                 ['key' => 'selesai', 'label' => 'Selesai', 'count' => $counts['selesai'], 'class' => 'emerald'],
                 ['key' => 'ditolak', 'label' => 'Ditolak', 'count' => $counts['ditolak'], 'class' => 'red'],
-                ['key' => 'dibaca', 'label' => 'Dibaca', 'count' => $counts['dibaca'], 'class' => 'purple'],
-                ['key' => 'ditindaklanjuti', 'label' => 'Ditindaklanjuti', 'count' => $counts['ditindaklanjuti'], 'class' => 'teal'],
             ];
         @endphp
 
@@ -241,8 +240,8 @@
                                                                                                                                                                     @elseif($ticket->status == 'diproses') bg-yellow-100 text-yellow-800
                                                                                                                                                                     @elseif($ticket->status == 'selesai') bg-emerald-100 text-emerald-800
                                                                                                                                                                     @elseif($ticket->status == 'ditolak') bg-red-100 text-red-800
-                                                                                                                                                                    @elseif($ticket->status == 'dibaca') bg-purple-100 text-purple-800
-                                                                                                                                                                    @elseif($ticket->status == 'ditindaklanjuti') bg-teal-100 text-teal-800
+                                                                                                                                                                    @elseif($ticket->status == 'di_assign') bg-purple-100 text-purple-800
+                                                                                                                                                                    @elseif($ticket->status == 'diproses') bg-teal-100 text-teal-800
                                                                                                                                                                     @endif">
                                                                                                 {{ ucfirst($ticket->status) }}
                                                                                             </span>
@@ -331,7 +330,8 @@
                                                                                                                 Lihat Detail
                                                                                                             </a>
 
-                                                                                                            {{-- ASSIGN (semua tiket) --}}
+                                                                                                            @if (auth()->user()->role !== 'petugas')
+                                                                                                            {{-- ASSIGN (admin/staff) --}}
                                                                                                             <button type="button" @click="
                                                                                                                                                                                         openAssign({
                                                                                                                                                                                             id: {{ $ticket->id }},
@@ -347,6 +347,7 @@
                                                                                                                     class="ri-user-add-line mr-2 text-gray-400 group-hover:text-prussian-blue-500"></i>
                                                                                                                 Assign Petugas
                                                                                                             </button>
+                                            @endif
 
                                                                                                             {{-- UBAH STATUS --}}
                                                                                                             <button type="button" @click="
@@ -516,8 +517,8 @@
                             <div class="space-y-2">
                                 @foreach ([
                                         'baru' => ['label' => 'Baru', 'desc' => 'Aspirasi baru masuk', 'color' => 'blue'],
-                                        'dibaca' => ['label' => 'Dibaca', 'desc' => 'Sudah dibaca admin', 'color' => 'purple'],
-                                        'ditindaklanjuti' => ['label' => 'Ditindaklanjuti', 'desc' => 'Sudah ditindaklanjuti', 'color' => 'emerald'],
+                                        'di_assign' => ['label' => 'Di-assign', 'desc' => 'Sudah dibaca admin', 'color' => 'purple'],
+                                        'diproses' => ['label' => 'Diproses', 'desc' => 'Sudah ditindaklanjuti', 'color' => 'emerald'],
                                     ] as $value => $opt)
                                                 <label class="cursor-pointer block">
                                                     <input type="radio" name="status" value="{{ $value }}" x-model="selected.status"
