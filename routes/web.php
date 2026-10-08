@@ -75,21 +75,16 @@ foreach (['admin', 'staff', 'petugas'] as $role) {
                 }
             });
 
-            // ASPIRASI
-            Route::prefix('aspirasi')->name('aspirasi.')->group(function () use ($role) {
-                if (in_array($role, ['admin', 'staff'])) {
+            // ASPIRASI (khusus admin dan staff)
+            if (in_array($role, ['admin', 'staff'])) {
+                Route::prefix('aspirasi')->name('aspirasi.')->group(function () {
                     Route::get('/tindak-lanjut/list', [AspirationController::class, 'followUp'])->name('follow-up');
-                }
-
-                Route::get('/', [AspirationController::class, 'index'])->name('index');
-                Route::get('/{aspiration:ticket_number}/attachment/download', [AspirationController::class, 'downloadAttachment'])->name('attachment.download');
-                Route::get('/{aspiration:ticket_number}', [AspirationController::class, 'show'])->name('show');
-                Route::put('/{aspiration:ticket_number}', [AspirationController::class, 'update'])->name('update');
-
-                if (in_array($role, ['admin', 'staff'])) {
-                    Route::put('/{aspiration:ticket_number}/assign', [AspirationController::class, 'assignStore'])->name('assign.store');
-                }
-            });
+                    Route::get('/', [AspirationController::class, 'index'])->name('index');
+                    Route::get('/{aspiration:ticket_number}/attachment/download', [AspirationController::class, 'downloadAttachment'])->name('attachment.download');
+                    Route::get('/{aspiration:ticket_number}', [AspirationController::class, 'show'])->name('show');
+                    Route::put('/{aspiration:ticket_number}', [AspirationController::class, 'update'])->name('update');
+                });
+            }
 
             // KHUSUS STAFF: Daftar Petugas (read-only)
             if ($role === 'staff') {

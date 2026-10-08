@@ -17,7 +17,11 @@ class Dashboard extends Controller
         $userId = $user ? $user->id : null;
 
         $complaintQuery = Complaint::when($isPetugas, fn($q) => $q->where('assigned_to', $userId));
-        $aspirationQuery = Aspiration::when($isPetugas, fn($q) => $q->where('assigned_to', $userId));
+        $aspirationQuery = Aspiration::query();
+
+        if ($isPetugas) {
+            $aspirationQuery->whereRaw('1 = 0');
+        }
 
         $stats = [
             'complaints_total' => (clone $complaintQuery)->count(),
@@ -28,13 +32,11 @@ class Dashboard extends Controller
             'aspirations_new' => (clone $aspirationQuery)->where('status', Aspiration::STATUS_BARU)->count(),
             'aspirations_follow_up' => (clone $aspirationQuery)->where('status', Aspiration::STATUS_DITINDAKLANJUTI)->count(),
             'unassigned' => (clone $complaintQuery)->whereNull('assigned_to')
-                ->whereIn('status', [Complaint::STATUS_BARU, Complaint::STATUS_DIPROSES])
+                ->whereIn('status', [Complaint::STATUS_BARU, Complaint::STATUS_DI_ASSIGN, Complaint::STATUS_DIPROSES])
                 ->count(),
-            'unassigned_aspirations' => (clone $aspirationQuery)->whereNull('assigned_to')
-                ->whereIn('status', [Aspiration::STATUS_BARU, Aspiration::STATUS_DIBACA])
-                ->count(),
-            'active_tickets' => (clone $complaintQuery)->whereIn('status', [Complaint::STATUS_BARU, Complaint::STATUS_DIPROSES])->count()
-                + (clone $aspirationQuery)->whereIn('status', [Aspiration::STATUS_BARU, Aspiration::STATUS_DIBACA, Aspiration::STATUS_DITINDAKLANJUTI])->count(),
+            'unassigned_aspirations' => 0,
+            'active_tickets' => (clone $complaintQuery)->whereIn('status', [Complaint::STATUS_BARU, Complaint::STATUS_DI_ASSIGN, Complaint::STATUS_DIPROSES])->count()
+                + (clone $aspirationQuery)->whereIn('status', [Aspiration::STATUS_BARU, Aspiration::STATUS_DITINDAKLANJUTI])->count(),
             'month_total' => (clone $complaintQuery)->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count()
                 + (clone $aspirationQuery)->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count(),
             'today_complaints' => (clone $complaintQuery)->whereDate('created_at', today())->count(),
@@ -71,17 +73,22 @@ class Dashboard extends Controller
 
         $aspirationStatusData = [
             'baru' => (clone $aspirationQuery)->where('status', Aspiration::STATUS_BARU)->count(),
-            'dibaca' => (clone $aspirationQuery)->where('status', Aspiration::STATUS_DIBACA)->count(),
             'ditindaklanjuti' => (clone $aspirationQuery)->where('status', Aspiration::STATUS_DITINDAKLANJUTI)->count(),
+            'selesai' => (clone $aspirationQuery)->where('status', Aspiration::STATUS_SELESAI)->count(),
         ];
 
-        $topCategories = Category::withCount([
+        $categoryCountRelations = [
             'complaints' => fn($q) => $q->when($isPetugas, fn($q2) => $q2->where('assigned_to', $userId)),
-            'aspirations' => fn($q) => $q->when($isPetugas, fn($q2) => $q2->where('assigned_to', $userId))
-        ])
+        ];
+
+        if (!$isPetugas) {
+            $categoryCountRelations['aspirations'] = fn($q) => $q;
+        }
+
+        $topCategories = Category::withCount($categoryCountRelations)
             ->get()
             ->map(function ($cat) {
-                $cat->total = $cat->complaints_count + $cat->aspirations_count;
+                $cat->total = $cat->complaints_count + ($cat->aspirations_count ?? 0);
                 return $cat;
             })
             ->sortByDesc('total')
@@ -107,7 +114,28 @@ class Dashboard extends Controller
             ->take(8)
             ->values();
 
-        return view('admin.dashboard', compact(
+        if ($isPetugas) {
+            $todayTickets = (clone $complaintQuery)->with('category')
+                ->whereDate('created_at', today())
+                ->select('id', 'ticket_number', 'subject', 'status', 'category_id', 'created_at')
+                ->selectRaw("'complaint' as type")
+                ->latest()->get()
+                ->concat((clone $aspirationQuery)->with('category')
+                    ->whereDate('created_at', today())
+                    ->select('id', 'ticket_number', 'subject', 'status', 'category_id', 'created_at')
+                    ->selectRaw("'aspiration' as type")
+                    ->latest()->get())
+                ->sortByDesc('created_at')->values();
+
+            return view('admin.dashboard.officer', compact(
+                'stats',
+                'complaintStatusData',
+                'aspirationStatusData',
+                'todayTickets'
+            ));
+        }
+
+        return view('admin.dashboard.admin', compact(
             'stats',
             'trendLabels',
             'trendComplaints',

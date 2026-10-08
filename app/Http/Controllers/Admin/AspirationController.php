@@ -14,12 +14,8 @@ class AspirationController extends Controller
 {
     public function index(Request $request)
     {
+        abort_if(auth()->user()->role === User::ROLE_PETUGAS, 403);
         $query = Aspiration::with('category');
-        $user = auth()->user();
-
-        if ($user && $user->role === 'petugas') {
-            $query->where('assigned_to', $user->id);
-        }
 
         if ($request->filled('search')) {
             $searchTerm = '%' . $request->search . '%';
@@ -40,20 +36,8 @@ class AspirationController extends Controller
 
     public function show(Aspiration $aspiration)
     {
-        $aspiration->load(['category', 'officer.unit']);
-
-        if (auth()->user()->role === User::ROLE_PETUGAS && $aspiration->assigned_to !== auth()->id()) {
-            abort(403, 'Anda tidak memiliki akses ke aspirasi ini.');
-        }
-
+        $aspiration->load('category');
         $officers = collect();
-        if (in_array(auth()->user()->role, [User::ROLE_ADMIN, User::ROLE_STAFF], true)) {
-            $officers = User::query()
-                ->where('role', User::ROLE_PETUGAS)
-                ->with('unit')
-                ->orderBy('name')
-                ->get(['id', 'name', 'unit_id']);
-        }
 
         return view('admin.aspirations.show', compact('aspiration', 'officers'));
     }
@@ -78,8 +62,12 @@ class AspirationController extends Controller
 
     public function update(Request $request, Aspiration $aspiration)
     {
+        if (auth()->user()->role === User::ROLE_PETUGAS) {
+            abort(403, 'Petugas hanya dapat membaca aspirasi.');
+        }
+
         $validated = $request->validate([
-            'status' => 'sometimes|in:baru,dibaca,ditindaklanjuti,ditolak',
+            'status' => 'required|in:baru,ditindaklanjuti,selesai,ditolak',
         ]);
 
         $aspiration->update($validated);
@@ -122,7 +110,7 @@ class AspirationController extends Controller
     public function followUp(Request $request)
     {
         $query = Aspiration::with('category')
-            ->whereIn('status', [Aspiration::STATUS_BARU, Aspiration::STATUS_DIBACA]);
+            ->whereIn('status', [Aspiration::STATUS_DITINDAKLANJUTI, Aspiration::STATUS_SELESAI]);
 
         if ($request->filled('search')) {
             $searchTerm = '%' . $request->search . '%';

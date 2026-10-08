@@ -50,18 +50,17 @@ class InboxController extends Controller
                 'aspirations.category_id',
                 'aspirations.status',
                 DB::raw('NULL as priority'),
-                'aspirations.assigned_to',
+                DB::raw('NULL as assigned_to'),
                 'aspirations.created_at',
                 'c.name as category_name',
-                'u.name as officer_name',
-                'u.profile_image_path as officer_image',
+                DB::raw('NULL as officer_name'),
+                DB::raw('NULL as officer_image'),
             )
             ->leftJoin('categories as c', 'c.id', '=', 'aspirations.category_id')
-            ->leftJoin('users as u', 'u.id', '=', 'aspirations.assigned_to')
             ->whereNull('aspirations.deleted_at');
 
         if ($isPetugas) {
-            $aspirationsQ->where('aspirations.assigned_to', auth()->id());
+            $aspirationsQ->whereRaw('1 = 0');
         }
 
         $union = $complaintsQ->unionAll($aspirationsQ);
@@ -146,13 +145,14 @@ class InboxController extends Controller
 
         if ($isPetugas) {
             $complaintBase->where('assigned_to', auth()->id());
-            $aspirationBase->where('assigned_to', auth()->id());
+            $aspirationBase->whereRaw('1 = 0');
         }
 
         return [
             'all' => (clone $complaintBase)->count() + (clone $aspirationBase)->count(),
             'baru' => (clone $complaintBase)->where('status', 'baru')->count()
                 + (clone $aspirationBase)->where('status', 'baru')->count(),
+            'di_assign' => (clone $complaintBase)->where('status', 'di_assign')->count(),
             'diproses' => (clone $complaintBase)->where('status', 'diproses')->count(),
             'selesai' => (clone $complaintBase)->where('status', 'selesai')->count(),
             'ditolak' => (clone $complaintBase)->where('status', 'ditolak')->count(),

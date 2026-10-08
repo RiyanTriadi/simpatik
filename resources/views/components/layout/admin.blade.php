@@ -84,6 +84,15 @@
                     </div>
                 </div>
 
+                @if ($role === 'petugas')
+                    <div class="nav-item-group relative">
+                        <a href="{{ role_route('pengaduan.index') }}"
+                            class="nav-item flex items-center gap-3 {{ request()->routeIs('*.pengaduan.*') ? 'bg-gray-700 text-white' : 'text-alabaster-grey-600 transition hover:bg-gray-700 hover:text-white' }} px-3 py-2.5 text-sm font-medium cursor-pointer">
+                            <i class="ri-task-line text-lg"></i>
+                            <span class="sidebar-label">Tugas Saya</span>
+                        </a>
+                    </div>
+                @else
                 {{-- ============ KOTAK MASUK (semua role) ============ --}}
                 <div class="nav-item-group relative">
                     <a href="{{ role_route('inbox.index') }}"
@@ -144,6 +153,7 @@
                 </div>
 
                 {{-- ============ ASPIRASI ============ --}}
+                @if ($role !== 'petugas')
                 @php $groupAspirasi = request()->routeIs('*.aspirasi.*'); @endphp
                 <div class="nav-item-group relative">
                     <button type="button" data-submenu-toggle
@@ -181,6 +191,7 @@
                         </div>
                     </div>
                 </div>
+                @endif
 
                 {{-- KHUSUS STAFF: Lihat Petugas --}}
                 @if ($role === 'staff')
@@ -233,7 +244,7 @@
                         </div>
                     </div>
                 @endif
-
+                @endif
             </nav>
         </aside>
 

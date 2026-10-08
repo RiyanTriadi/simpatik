@@ -1,5 +1,5 @@
 <x-layout.admin title="Tindak Lanjut Aspirasi">
-    <div class="bg-white p-4">
+    <div class="bg-white p-4" x-data="{ confirmOpen: false, confirmAction: '', confirmStatus: '', confirmLabel: '' }" @open-aspiration-confirm.window="confirmAction = $event.detail.action; confirmStatus = $event.detail.status; confirmLabel = $event.detail.label; confirmOpen = true">
 
         {{-- Header --}}
         <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
@@ -17,18 +17,6 @@
                 </button>
             </form>
         </div>
-
-        {{-- Info Banner --}}
-        @if ($aspirations->total() > 0)
-            <div class="mt-4 bg-purple-50 border border-purple-200 p-3 flex items-center gap-2">
-                <i class="ri-information-line text-purple-500 text-lg mt-0.5"></i>
-                <p class="text-xs text-purple-700">
-                    Terdapat <strong>{{ $aspirations->total() }} aspirasi</strong> yang menunggu tindak lanjut.
-                    Pilih petugas melalui tombol aksi untuk menugaskan dan menandai aspirasi sebagai
-                    <strong>ditindaklanjuti</strong>.
-                </p>
-            </div>
-        @endif
 
         {{-- Tabel --}}
         <div class="mt-4 overflow-x-auto border border-alabaster-grey-300">
@@ -71,8 +59,8 @@
                             <td class="px-4 py-3">
                                 <span class="px-2 py-1 text-xs font-semibold whitespace-nowrap
                                                     @if ($aspiration->status == 'baru') bg-blue-100 text-blue-800
-                                                    @elseif($aspiration->status == 'dibaca') bg-purple-100 text-purple-800
-                                                    @elseif($aspiration->status == 'ditindaklanjuti') bg-emerald-100 text-emerald-800
+                                                    @elseif($aspiration->status == 'ditindaklanjuti') bg-purple-100 text-purple-800
+                                                    @elseif($aspiration->status == 'selesai') bg-emerald-100 text-emerald-800
                                                     @endif">
                                     {{ ucfirst($aspiration->status) }}
                                 </span>
@@ -84,126 +72,23 @@
                                     {{ $aspiration->creator_label }}
                                 </p>
                             </td>
-
                             {{-- AKSI --}}
                             <td class="text-center px-4 py-3">
-                                <div x-data="{
-                                                        open: false,
-                                                    modalOpen: @js($errors->has('assigned_to') && (string) old('aspiration_id') === (string) $aspiration->id),
-                                                    top: 0,
-                                                    left: 0,
-                                                    officerOpen: false,
-                                                    officerSearch: '',
-                                                    selectedOfficer: {{ Js::from((string) old('assigned_to', '')) }},
-                                                    officers: {{ Js::from($officers->map(fn ($officer) => ['id' => (string) $officer->id, 'name' => $officer->name, 'unit' => $officer->unit->name ?? 'Tanpa Unit'])) }},
-                                                    get filteredOfficers() { return this.officers.filter((officer) => `${officer.name} ${officer.unit}`.toLowerCase().includes(this.officerSearch.toLowerCase())); },
-                                                    chooseOfficer(officer) { this.selectedOfficer = officer.id; this.officerSearch = officer.name; this.officerOpen = false; },
-                                                    toggle(event) {
-                                                            if (this.open) { this.open = false; return; }
-                                                            const rect = event.currentTarget.getBoundingClientRect();
-                                                            this.top  = rect.bottom + 4;
-                                                            this.left = rect.right - 176;
-                                                            this.open = true;
-                                                        }
-                                                    }" @scroll.window="open = false" @resize.window="open = false">
-
-                                    <button @click="toggle($event)"
-                                        class="cursor-pointer text-gray-500 hover:text-prussian-blue-500 focus:outline-none p-1 hover:bg-gray-100 transition">
+                                <div x-data="{ open: false, top: 0, left: 0, toggle(event) {  if (this.open) { this.open = false; return; } const rect = event.currentTarget.getBoundingClientRect(); this.top = rect.bottom + 4; this.left = rect.right - 144; this.open = true; } }" @scroll.window="open = false" @resize.window="open = false">
+                                    <button type="button" @click="toggle($event)" class="cursor-pointer p-1 text-gray-500 hover:bg-gray-100 hover:text-prussian-blue-500">
                                         <i class="ri-more-line text-lg"></i>
                                     </button>
-
                                     <template x-teleport="body">
-                                        <div x-show="open" x-cloak @click.outside="open = false"
-                                            x-transition:enter="transition ease-out duration-100"
-                                            x-transition:enter-start="opacity-0 scale-95"
-                                            x-transition:enter-end="opacity-100 scale-100"
-                                            x-transition:leave="transition ease-in duration-75"
-                                            x-transition:leave-start="opacity-100 scale-100"
-                                            x-transition:leave-end="opacity-0 scale-95"
-                                            :style="`top: ${top}px; left: ${left}px;`"
-                                            class="fixed z-[100] w-44 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 border border-gray-100">
-
+                                        <div x-show="open" x-cloak @click.outside="open = false" :style="`top: ${top}px; left: ${left}px;`" class="fixed z-[100] w-36 bg-white shadow-lg ring-1 ring-black border border-gray-100">
                                             <div class="py-1">
-                                                {{-- Tindak Lanjut --}}
-                                                <button type="button" @click="open = false; modalOpen = true"
-                                                    class="group flex w-full items-center px-4 py-2 text-sm text-emerald-600 hover:bg-emerald-50 transition">
-                                                    <i class="ri-check-double-line mr-2 text-emerald-500"></i>
-                                                    Tindak Lanjut
-                                                </button>
-
-                                                {{-- Detail --}}
-                                                <a href="{{ role_route('aspirasi.show', $aspiration) }}"
-                                                    class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-prussian-blue-500 transition border-t border-gray-100">
-                                                    <i
-                                                        class="ri-eye-line mr-2 text-gray-400 group-hover:text-prussian-blue-500"></i>
-                                                    Detail
+                                                @if ($aspiration->status === \App\Models\Aspiration::STATUS_DITINDAKLANJUTI)
+                                                    <button type="button" @click="$dispatch('open-aspiration-confirm', { action: '{{ role_route('aspirasi.update', $aspiration) }}', status: 'selesai', label: 'Selesai' }); open = false" class="group flex w-full items-center px-4 py-2 text-sm text-emerald-600 hover:bg-emerald-50 transition">
+                                                        <i class="ri-checkbox-circle-line mr-2 text-emerald-400"></i> Selesai
+                                                    </button>
+                                                @endif
+                                                <a href="{{ role_route('aspirasi.show', $aspiration) }}" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-prussian-blue-500">
+                                                    <i class="ri-eye-line mr-2 text-gray-400"></i> Detail
                                                 </a>
-                                            </div>
-                                        </div>
-                                    </template>
-
-                                    <template x-teleport="body">
-                                        <div x-show="modalOpen" x-cloak @keydown.escape.window="modalOpen = false"
-                                            @click.self="modalOpen = false"
-                                            x-transition:enter="transition ease-out duration-200"
-                                            x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                                            x-transition:leave="transition ease-in duration-150"
-                                            x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-                                            class="fixed inset-0 z-[110] flex items-center justify-center bg-black/50 p-4">
-                                            <div role="dialog" aria-modal="true"
-                                                aria-labelledby="assign-modal-title-{{ $aspiration->id }}"
-                                                class="modal-panel w-full max-w-md bg-white p-6 shadow-xl">
-                                                <h2 id="assign-modal-title-{{ $aspiration->id }}"
-                                                    class="text-lg font-semibold text-prussian-blue-500">
-                                                    Tugaskan Aspirasi
-                                                </h2>
-                                                <p class="mt-1 text-sm text-gray-500">
-                                                    Pilih petugas yang akan menangani tiket
-                                                    <strong>{{ $aspiration->ticket_number }}</strong>.
-                                                </p>
-
-                                                <form action="{{ role_route('aspirasi.assign.store', $aspiration) }}"
-                                                    method="POST" class="mt-5">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <input type="hidden" name="aspiration_id" value="{{ $aspiration->id }}">
-
-                                                    <label for="assigned-to-{{ $aspiration->id }}"
-                                                        class="mb-1 block text-sm font-medium text-gray-700">
-                                                        Petugas
-                                                    </label>
-                                                    <input type="hidden" name="assigned_to" :value="selectedOfficer">
-                                                    <input type="hidden" name="officer_search" :value="officerSearch">
-                                                    <div class="relative">
-                                                        <input id="assigned-to-{{ $aspiration->id }}" type="search" x-model="officerSearch"
-                                                            @focus="officerOpen = true" @input="selectedOfficer = ''; officerOpen = true"
-                                                            @click.outside="officerOpen = false" placeholder="Cari nama atau unit petugas..."
-                                                            class="w-full border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none">
-                                                        <div x-show="officerOpen" x-cloak class="absolute z-20 mt-1 max-h-48 w-full overflow-y-auto border border-gray-200 bg-white shadow-lg">
-                                                            <template x-for="officer in filteredOfficers" :key="officer.id">
-                                                                <button type="button" @click="chooseOfficer(officer)" class="block w-full px-3 py-2 text-left text-sm hover:bg-emerald-50">
-                                                                    <span class="block" x-text="officer.name"></span>
-                                                                    <span class="block text-xs text-gray-500" x-text="officer.unit"></span>
-                                                                </button>
-                                                            </template>
-                                                            <p x-show="filteredOfficers.length === 0" class="px-3 py-2 text-sm text-gray-500">Petugas tidak ditemukan.</p>
-                                                        </div>
-                                                    </div>
-                                                    @error('assigned_to')
-                                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                                    @enderror
-
-                                                    <div class="mt-6 flex justify-end gap-2">
-                                                        <button type="button" @click="modalOpen = false"
-                                                            class="border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                                            Batal
-                                                        </button>
-                                                        <button type="submit"
-                                                            class="bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">
-                                                            Tugaskan &amp; Tindak Lanjut
-                                                        </button>
-                                                    </div>
-                                                </form>
                                             </div>
                                         </div>
                                     </template>
@@ -232,5 +117,20 @@
         </div>
 
         {{ $aspirations->links('components.pagination') }}
+
+        <template x-teleport="body">
+            <div x-show="confirmOpen" x-cloak x-transition:enter="transition-opacity duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" @keydown.escape.window="confirmOpen = false" @click.self="confirmOpen = false" class="fixed inset-0 z-[120] flex items-center justify-center bg-black/50 p-4">
+                <div role="dialog" aria-modal="true" class="modal-panel w-full max-w-sm bg-white p-6 shadow-xl">
+                    <h2 class="text-lg font-semibold text-gray-800"><span x-text="confirmLabel"></span> Tiket?</h2>
+                    <p class="mt-2 text-sm text-gray-600">Pastikan tindakan sesuai. Status tiket akan diperbarui.</p>
+                    <form :action="confirmAction" method="POST" class="mt-6 flex justify-end gap-2">
+                        @csrf @method('PUT')
+                        <input type="hidden" name="status" :value="confirmStatus">
+                        <button type="button" @click="confirmOpen = false" class="border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Batal</button>
+                        <button type="submit" class="bg-prussian-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-prussian-blue-700">Ya, <span x-text="confirmLabel"></span></button>
+                    </form>
+                </div>
+            </div>
+        </template>
     </div>
 </x-layout.admin>
